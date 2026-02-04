@@ -1,9 +1,11 @@
 # Work Order 006: Toad Reveal (Project Discovery)
 
 ### Details
+
 - **Date:** 2026-02-03
 - **Status:** Complete
-- **Goal:** Implement `toad reveal <QUERY>`, a command to find projects within the `projects/` directory using case-insensitive search.
+- **Goal:** Implement `toad reveal <QUERY>`, a command to find projects within
+  the `projects/` directory using case-insensitive search.
 
 ## Execution Log
 

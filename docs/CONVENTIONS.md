@@ -36,60 +36,38 @@ When starting a new session, the agent should:
 
   3. Ensure the "Success Criteria" in the Work Order are physically verified.
 
-- **Finalization:** Update the `.gemini/SESSIONS.md` with a fresh receipt if significant progress was made.
-
-
+- **Finalization:** Update the `.gemini/SESSIONS.md` with a fresh receipt if
+  significant progress was made.
 
 ## 4. Modular Development Rules
 
+- **Decoupling:** New logic must live in a dedicated crate in `crates/` if it
+  serves a distinct purpose (e.g., `toad-ai`, `toad-git`).
 
+- **Core Dependency:** All platform crates must depend on `toad-core` for shared
+  types.
 
-- **Decoupling:** New logic must live in a dedicated crate in `crates/` if it serves a distinct purpose (e.g., `toad-ai`, `toad-git`).
+- **Thin CLI:** The `bin/toad` package must remain a thin orchestration layer.
+  Logic belongs in crates.
 
+- **Strategy Pattern:** Use traits/strategies for extensible features like stack
+  detection or agentic prompts.
 
-
-- **Core Dependency:** All platform crates must depend on `toad-core` for shared types.
-
-
-
-- **Thin CLI:** The `bin/toad` package must remain a thin orchestration layer. Logic belongs in crates.
-
-
-
-- **Strategy Pattern:** Use traits/strategies for extensible features like stack detection or agentic prompts.
-
-
-
-- **Test Separation:** Implementation files should stay lean. Move unit tests to a separate module or file (e.g., `mod tests;` in `lib.rs` with logic in `src/tests.rs`).
-
-
-
-
-
-
+- **Test Separation:** Implementation files should stay lean. Move unit tests to
+  a separate module or file (e.g., `mod tests;` in `lib.rs` with logic in
+  `src/tests.rs`).
 
 ## 5. Session Management
 
+- **Persistence:** Significant milestones must be recorded in
+  `.gemini/SESSIONS.md`.
 
+- **Formatting:** Entries must be dated (YYYY-MM-DD) and include a clear
+  **Goal**, **Accomplishments**, and **Next Steps**.
 
-- **Persistence:** Significant milestones must be recorded in `.gemini/SESSIONS.md`.
+- **Context Pruning:** To maintain high token efficiency, the active log should
+  only contain recent context. Move older entries to a `docs/archive/sessions/`
+  directory once the log exceeds 10 entries.
 
-
-
-- **Formatting:** Entries must be dated (YYYY-MM-DD) and include a clear **Goal**, **Accomplishments**, and **Next Steps**.
-
-
-
-- **Context Pruning:** To maintain high token efficiency, the active log should only contain recent context. Move older entries to a `docs/archive/sessions/` directory once the log exceeds 10 entries.
-
-
-
-- **Auto-Loading:** The `SESSIONS.md` file must be whitelisted in `.gemini/settings.json` to ensure immediate agent awareness.
-
-
-
-
-
-
-
-
+- **Auto-Loading:** The `SESSIONS.md` file must be whitelisted in
+  `.gemini/settings.json` to ensure immediate agent awareness.

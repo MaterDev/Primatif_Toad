@@ -1,9 +1,11 @@
 # Work Order 005: Platform Architecture & Scaffolder MVP
 
 ### Details
+
 - **Date:** 2026-02-03
 - **Status:** Complete
-- **Goal:** Transition to a Rust Workspace architecture and implement the "Project Scaffolder" as the first MVP feature, accessible via a `toad` CLI.
+- **Goal:** Transition to a Rust Workspace architecture and implement the
+  "Project Scaffolder" as the first MVP feature, accessible via a `toad` CLI.
 
 ## Execution Log
 

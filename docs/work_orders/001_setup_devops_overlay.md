@@ -1,9 +1,12 @@
 # Work Order 001: Setup DevOps Root & Organize Source
 
 ### Details
+
 - **Date:** 2026-02-03
 - **Status:** Complete
-- **Goal:** Organize the root `Code` directory by moving all project repositories into a dedicated `source/` folder and establishing a root Git repository for DevOps scripts.
+- **Goal:** Organize the root `Code` directory by moving all project
+  repositories into a dedicated `source/` folder and establishing a root Git
+  repository for DevOps scripts.
 
 ## Strategy: Clean Root with Source Directory
 
