@@ -45,11 +45,13 @@ unified project management.
 ### Prerequisites
 
 #### For Users (Running Toad)
+
 - **Rust & Cargo:** (Latest stable)
 - **Just:** [just command runner](https://github.com/casey/just)
 - **Git:** Required for project management and VCS health checks.
 
 #### For Developers (Contributing)
+
 - **Node.js & NPM:** Required for markdown linting tools.
 - **Markdownlint CLI:** `npm install -g markdownlint-cli`
 - **Dprint:** `cargo install dprint` (Formatted code and docs)

@@ -1,0 +1,4 @@
+projects/**
+target/**
+shadows/**
+**/node_modules/**
