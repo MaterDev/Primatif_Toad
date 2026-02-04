@@ -1,13 +1,16 @@
 use anyhow::Result;
 use clap::{CommandFactory, Parser, Subcommand};
-use scaffold::{create_project, open_in_editor, ProjectConfig};
+use colored::*;
 use discovery::find_projects;
+use scaffold::{create_project, open_in_editor, ProjectConfig};
 use std::io::{self, Write};
 use std::path::PathBuf;
 
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 #[derive(Parser)]
 #[command(name = "toad")]
-#[command(about = "Code Control Plane CLI", long_about = None)]
+#[command(about = "Primatif_Toad: Toad Control CLI", version = VERSION)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -31,14 +34,27 @@ enum Commands {
     },
     /// List all available commands
     List,
+    /// Display version information and the Toad banner
+    Version,
+}
+
+fn print_banner() {
+    // Force colors to ensure they show up in all environments
+    colored::control::set_override(true);
+
+    let toad = r###"      _   _      
+     (.)_(.)    
+  _ (   _   ) _ 
+ / \/`-----'\/ \ 
+ __/  ^   ^  \__
+"###;
+    println!("{}", toad.green());
+        println!(" {} v{}", "TOAD CONTROL".green().bold(), VERSION.white());
 }
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
-    // In a real Mac-agnostic setup, we resolve the relative projects folder
-    // based on the location of the binary or a workspace root.
-    // For now, we assume execution from the root of the Code directory.
     let root_dir = PathBuf::from("projects");
 
     match &cli.command {
@@ -52,10 +68,9 @@ fn main() -> Result<()> {
             create_project(config)?;
 
             if *dry_run {
-                return Ok(());
+                return Ok(())
             }
 
-            // Offer to open in editor
             println!("\nWould you like to open this project? [v]scode, [w]indsurf, or [n]o");
             print!("> ");
             io::stdout().flush()?;
@@ -73,7 +88,7 @@ fn main() -> Result<()> {
         Commands::Reveal { query } => {
             println!("Searching for projects matching '{}'...", query);
             let matches = find_projects(&root_dir, query, 30)?;
-            
+
             if matches.is_empty() {
                 println!("No projects found.");
             } else {
@@ -85,6 +100,9 @@ fn main() -> Result<()> {
         Commands::List => {
             let mut cmd = Cli::command();
             cmd.print_help()?;
+        }
+        Commands::Version => {
+            print_banner();
         }
     }
 

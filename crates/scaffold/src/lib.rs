@@ -45,13 +45,7 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
 
     // 2. Write README.md
     let readme_content = format!(
-        "# {{}}
-
-## Overview
-This project was scaffolded by the Code Control Plane.
-
-## Documentation
-See [docs/](docs/) for more details.",
+        "# {}\n\n## Overview",
         config.name
     );
     fs::write(project_path.join("README.md"), readme_content)
@@ -97,13 +91,13 @@ pub fn open_in_editor(project_name: &str, root_dir: &Path, editor: &str) -> Resu
         _ => bail!("Unknown editor: {}", editor),
     };
 
-    println!("Opening in {{}}...", editor);
+    println!("Opening in {}...", editor);
     
     let status = Command::new(command)
         .arg(".")
         .current_dir(project_path)
         .status()
-        .context(format!("Failed to launch {{}}. Is it in your PATH?", command))?;
+        .context(format!("Failed to launch {}. Is it in your PATH?", command))?;
 
     if !status.success() {
         bail!("Editor launch failed");

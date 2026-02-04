@@ -1,29 +1,25 @@
 # Justfile for Primatif_Toad
+#
+# NOTE: 
+# 'just' commands are for DEVELOPING the Toad system itself.
+# 'toad' commands are for USING the installed tool to manage projects.
 
-# Run the Toad CLI
+# Run the local version of the CLI (Development)
 cli *args:
     cargo run -p toad -- {{args}}
 
-# Create a new project
-create name:
-    just cli create {{name}}
-
-# Find projects
-reveal query:
-    just cli reveal {{query}}
-
-# Build the system
-build:
-    cargo build
+# Install the Toad CLI to your system (Production)
+install:
+    ./scripts/install_toad.sh
 
 # Run tests
 test:
     cargo test --workspace
 
-# Install the Toad CLI to ~/.cargo/bin
-install:
-    cargo install --path bin/toad
+# Build the system
+build:
+    cargo build
 
-# List available Toad commands
-list:
-    just cli list
+# Dev Shortcut: Create a project using the local dev build
+dev-create name:
+    just cli create {{name}}
