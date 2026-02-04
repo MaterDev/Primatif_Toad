@@ -12,7 +12,8 @@
 ```
 
 ### Toad Control Plane
-*The modular meta-engineering platform.*
+
+_The modular meta-engineering platform._
 
 ---
 </div>
@@ -37,16 +38,21 @@ unified project management.
 1. **Install:** `just install`
 2. **Setup:** `toad manifest` (Build your initial project map)
 3. **Use:** `toad create my-project`
-
 ---
 
 ## 🚀 Installation & Setup
 
 ### Prerequisites
 
+#### For Users (Running Toad)
 - **Rust & Cargo:** (Latest stable)
 - **Just:** [just command runner](https://github.com/casey/just)
 - **Git:** Required for project management and VCS health checks.
+
+#### For Developers (Contributing)
+- **Node.js & NPM:** Required for markdown linting tools.
+- **Markdownlint CLI:** `npm install -g markdownlint-cli`
+- **Dprint:** `cargo install dprint` (Formatted code and docs)
 
 ### Installing Toad
 
@@ -56,11 +62,14 @@ Run the following command from the root of this repository:
 just install
 ```
 
-This script will compile the project in release mode and install the `toad` binary to your `~/.cargo/bin` directory. Ensure this directory is in your system's `PATH`.
+This script will compile the project in release mode and install the `toad`
+binary to your `~/.cargo/bin` directory. Ensure this directory is in your
+system's `PATH`.
 
 ### Initial Configuration
 
-Once installed, run the manifest command to allow Toad to "learn" your existing `projects/` directory:
+Once installed, run the manifest command to allow Toad to "learn" your existing
+`projects/` directory:
 
 ```bash
 toad manifest
