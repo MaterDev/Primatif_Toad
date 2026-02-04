@@ -1,4 +1,21 @@
-# Primatif_Toad
+<div align="center">
+
+```text
+      _   _      
+     (.)_(.)    
+  _ (   _   ) _ 
+ / \/`-----'\/ \ 
+ __/  ^   ^  \__
+
+ P R I M A T I F
+ T O A D
+```
+
+### Toad Control Plane
+*The modular meta-engineering platform.*
+
+---
+</div>
 
 **Primatif_Toad** is a **DevOps Overlay and Developer CLI (Toad)** designed to
 manage a modular ecosystem of independent projects. It acts as a clean
