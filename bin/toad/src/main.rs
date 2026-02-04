@@ -49,7 +49,7 @@ fn print_banner() {
  __/  ^   ^  \__
 "###;
     println!("{}", toad.green());
-        println!(" {} v{}", "TOAD CONTROL".green().bold(), VERSION.white());
+    println!(" {} v{}", "TOAD CONTROL".green().bold(), VERSION.white());
 }
 
 fn main() -> Result<()> {
@@ -68,7 +68,7 @@ fn main() -> Result<()> {
             create_project(config)?;
 
             if *dry_run {
-                return Ok(())
+                return Ok(());
             }
 
             println!("\nWould you like to open this project? [v]scode, [w]indsurf, or [n]o");

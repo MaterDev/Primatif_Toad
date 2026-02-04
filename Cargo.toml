@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "bin/toad",
-    "crates/*"
+  "bin/toad",
+  "crates/*",
 ]
 resolver = "2"

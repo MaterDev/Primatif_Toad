@@ -30,11 +30,14 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
     }
 
     if config.dry_run {
-        println!("[Dry Run] Would create project directory: {:?}", project_path);
+        println!(
+            "[Dry Run] Would create project directory: {:?}",
+            project_path
+        );
         println!("[Dry Run] Would create directories: docs/");
         println!("[Dry Run] Would write files: README.md, .gitignore");
         println!("[Dry Run] Would initialize Git repository");
-        return Ok(())
+        return Ok(());
     }
 
     println!("Creating project: {}", config.name);
@@ -44,10 +47,7 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
         .context("Failed to create project directories")?;
 
     // 2. Write README.md
-    let readme_content = format!(
-        "# {}\n\n## Overview",
-        config.name
-    );
+    let readme_content = format!("# {}\n\n## Overview", config.name);
     fs::write(project_path.join("README.md"), readme_content)
         .context("Failed to write README.md")?;
 
@@ -66,10 +66,7 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
 
 /// Initializes a git repository in the given directory.
 fn init_git(path: &Path) -> Result<()> {
-    let status = Command::new("git")
-        .arg("init")
-        .current_dir(path)
-        .status()?;
+    let status = Command::new("git").arg("init").current_dir(path).status()?;
 
     if !status.success() {
         bail!("Git init failed with status: {}", status);
@@ -84,7 +81,7 @@ fn init_git(path: &Path) -> Result<()> {
 /// - `windsurf` (launches `windsurf`)
 pub fn open_in_editor(project_name: &str, root_dir: &Path, editor: &str) -> Result<()> {
     let project_path = root_dir.join(project_name);
-    
+
     let command = match editor {
         "vscode" => "code",
         "windsurf" => "windsurf",
@@ -92,7 +89,7 @@ pub fn open_in_editor(project_name: &str, root_dir: &Path, editor: &str) -> Resu
     };
 
     println!("Opening in {}...", editor);
-    
+
     let status = Command::new(command)
         .arg(".")
         .current_dir(project_path)

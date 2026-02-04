@@ -12,9 +12,44 @@ cli *args:
 install:
     ./scripts/install_toad.sh
 
-# Run tests
+# --- Quality Assurance (QA) ---
+
+# Run full QA suite (Format -> Lint -> Test -> Build)
+qa: fmt lint test build
+    @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
+
+# Run all tests
 test:
     cargo test --workspace
+
+# Check everything (CI Gate)
+check: lint test
+    cargo fmt --all -- --check
+    dprint check
+
+# Auto-fix everything possible
+fix:
+    cargo clippy --workspace --fix --allow-dirty --allow-staged
+    just fmt
+
+# Format code and docs
+fmt: fmt-rust fmt-misc
+
+# Format Rust code
+fmt-rust:
+    cargo fmt --all
+
+# Format Markdown, TOML, JSON (requires dprint)
+fmt-misc:
+    dprint fmt
+
+# Lint Rust code (Clippy)
+lint:
+    cargo clippy --workspace -- -D warnings
+
+# Install development tools (dprint)
+setup-tools:
+    cargo install dprint
 
 # Build the system
 build:
