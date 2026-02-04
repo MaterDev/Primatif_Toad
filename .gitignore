@@ -1,8 +1,15 @@
-# Ignore everything in the root directory
+# Ignore everything in the root directory by default
 /*
 
-# Whitelist Admin Tools (Un-ignore these specific root items)
+# Whitelist Admin Tools
 !/GEMINI.md
 !/scripts/
 !/work_orders/
 !/.gitignore
+!/doc/
+
+# Whitelist Rust Project Files
+!/Cargo.toml
+!/Cargo.lock
+!/src/
+!/README.md
