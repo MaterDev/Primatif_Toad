@@ -95,13 +95,13 @@ Use this command to **develop Primatif_Toad itself**.
 
 Standardized project creation within the `projects/` directory.
 
-**Requirements:**
+#### Requirements
 
 - `just`
 - `git`
 - `vscode` / `windsurf` (Optional)
 
-**Usage:**
+#### Usage
 
 ```bash
 toad create <project-name>
@@ -111,7 +111,7 @@ toad create <project-name>
 
 Search for projects by name.
 
-**Usage:**
+#### Usage
 
 ```bash
 toad reveal cli

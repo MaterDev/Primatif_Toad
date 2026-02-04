@@ -1,6 +1,6 @@
 # Work Order 007: Context Shadows (Project Manifest)
 
-**Status: In-Progress (Phase 2: Technical & Contextual Refinement)**
+### Status: In-Progress (Phase 2: Technical & Contextual Refinement)
 
 ## Motivation
 

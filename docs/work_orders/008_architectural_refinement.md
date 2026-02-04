@@ -1,6 +1,6 @@
 # Work Order 008: Architectural Refinement (The Great Decoupling)
 
-**Status: Completed**
+### Status: Completed
 
 ## Motivation
 
