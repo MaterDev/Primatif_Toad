@@ -8,6 +8,10 @@ cli *args:
 create name:
     just cli create {{name}}
 
+# Find projects
+reveal query:
+    just cli reveal {{query}}
+
 # Build the system
 build:
     cargo build

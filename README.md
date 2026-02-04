@@ -34,6 +34,15 @@ This will:
 - Initialize Git.
 - Offer to open the project in VS Code or Windsurf.
 
+### 2. Project Discovery (Reveal)
+Search for projects by name.
+
+**Usage:**
+```bash
+# Find projects matching "cli"
+toad reveal cli
+```
+
 ## Development
 
 ```bash

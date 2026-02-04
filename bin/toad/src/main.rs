@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::{CommandFactory, Parser, Subcommand};
 use scaffold::{create_project, open_in_editor, ProjectConfig};
+use discovery::find_projects;
 use std::io::{self, Write};
 use std::path::PathBuf;
 
@@ -23,6 +24,11 @@ enum Commands {
         #[arg(long, short = 'd')]
         dry_run: bool,
     },
+    /// Find projects matching a query
+    Reveal {
+        /// Case-insensitive search query
+        query: String,
+    },
     /// List all available commands
     List,
 }
@@ -30,13 +36,13 @@ enum Commands {
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
+    // In a real Mac-agnostic setup, we resolve the relative projects folder
+    // based on the location of the binary or a workspace root.
+    // For now, we assume execution from the root of the Code directory.
+    let root_dir = PathBuf::from("projects");
+
     match &cli.command {
         Commands::Create { name, dry_run } => {
-            // In a real Mac-agnostic setup, we resolve the relative projects folder
-            // based on the location of the binary or a workspace root.
-            // For now, we assume execution from the root of the Code directory.
-            let root_dir = PathBuf::from("projects");
-            
             let config = ProjectConfig {
                 name,
                 root_dir: root_dir.clone(),
@@ -62,6 +68,18 @@ fn main() -> Result<()> {
                 "v" | "vscode" => open_in_editor(name, &root_dir, "vscode")?,
                 "w" | "windsurf" => open_in_editor(name, &root_dir, "windsurf")?,
                 _ => println!("Skipping editor launch."),
+            }
+        }
+        Commands::Reveal { query } => {
+            println!("Searching for projects matching '{}'...", query);
+            let matches = find_projects(&root_dir, query, 30)?;
+            
+            if matches.is_empty() {
+                println!("No projects found.");
+            } else {
+                for project in matches {
+                    println!("- {}", project);
+                }
             }
         }
         Commands::List => {
