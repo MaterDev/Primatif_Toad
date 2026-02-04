@@ -15,7 +15,9 @@ Transform Primatif_Toad into a professional-grade modular platform with "AI Intu
 3. **Operational Intelligence:** Added Activity Tiers (Active/Cold/Archive) and VCS Health (Clean/Dirty) detection.
 4. **Trust Layer:** Implemented "Lazy Fingerprinting" to detect and warn about stale context.
 5. **Self-Documentation:** Added `toad docs` for programmatically accurate CLI manuals.
-6. **Governance:** Established "Documentation Integrity" and "Test Separation" conventions in `docs/CONVENTIONS.md`.
+6. **Governance:** Established "Documentation Integrity," "Test Separation," and "Session Management" conventions in `docs/CONVENTIONS.md`.
+7. **Unified QA:** Centralized linting/formatting rules with `.markdownlint.json` and `dprint.json`, and enforced them as hard gates in the `Justfile`.
+8. **Visual Identity:** Styled the `README.md` with a centered Atari-style ASCII banner and professional hierarchy.
 
 ### Next Steps
 Ready for Phase 3: Semantic Hashtag Harvesting (Agentic/Local ML).
