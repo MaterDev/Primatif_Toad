@@ -1,14 +1,27 @@
+//! Logic for scaffolding new projects within the Code Control Plane.
+
 use anyhow::{Context, Result, bail};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+/// Configuration for creating a new project.
 pub struct ProjectConfig<'a> {
+    /// The name of the project (becomes the directory name).
     pub name: &'a str,
+    /// The root directory where projects are stored (e.g., "projects/").
     pub root_dir: PathBuf,
+    /// If true, performs a simulation without modifying the filesystem.
     pub dry_run: bool,
 }
 
+/// Creates a new project directory with standard boilerplate.
+///
+/// This includes:
+/// - A `docs/` directory.
+/// - A `README.md` file.
+/// - A `.gitignore` file.
+/// - Initializing a Git repository.
 pub fn create_project(config: ProjectConfig) -> Result<()> {
     let project_path = config.root_dir.join(config.name);
 
@@ -32,7 +45,13 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
 
     // 2. Write README.md
     let readme_content = format!(
-        "# {}\n\n## Overview\nThis project was scaffolded by the Code Control Plane.\n\n## Documentation\nSee [docs/](docs/) for more details.",
+        "# {{}}
+
+## Overview
+This project was scaffolded by the Code Control Plane.
+
+## Documentation
+See [docs/](docs/) for more details.",
         config.name
     );
     fs::write(project_path.join("README.md"), readme_content)
@@ -51,6 +70,7 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
     Ok(())
 }
 
+/// Initializes a git repository in the given directory.
 fn init_git(path: &Path) -> Result<()> {
     let status = Command::new("git")
         .arg("init")
@@ -63,6 +83,11 @@ fn init_git(path: &Path) -> Result<()> {
     Ok(())
 }
 
+/// Launches a specified editor in the project directory.
+///
+/// Supported editors:
+/// - `vscode` (launches `code`)
+/// - `windsurf` (launches `windsurf`)
 pub fn open_in_editor(project_name: &str, root_dir: &Path, editor: &str) -> Result<()> {
     let project_path = root_dir.join(project_name);
     
@@ -72,13 +97,13 @@ pub fn open_in_editor(project_name: &str, root_dir: &Path, editor: &str) -> Resu
         _ => bail!("Unknown editor: {}", editor),
     };
 
-    println!("Opening in {}...", editor);
+    println!("Opening in {{}}...", editor);
     
     let status = Command::new(command)
         .arg(".")
         .current_dir(project_path)
         .status()
-        .context(format!("Failed to launch {}. Is it in your PATH?", command))?;
+        .context(format!("Failed to launch {{}}. Is it in your PATH?", command))?;
 
     if !status.success() {
         bail!("Editor launch failed");
