@@ -35,3 +35,4 @@
 - **No Conflict:** Do not track sub-repositories in `projects/`.
 - **Safety:** Always verify paths before moving or deleting.
 - **Discovery:** Do not assume a fixed list of projects; always scan `projects/` dynamically.
+- **Commit History as Context:** All commits must follow a structured, high-context format (Motivation, Implementation, Impact, Context) to serve as a readable historical record for AI agents.
