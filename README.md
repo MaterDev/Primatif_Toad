@@ -1,25 +1,42 @@
-# Code System
+# Primatif_Toad
 
-This repository serves as the **Control Plane** for my local development environment. 
+**Primatif_Toad** is a Mac-agnostic **Control Plane** for managing local development environments.
 
-It uses a "Zero-Conflict Overlay" strategy:
-- **Root:** A Rust application for system management and automation.
-- **`projects/`:** A folder containing all actual software projects (70+ repositories). These are **ignored** by this root Git repo.
-- **`scripts/`:** Shell scripts for quick tasks.
-- **`work_orders/`:** Logs of major infrastructure changes.
+## Architecture
+- **Workspace:** Rust-based monorepo.
+- **`bin/toad`**: Unified CLI interface (Command: `toad`).
+- **`crates/`**: Modular, testable capabilities.
+- **`projects/`**: Directory for managed projects (ignored by Git).
+- **`Justfile`**: Task runner for developer operations.
 
-## Setup
+## Features
 
-This root directory is a Rust workspace. 
+### 1. Project Scaffolding
+Standardized project creation within the `projects/` directory.
+
+**Requirements:**
+- `just`
+- `git`
+- `vscode` (`code` command in PATH) - Optional
+- `windsurf` (`windsurf` command in PATH) - Optional
+
+**Usage:**
+```bash
+# Create a new project
+just create <project-name>
+```
+This will:
+- Check for existing directory.
+- Create structure (`docs/`, `README.md`, `.gitignore`).
+- Initialize Git.
+- Offer to open the project in VS Code or Windsurf.
+
+## Development
 
 ```bash
-# Run the main tool (currently Hello World)
-cargo run
+# Build the system
+just build
+
+# Run tests
+just test
 ```
-
-## Structure
-
-- `src/`: Rust source code for the control plane CLI/tools.
-- `projects/`: The "User Space" where all project repositories live.
-- `scripts/`: Legacy or simple shell automation.
-- `doc/`: Documentation for this system.

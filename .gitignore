@@ -1,15 +1,21 @@
-# Ignore everything in the root directory by default
+# Ignore everything by default
 /*
 
-# Whitelist Admin Tools
-!/scripts/
-!/work_orders/
-!/.gitignore
-!/docs/
+# Whitelist Admin Tools & Config
 !/.gemini/
-
-# Whitelist Rust Project Files
+!/.gitignore
 !/Cargo.toml
 !/Cargo.lock
-!/src/
+!/Justfile
 !/README.md
+
+# Whitelist Source Code
+!/bin/
+!/crates/
+!/scripts/
+!/docs/
+!/work_orders/
+
+# Rust Ignore (Standard)
+target/
+**/*.rs.bk

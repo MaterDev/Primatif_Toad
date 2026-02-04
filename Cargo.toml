@@ -1,6 +1,6 @@
-[package]
-name = "Code"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
+[workspace]
+members = [
+    "bin/toad",
+    "crates/*"
+]
+resolver = "2"
