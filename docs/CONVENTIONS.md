@@ -24,6 +24,35 @@ When starting a new session, the agent should:
 ## 3. Tooling Workflow
 
 - **Pre-check:** Run `just fmt` or `just lint` before starting.
+
 - **Verification:** Every logic change requires running `just test`.
+
+- **Documentation Integrity:** Before marking a task as "Completed" or proposing
+  a commit, you MUST:
+
+  1. Update `README.md` if the user-facing CLI or architecture changed.
+
+  2. Update `.gemini/GEMINI.md` if the architectural rules or context changed.
+
+  3. Ensure the "Success Criteria" in the Work Order are physically verified.
+
 - **Finalization:** Update the `.gemini/GEMINI.md` "Receipt for current session"
   if the project architecture changed.
+
+## 4. Modular Development Rules
+
+- **Decoupling:** New logic must live in a dedicated crate in `crates/` if it
+  serves a distinct purpose (e.g., `toad-ai`, `toad-git`).
+
+- **Core Dependency:** All platform crates must depend on `toad-core` for shared
+  types.
+
+- **Thin CLI:** The `bin/toad` package must remain a thin orchestration layer.
+  Logic belongs in crates.
+
+- **Strategy Pattern:** Use traits/strategies for extensible features like stack
+  detection or agentic prompts.
+
+- **Test Separation:** Implementation files should stay lean. Move unit tests to
+  a separate module or file (e.g., `mod tests;` in `lib.rs` with logic in
+  `src/tests.rs`).

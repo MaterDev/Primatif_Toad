@@ -45,9 +45,14 @@ Use this command to **develop Primatif_Toad itself**.
 ## Architecture
 
 - **Workspace:** Rust-based monorepo.
-- **`bin/toad`**: Unified CLI interface.
-- **`crates/`**: Modular capabilities (`scaffold`, `discovery`).
+- **`bin/toad`**: Unified CLI interface (The Orchestrator).
+- **`crates/`**: Modular capabilities:
+  - `toad-core`: Shared data models and workspace context.
+  - `toad-discovery`: Project scanning and tech stack detection strategies.
+  - `toad-manifest`: Markdown reporting and context shadow generation.
+  - `scaffold`: Project generation logic.
 - **`projects/`**: Directory for managed projects (ignored by Git).
+- **`shadows/`**: Directory for AI context metadata (ignored by Git).
 
 ## Features
 

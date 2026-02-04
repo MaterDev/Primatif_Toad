@@ -9,10 +9,14 @@
 
 ## Architecture & Design Principles
 
-1.  **Platform Pattern:**
-    - `bin/toad`: The single entry point (CLI) for the user.
-    - `crates/`: Reusable, testable logic modules (e.g., `scaffold`, `discovery`).
+1.  **Platform Pattern (Modular Workspace):**
+    - `bin/toad`: **The Orchestrator.** Minimal CLI wrapper for user interaction.
+    - `crates/toad-core`: **The Source of Truth.** Shared models and workspace state.
+    - `crates/toad-discovery`: **The Specialist.** Modular scanning via Strategy Pattern.
+    - `crates/toad-manifest`: **The Chronicler.** Markdown formatting and staleness detection.
+    - `crates/scaffold`: **The Generator.** Project template logic.
     - `projects/`: The managed user space (ignored by Git).
+    - `shadows/`: AI-specific metadata and context maps (ignored by Git).
 2.  **Environment Agnostic (Mac):** Code must run on _any_ macOS system.
     - **No Hardcoded Paths:** Use relative paths or dynamic resolution.
     - **Portability:** System functions if moved or cloned.

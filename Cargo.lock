@@ -178,6 +178,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tempfile",
+ "toad-core",
 ]
 
 [[package]]
@@ -444,6 +445,24 @@ dependencies = [
  "colored",
  "discovery",
  "scaffold",
+ "toad-core",
+ "toad-manifest",
+]
+
+[[package]]
+name = "toad-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "toad-manifest"
+version = "0.1.0"
+dependencies = [
+ "toad-core",
 ]
 
 [[package]]
