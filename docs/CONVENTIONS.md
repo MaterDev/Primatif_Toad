@@ -36,8 +36,9 @@ When starting a new session, the agent should:
 
   3. Ensure the "Success Criteria" in the Work Order are physically verified.
 
-- **Finalization:** Update the `.gemini/GEMINI.md` "Receipt for current session"
-  if the project architecture changed.
+- **Finalization:** Update the `.gemini/SESSIONS.md` with a fresh receipt if significant progress was made.
+
+
 
 ## 4. Modular Development Rules
 
