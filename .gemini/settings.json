@@ -1,0 +1,23 @@
+{
+  "project": {
+    "name": "Code Control Plane",
+    "description": "Root directory for managing local software projects and DevOps automation.",
+    "type": "control-plane"
+  },
+  "context": {
+    "files": [
+      ".gemini/GEMINI.md"
+    ],
+    "folders": [
+      "projects",
+      "scripts",
+      "work_orders",
+      "docs"
+    ]
+  },
+  "rules": {
+    "source_directory": "projects",
+    "automation_directory": "scripts",
+    "docs_directory": "docs"
+  }
+}

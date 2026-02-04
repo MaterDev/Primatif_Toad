@@ -2,11 +2,11 @@
 /*
 
 # Whitelist Admin Tools
-!/GEMINI.md
 !/scripts/
 !/work_orders/
 !/.gitignore
-!/doc/
+!/docs/
+!/.gemini/
 
 # Whitelist Rust Project Files
 !/Cargo.toml
