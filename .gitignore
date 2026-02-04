@@ -3,6 +3,7 @@
 
 # Whitelist Admin Tools & Config
 !/.gemini/
+!/.geminiignore
 !/.gitignore
 !/Cargo.toml
 !/Cargo.lock

@@ -1,0 +1,28 @@
+# Ignore build artifacts
+target/
+**/target/
+build/
+dist/
+
+# Ignore lock files (too many tokens, rarely useful for logic)
+Cargo.lock
+package-lock.json
+pnpm-lock.yaml
+
+# Ignore large binary files
+*.tar.gz
+*.tar.xz
+*.bin
+*.exe
+*.dll
+*.dylib
+*.so
+
+# Ignore project-specific deep noise
+projects/**/.git/
+projects/**/node_modules/
+projects/**/target/
+
+# Ignore logs
+*.log
+tmp/

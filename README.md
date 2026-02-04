@@ -1,7 +1,19 @@
 # Primatif_Toad
 
-**Primatif_Toad** is a Mac-agnostic **Toad Control** for managing local
-development environments.
+**Primatif_Toad** is a **DevOps Overlay and Developer CLI (Toad)** designed to
+manage a modular ecosystem of independent projects. It acts as a clean
+administrative layer for orchestrating workspaces, discovering patterns, and
+unified project management.
+
+## Core Roles
+
+- **Workspace Orchestration:** Uses a "whitelist-only" strategy to manage the
+  `projects/` directory as an external collection of independent repositories.
+- **Discovery & Scaffolding:** Automates project pattern detection and component
+  generation via specialized Rust crates (`discovery`, `scaffold`).
+- **Unified Tooling:** Centralizes quality gates and management scripts for a
+  diverse set of local codebases without impacting their individual Git
+  histories.
 
 ## Quick Start
 

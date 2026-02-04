@@ -6,7 +6,8 @@
   },
   "context": {
     "files": [
-      ".gemini/GEMINI.md"
+      ".gemini/GEMINI.md",
+      "docs/CONVENTIONS.md"
     ],
     "folders": [
       "projects",

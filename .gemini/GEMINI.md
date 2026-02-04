@@ -5,6 +5,7 @@
 - **Role:** This is **Primatif_Toad** (CLI: `toad`), the **Toad Control** system for local development.
 - **Goal:** Provide a portable, Mac-agnostic control plane to manage, audit, and manipulate software projects in the `projects/` directory.
 - **Strategy:** "Platform Architecture." A centralized Rust workspace (`bin` + `crates`) manages the environment.
+- **IMPORTANT:** At the start of every session, you MUST read `docs/CONVENTIONS.md` to understand the current project state and "State Machine" protocol.
 
 ## Architecture & Design Principles
 
