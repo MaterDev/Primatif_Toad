@@ -18,6 +18,10 @@ enum Commands {
     Create {
         /// Name of the project
         name: String,
+
+        /// Simulate the action without creating files
+        #[arg(long, short = 'd')]
+        dry_run: bool,
     },
     /// List all available commands
     List,
@@ -27,8 +31,7 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match &cli.command {
-        Commands::Create { name } => {
-            // ... existing code ...
+        Commands::Create { name, dry_run } => {
             // In a real Mac-agnostic setup, we resolve the relative projects folder
             // based on the location of the binary or a workspace root.
             // For now, we assume execution from the root of the Code directory.
@@ -37,9 +40,14 @@ fn main() -> Result<()> {
             let config = ProjectConfig {
                 name,
                 root_dir: root_dir.clone(),
+                dry_run: *dry_run,
             };
 
             create_project(config)?;
+
+            if *dry_run {
+                return Ok(());
+            }
 
             // Offer to open in editor
             println!("\nWould you like to open this project? [v]scode, [w]indsurf, or [n]o");

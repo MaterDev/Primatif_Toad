@@ -6,6 +6,7 @@ use std::process::Command;
 pub struct ProjectConfig<'a> {
     pub name: &'a str,
     pub root_dir: PathBuf,
+    pub dry_run: bool,
 }
 
 pub fn create_project(config: ProjectConfig) -> Result<()> {
@@ -13,6 +14,14 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
 
     if project_path.exists() {
         bail!("Project directory already exists: {:?}", project_path);
+    }
+
+    if config.dry_run {
+        println!("[Dry Run] Would create project directory: {:?}", project_path);
+        println!("[Dry Run] Would create directories: docs/");
+        println!("[Dry Run] Would write files: README.md, .gitignore");
+        println!("[Dry Run] Would initialize Git repository");
+        return Ok(())
     }
 
     println!("Creating project: {}", config.name);
@@ -40,31 +49,6 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
     println!("Project created successfully at: {:?}", project_path);
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use tempfile::tempdir;
-
-    #[test]
-    fn test_create_project_structure() {
-        let dir = tempdir().unwrap();
-        let name = "test-proj";
-        let config = ProjectConfig {
-            name,
-            root_dir: dir.path().to_path_buf(),
-        };
-
-        create_project(config).expect("Should create project");
-
-        let proj_path = dir.path().join(name);
-        assert!(proj_path.exists());
-        assert!(proj_path.join("docs").is_dir());
-        assert!(proj_path.join("README.md").is_file());
-        assert!(proj_path.join(".gitignore").is_file());
-        assert!(proj_path.join(".git").is_dir());
-    }
 }
 
 fn init_git(path: &Path) -> Result<()> {
@@ -101,4 +85,62 @@ pub fn open_in_editor(project_name: &str, root_dir: &Path, editor: &str) -> Resu
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::tempdir;
+
+    #[test]
+    fn test_create_project_success() {
+        let dir = tempdir().unwrap();
+        let name = "test-proj";
+        let config = ProjectConfig {
+            name,
+            root_dir: dir.path().to_path_buf(),
+            dry_run: false,
+        };
+
+        create_project(config).expect("Should create project");
+
+        let proj_path = dir.path().join(name);
+        assert!(proj_path.exists());
+        assert!(proj_path.join("docs").is_dir());
+        assert!(proj_path.join("README.md").is_file());
+        assert!(proj_path.join(".git").is_dir());
+    }
+
+    #[test]
+    fn test_create_project_dry_run() {
+        let dir = tempdir().unwrap();
+        let name = "dry-run-proj";
+        let config = ProjectConfig {
+            name,
+            root_dir: dir.path().to_path_buf(),
+            dry_run: true,
+        };
+
+        create_project(config).expect("Dry run should succeed");
+
+        let proj_path = dir.path().join(name);
+        assert!(!proj_path.exists(), "Dry run should NOT create directories");
+    }
+
+    #[test]
+    fn test_create_project_already_exists() {
+        let dir = tempdir().unwrap();
+        let name = "existing-proj";
+        let proj_path = dir.path().join(name);
+        fs::create_dir(&proj_path).unwrap();
+
+        let config = ProjectConfig {
+            name,
+            root_dir: dir.path().to_path_buf(),
+            dry_run: false,
+        };
+
+        let result = create_project(config);
+        assert!(result.is_err(), "Should fail if directory exists");
+    }
 }

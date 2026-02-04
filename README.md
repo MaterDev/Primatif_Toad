@@ -24,6 +24,9 @@ Standardized project creation within the `projects/` directory.
 ```bash
 # Create a new project
 just create <project-name>
+
+# Simulate creation (Dry Run)
+toad create <project-name> --dry-run
 ```
 This will:
 - Check for existing directory.
@@ -39,4 +42,7 @@ just build
 
 # Run tests
 just test
+
+# Install the CLI locally
+just install
 ```
