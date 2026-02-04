@@ -1,0 +1,8 @@
+# Ignore everything in the root directory
+/*
+
+# Whitelist Admin Tools (Un-ignore these specific root items)
+!/GEMINI.md
+!/scripts/
+!/work_orders/
+!/.gitignore
