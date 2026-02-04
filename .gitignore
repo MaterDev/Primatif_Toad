@@ -2,6 +2,7 @@
 /*
 
 # Whitelist Admin Tools & Config
+!/.markdownlint.json
 !/.gemini/
 !/.geminiignore
 !/.gitignore

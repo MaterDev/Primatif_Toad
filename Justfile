@@ -43,9 +43,14 @@ fmt-rust:
 fmt-misc:
     dprint fmt
 
-# Lint Rust code (Clippy)
+# Lint Rust code (Clippy) and Markdown
 lint:
     cargo clippy --workspace -- -D warnings
+    @if command -v markdownlint > /dev/null; then \
+        markdownlint "**/*.md" --ignore "projects/**" --ignore "target/**" --ignore "**/node_modules/**"; \
+    else \
+        echo "⚠️  markdownlint-cli not installed. Skipping MD lint (use 'npm install -g markdownlint-cli' to fix)."; \
+    fi
 
 # Install development tools (dprint)
 setup-tools:
