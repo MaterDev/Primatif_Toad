@@ -18,7 +18,42 @@ unified project management.
 ## Quick Start
 
 1. **Install:** `just install`
-2. **Use:** `toad create my-project`
+2. **Setup:** `toad manifest` (Build your initial project map)
+3. **Use:** `toad create my-project`
+
+---
+
+## 🚀 Installation & Setup
+
+### Prerequisites
+
+- **Rust & Cargo:** (Latest stable)
+- **Just:** [just command runner](https://github.com/casey/just)
+- **Git:** Required for project management and VCS health checks.
+
+### Installing Toad
+
+Run the following command from the root of this repository:
+
+```bash
+just install
+```
+
+This script will compile the project in release mode and install the `toad` binary to your `~/.cargo/bin` directory. Ensure this directory is in your system's `PATH`.
+
+### Initial Configuration
+
+Once installed, run the manifest command to allow Toad to "learn" your existing `projects/` directory:
+
+```bash
+toad manifest
+```
+
+Verify the installation with:
+
+```bash
+toad version
+```
 
 ---
 
