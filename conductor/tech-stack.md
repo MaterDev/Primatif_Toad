@@ -34,11 +34,13 @@ The project is structured as a modular Rust workspace to separate the
 1. **Modular by Default:** New capabilities must live in a dedicated crate.
 2. **View-Agnostic Backend:** The logic layer must remain decoupled from the CLI
    interface (stable API contracts).
-3. **Strategy Pattern:** Use traits for extensible features like project
-   discovery to allow adding new tech-stack detection without refactoring the
-   core.
-4. **Whitelist-Only VCS:** Git ignores everything by default (`/*`) to prevent
-   accidental commits of managed projects or sensitive metadata.
+3. **Strategy Pattern:** Use traits for extensible features.
+4. **Separate Tests:** Implementation files must stay lean. Move unit tests to a
+   companion `tests.rs` file or a `tests` module within the same directory,
+   keeping logic and tests decoupled at the file level.
+5. **Clean Code (Platform MVP):** Favor small, single-responsibility functions,
+   explicit error handling (using `anyhow`), and avoid global state.
+6. **Whitelist-Only VCS:** Git ignores everything by default.
 
 ## 🎨 Aesthetic Standards
 

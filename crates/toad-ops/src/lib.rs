@@ -1,4 +1,4 @@
-pub mod status;
+pub mod shell;
 
 #[cfg(test)]
 mod tests;

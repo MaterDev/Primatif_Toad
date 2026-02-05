@@ -11,7 +11,8 @@ detailed plan in its respective folder.
 - [x] **Track: Toad Status (The Health Check)** _Link:
       [./tracks/archive/toad-status/](./tracks/archive/toad-status/)_
 
-- [ ] **Track: Toad Do (Bulk Operations)**
+- [~] **Track: Toad Do (Bulk Operations)** _Link:
+  [./tracks/toad-do/](./tracks/toad-do/)_
 - [ ] **Track: Toad Clean (Disk Hygiene)**
 - [ ] **Track: Toad Tag (Taxonomy)**
 - [ ] **Track: Toad Sync (Registry Cache)**

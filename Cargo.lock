@@ -171,7 +171,7 @@ checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
 
 [[package]]
 name = "discovery"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "ignore",
@@ -358,7 +358,7 @@ dependencies = [
 
 [[package]]
 name = "scaffold"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "tempfile",
@@ -439,7 +439,7 @@ dependencies = [
 
 [[package]]
 name = "toad"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -453,7 +453,7 @@ dependencies = [
 
 [[package]]
 name = "toad-core"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "serde",
@@ -462,7 +462,7 @@ dependencies = [
 
 [[package]]
 name = "toad-git"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "tempfile",
@@ -471,8 +471,17 @@ dependencies = [
 
 [[package]]
 name = "toad-manifest"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
+ "toad-core",
+]
+
+[[package]]
+name = "toad-ops"
+version = "0.3.0"
+dependencies = [
+ "anyhow",
+ "tempfile",
  "toad-core",
 ]
 

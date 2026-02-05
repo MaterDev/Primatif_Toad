@@ -1,0 +1,8 @@
+{
+  "track_id": "toad_do_20260204",
+  "type": "feature",
+  "status": "in_progress",
+  "created_at": "2026-02-04T18:40:00Z",
+  "updated_at": "2026-02-04T18:40:00Z",
+  "description": "Implement the toad do command for bulk operations"
+}
