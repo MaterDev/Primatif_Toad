@@ -1,6 +1,6 @@
 <div align="center">
 
-![Toad Banner](assets/cover.jpeg)
+[![Toad Project Lifecycle](https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.gif)](https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.mp4)
 
 ### Toad Control CLI
 
@@ -114,13 +114,11 @@ This executes formatting, clippy, unit tests, and coverage verification.
 
 ---
 
-<!-- Project Lifecycle Visualization -->
+<!-- Project Banner -->
 
 <div align="center">
 
-[![Toad Project Lifecycle](https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.gif)](https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.mp4)
-
-_Click the animation to view the high-quality video._
+![Toad Banner](assets/cover.jpeg)
 
 <!-- Hop safely, little toads! 🐸 -->
 
