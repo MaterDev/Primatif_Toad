@@ -118,7 +118,10 @@ This executes formatting, clippy, unit tests, and coverage verification.
 
 <div align="center">
 
-<video src="https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.mp4" width="100%" controls autoplay loop muted></video>
+<video width="100%" poster="assets/video.gif" controls autoplay loop muted playsinline>
+  <source src="https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.mp4" type="video/mp4">
+  <img src="assets/video.gif" width="100%" alt="Toad Project Lifecycle Visualization">
+</video>
 
 <!-- Hop safely, little toads! 🐸 -->
 
