@@ -25,14 +25,17 @@ detailed plan in its respective folder.
 - [x] **Track: Bulk Operation Safety (Guardrails)** _Link:
       [./tracks/archive/bulk-op-safety/](./tracks/bulk-op-safety/)_
 
-- [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
-      [./tracks/toad-clean/](./tracks/toad-clean/)_
+- [ ] **Track: Ecosystem Analytics (Insights)** _Link:
+      [./tracks/ecosystem-analytics/](./tracks/ecosystem-analytics/)_
 
 - [ ] **Track: Toad Tag (Taxonomy)** _Link:
       [./tracks/toad-tag/](./tracks/toad-tag/)_
 
 - [ ] **Track: Toad Sync (Registry Cache)** _Link:
       [./tracks/toad-sync/](./tracks/toad-sync/)_
+
+- [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
+      [./tracks/toad-clean/](./tracks/toad-clean/)_
 
 - [x] **Track: Infrastructure Hardening (Stability)** _Link:
       [./tracks/archive/infrastructure-hardening/](./tracks/infrastructure-hardening/)_

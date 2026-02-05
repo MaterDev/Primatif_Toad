@@ -206,3 +206,24 @@ fn test_create_dry_run() -> Result<(), Box<dyn std::error::Error>> {
     assert!(!dir.path().join("projects").join("new-project").exists());
     Ok(())
 }
+
+#[test]
+fn test_stats_basic() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+
+    let proj_path = projects_dir.join("test-stats");
+    fs::create_dir(&proj_path)?;
+    fs::write(proj_path.join("Cargo.toml"), "")?;
+    fs::write(proj_path.join("main.rs"), "0".repeat(100))?;
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .arg("stats")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("--- ECOSYSTEM ANALYTICS ---"))
+        .stdout(predicate::str::contains("test-stats"));
+    Ok(())
+}

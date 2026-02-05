@@ -11,6 +11,7 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 use toad_core::{VcsStatus, Workspace};
+use toad_ops::stats::{calculate_project_stats, format_size};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -42,6 +43,15 @@ enum Commands {
     Status {
         /// Optional query to filter projects
         query: Option<String>,
+    },
+    /// Ecosystem health and disk usage analytics
+    Stats {
+        /// Optional query to filter projects
+        query: Option<String>,
+
+        /// Show details for all matching projects
+        #[arg(long, short = 'a')]
+        all: bool,
     },
     /// Execute a shell command across projects matching a query
     Do {
@@ -233,6 +243,107 @@ fn main() -> Result<()> {
                 }
             }
             println!("\n{}", "--- SCAN COMPLETE ---".green());
+        }
+        Commands::Stats { query, all } => {
+            println!("{}", "--- ECOSYSTEM ANALYTICS ---".green().bold());
+            let projects = scan_all_projects(&workspace.projects_dir)?;
+            let matching: Vec<_> = projects
+                .into_iter()
+                .filter(|p| {
+                    if let Some(q) = &query {
+                        p.name.to_lowercase().contains(&q.to_lowercase())
+                    } else {
+                        true
+                    }
+                })
+                .collect();
+
+            if matching.is_empty() {
+                println!("No projects found.");
+                return Ok(());
+            }
+
+            println!("Analyzing {} projects...", matching.len());
+            let pb = ProgressBar::new(matching.len() as u64);
+            pb.set_style(
+                ProgressStyle::default_bar()
+                    .template(
+                        "{spinner:.green} [{elapsed_precise}] [{bar:40.green/black}] {pos}/{len}",
+                    )?
+                    .progress_chars("■-"),
+            );
+
+            let mut results: Vec<_> = matching
+                .into_par_iter()
+                .map(|p| {
+                    let stats = calculate_project_stats(&p.path, &p.stack);
+                    pb.inc(1);
+                    (p, stats)
+                })
+                .collect();
+
+            pb.finish_and_clear();
+
+            // Sort by size descending
+            results.sort_by(|a, b| b.1.total_bytes.cmp(&a.1.total_bytes));
+
+            let total_ecosystem_bytes: u64 = results.iter().map(|(_, s)| s.total_bytes).sum();
+            let total_artifact_bytes: u64 = results.iter().map(|(_, s)| s.artifact_bytes).sum();
+
+            println!(
+                "{} Total Usage: {} ({} Artifacts)",
+                "■".green(),
+                format_size(total_ecosystem_bytes).bold(),
+                format_size(total_artifact_bytes).dimmed()
+            );
+
+            let limit = if *all { results.len() } else { 10 };
+            let display_count = std::cmp::min(results.len(), limit);
+
+            println!(
+                "\n{}",
+                format!("TOP {} OFFENDERS", display_count).yellow().bold()
+            );
+
+            for (p, stats) in results.iter().take(display_count) {
+                let size_str = format_size(stats.total_bytes);
+
+                // Color coding
+                let color_size = if stats.total_bytes > 1024 * 1024 * 1024 {
+                    size_str.red().bold()
+                } else if stats.total_bytes > 200 * 1024 * 1024 {
+                    size_str.yellow()
+                } else {
+                    size_str.green()
+                };
+
+                // Bloat bar
+                let bar_width = 20;
+                let bloat_blocks = ((stats.bloat_index / 100.0) * bar_width as f64) as usize;
+                let source_blocks = bar_width - bloat_blocks;
+
+                let bar = format!(
+                    "{}{}",
+                    "■".repeat(source_blocks).white(),
+                    "■".repeat(bloat_blocks).dimmed()
+                );
+
+                println!(
+                    "{: <20} | {: >10} | [{}] {:.0}% bloat ({})",
+                    p.name.bold(),
+                    color_size,
+                    bar,
+                    stats.bloat_index,
+                    p.activity
+                );
+            }
+
+            if !*all && results.len() > 10 {
+                println!(
+                    "\n... and {} more. Use --all to see full list.",
+                    results.len() - 10
+                );
+            }
         }
         Commands::Do {
             command,
