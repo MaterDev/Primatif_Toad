@@ -20,8 +20,8 @@ and thread-safe UI feedback.
 - [x] **Parallel Execution:** [commit: 11a55e8]
   - [x] Refactor `Commands::Do` to use parallel execution. [commit: 11a55e8]
   - [x] Implement result buffering to prevent console log interleaving. [commit: 11a55e8]
-- [ ] **UI:**
-  - [ ] Implement a multi-project progress bar for batch operations.
+- [~] **UI:**
+  - [~] Implement a multi-project progress bar for batch operations.
 - [ ] **Verification:**
   - [ ] Stress test with 100+ dummy projects.
   - [ ] Verify `Ctrl-C` behavior during parallel runs.

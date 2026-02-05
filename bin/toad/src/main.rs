@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::{CommandFactory, Parser, Subcommand};
 use colored::*;
 use discovery::{find_projects, scan_all_projects};
+use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 use scaffold::{create_project, open_in_editor, ProjectConfig};
 use std::fs;
@@ -258,13 +259,24 @@ fn main() -> Result<()> {
             }
 
             println!("\n{}", "--- EXECUTING BATCH ---".blue().bold());
+            let pb = ProgressBar::new(targets.len() as u64);
+            pb.set_style(
+                ProgressStyle::default_bar()
+                    .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/black}] {pos}/{len} ({eta}) {msg}")?
+                    .progress_chars("■-"),
+            );
+
             let results: Vec<_> = targets
                 .into_par_iter()
                 .map(|project| {
+                    pb.set_message(format!("Processing {}...", project.name));
                     let res = toad_ops::shell::run_in_dir(&project.path, command);
+                    pb.inc(1);
                     (project.name, res)
                 })
                 .collect();
+
+            pb.finish_and_clear();
 
             let mut success_count = 0;
             let mut fail_count = 0;
