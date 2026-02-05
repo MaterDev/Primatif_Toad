@@ -18,6 +18,11 @@ manage a vast ecosystem of independent projects. It provides a multi-threaded
 administrative layer for orchestrating workspaces, performing data-driven
 analytics, and enforcing safety guardrails across dozens of repositories.
 
+> [!CAUTION]
+> **Toad is a powerful meta-engineering tool.** Commands execute across multiple
+> independent repositories simultaneously. Misuse can lead to significant data
+> loss. Always verify your targets and commands before execution.
+
 ## 🪷 The v0.7.0 Bloom
 
 - **🦗 Multi-Core Parallelism:** Leverages `rayon` for sub-second scanning and
@@ -48,6 +53,12 @@ analytics, and enforcing safety guardrails across dozens of repositories.
 - `toad reveal <query>`: Search for projects by name or `#tag`.
 
 ### 🪵 Orchestration (Bulk Ops)
+
+> [!WARNING]
+> **High-Risk Operations:** Batch execution via `toad do` is potentially
+> destructive. We strongly recommend using the `--dry-run` flag to preview
+> changes before running them for real.
+
 - `toad do "<command>"`: Execute shell commands across matching projects in parallel.
 - `toad do "git pull" --tag stable`: Batch update only your stable tools.
 - `toad do "rm -rf target" --dry-run`: Safely preview destructive maintenance.
@@ -56,6 +67,16 @@ analytics, and enforcing safety guardrails across dozens of repositories.
 - `toad tag <project> <tag>`: Assign custom metadata.
 - `toad tag --query "ui" #frontend`: Bulk tag projects by name.
 - `toad manifest`: Synchronize high-fidelity AI context ("Shadows").
+
+### 🍄 Workspace Anchor
+
+> [!IMPORTANT]
+> **Context Steering:** The `toad home` command updates the global system
+> pointer. All subsequent CLI calls will target the projects and metadata in the
+> newly anchored directory.
+
+- `toad home .`: Anchor the current directory as your system-wide Toad home.
+- `toad home [path]`: View or set the global workspace pointer manually.
 
 ---
 
