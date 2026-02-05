@@ -25,8 +25,8 @@ detailed plan in its respective folder.
 - [x] **Track: Bulk Operation Safety (Guardrails)** _Link:
       [./tracks/archive/bulk-op-safety/](./tracks/bulk-op-safety/)_
 
-- [ ] **Track: Ecosystem Analytics (Insights)** _Link:
-      [./tracks/ecosystem-analytics/](./tracks/ecosystem-analytics/)_
+- [x] **Track: Ecosystem Analytics (Insights)** _Link:
+      [./tracks/archive/ecosystem-analytics/](./tracks/ecosystem-analytics/)_
 
 - [ ] **Track: Toad Tag (Taxonomy)** _Link:
       [./tracks/toad-tag/](./tracks/toad-tag/)_
