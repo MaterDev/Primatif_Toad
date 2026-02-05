@@ -14,4 +14,12 @@
 ## Management
 
 - [Tracks Registry](./tracks.md)
+
 - [Tracks Directory](./tracks/)
+
+## 📖 Help & Manuals
+
+- [**User Guide**](./USER_GUIDE.md): How to use Conductor in your solo-dev
+  workflow.
+
+- [**CLI Reference**](../docs/CLI.md): Programmatic command documentation.

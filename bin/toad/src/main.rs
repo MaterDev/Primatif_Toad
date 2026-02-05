@@ -241,6 +241,9 @@ fn main() -> Result<()> {
             output.push_str("\n```\n");
 
             let docs_path = PathBuf::from("docs/CLI.md");
+            if let Some(parent) = docs_path.parent() {
+                fs::create_dir_all(parent)?;
+            }
             fs::write(&docs_path, output)?;
             println!(
                 "{} Documentation updated at: {:?}",
