@@ -8,6 +8,8 @@ use scaffold::{create_project, open_in_editor, ProjectConfig};
 use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::Duration;
 use toad_core::{VcsStatus, Workspace};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -53,6 +55,14 @@ enum Commands {
         /// Skip confirmation prompt
         #[arg(long, short = 'y')]
         yes: bool,
+
+        /// Simulate the action without executing
+        #[arg(long, short = 'd')]
+        dry_run: bool,
+
+        /// Halt the entire batch if a single project fails
+        #[arg(long, short = 'f')]
+        fail_fast: bool,
     },
     /// Generate a project manifest for AI context (Shadow)
     Manifest,
@@ -228,6 +238,8 @@ fn main() -> Result<()> {
             command,
             query,
             yes,
+            dry_run,
+            fail_fast,
         } => {
             println!("{}", "--- BATCH OPERATION PREFLIGHT ---".blue().bold());
             let projects = scan_all_projects(&workspace.projects_dir)?;
@@ -243,11 +255,31 @@ fn main() -> Result<()> {
 
             println!("Found {} target(s):", targets.len());
             for project in &targets {
-                println!("  {} {}", "»".blue(), project.name);
+                let path_display = if *dry_run {
+                    format!(" ({:?})", project.path)
+                } else {
+                    String::new()
+                };
+                println!("  {} {}{}", "»".blue(), project.name, path_display);
             }
             println!("\nCommand: {}", command.yellow().bold());
 
-            if !*yes {
+            // --- Safety Guardrails: Destructive Command Detection ---
+            if toad_ops::safety::is_destructive(command) {
+                println!(
+                    "\n{} This command is potentially {}",
+                    "WARNING:".yellow().bold(),
+                    "DESTRUCTIVE".red().bold()
+                );
+                print!("Please type 'PROCEED' to confirm: ");
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if input.trim() != "PROCEED" {
+                    println!("Aborted.");
+                    return Ok(());
+                }
+            } else if !*yes && !*dry_run {
                 print!("\nExecute on {} projects? [y/N]: ", targets.len());
                 io::stdout().flush()?;
                 let mut input = String::new();
@@ -258,6 +290,11 @@ fn main() -> Result<()> {
                 }
             }
 
+            if *dry_run {
+                println!("\n{}", "--- DRY RUN COMPLETE ---".green().bold());
+                return Ok(());
+            }
+
             println!("\n{}", "--- EXECUTING BATCH ---".blue().bold());
             let pb = ProgressBar::new(targets.len() as u64);
             pb.set_style(
@@ -266,12 +303,30 @@ fn main() -> Result<()> {
                     .progress_chars("■-"),
             );
 
+            let failed = AtomicBool::new(false);
             let results: Vec<_> = targets
                 .into_par_iter()
                 .map(|project| {
-                    let res = toad_ops::shell::run_in_dir(&project.path, command);
+                    if *fail_fast && failed.load(Ordering::Relaxed) {
+                        return (project.name, None);
+                    }
+
+                    let res = toad_ops::shell::run_in_dir(
+                        &project.path,
+                        command,
+                        Duration::from_secs(30),
+                    );
+
+                    if let Ok(ref op_res) = res {
+                        if op_res.exit_code != 0 {
+                            failed.store(true, Ordering::Relaxed);
+                        }
+                    } else {
+                        failed.store(true, Ordering::Relaxed);
+                    }
+
                     pb.inc(1);
-                    (project.name, res)
+                    (project.name, Some(res))
                 })
                 .collect();
 
@@ -279,36 +334,49 @@ fn main() -> Result<()> {
 
             let mut success_count = 0;
             let mut fail_count = 0;
+            let mut skip_count = 0;
 
             for (name, outcome) in results {
-                print!("Processing {}... ", name);
                 match outcome {
-                    Ok(res) => {
+                    Some(Ok(res)) => {
+                        print!("Processing {}... ", name);
                         if res.exit_code == 0 {
                             println!("{}", "OK".green());
                             success_count += 1;
                         } else {
                             println!("{} (Code: {})", "FAIL".red(), res.exit_code);
+                            if res.timed_out {
+                                println!("  {}", "Timed out after 30s".yellow());
+                            }
                             if !res.stderr.is_empty() {
                                 println!("{}", res.stderr.dimmed());
                             }
                             fail_count += 1;
                         }
                     }
-                    Err(e) => {
+                    Some(Err(e)) => {
+                        print!("Processing {}... ", name);
                         println!("{} (Error: {})", "ERROR".red(), e);
                         fail_count += 1;
+                    }
+                    None => {
+                        skip_count += 1;
                     }
                 }
             }
 
             println!("\n{}", "--- BATCH COMPLETE ---".blue().bold());
             println!(
-                "{} {} Succeeded | {} {} Failed",
+                "{} {} Succeeded | {} {} Failed{}",
                 "■".green(),
                 success_count,
                 "■".red(),
-                fail_count
+                fail_count,
+                if skip_count > 0 {
+                    format!(" | {} {} Skipped", "■".yellow(), skip_count)
+                } else {
+                    String::new()
+                }
             );
         }
         Commands::Manifest => {

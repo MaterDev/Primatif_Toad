@@ -35,4 +35,4 @@ detailed plan in its respective folder.
       [./tracks/toad-sync/](./tracks/toad-sync/)_
 
 - [x] **Track: Infrastructure Hardening (Stability)** _Link:
-  [./tracks/archive/infrastructure-hardening/](./tracks/infrastructure-hardening/)_
+      [./tracks/archive/infrastructure-hardening/](./tracks/infrastructure-hardening/)_

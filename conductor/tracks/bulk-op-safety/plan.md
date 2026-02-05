@@ -4,15 +4,21 @@
 
 - **Priority:** High
 - **Owner:** Gemini (Solo-Dev Support)
-- **Status:** Pending
+- **Status:** In-Progress
 
 ## Objective
 
-Implement a multi-layered safety architecture for the `toad do` command to
-prevent accidental data loss.
+Implement a multi-layered safety architecture for the `toad do` command and
+provide an enhanced sandbox environment for safe verification of bulk
+operations.
 
 ## Deliverables
 
+- [ ] **Phase 0: Sandbox Refactor & Enhancement**
+  - [ ] Move sandbox script to `scripts/sandbox/`.
+  - [ ] Create `scripts/sandbox/README.md`.
+  - [ ] Add configurable args (tech stack mix, nesting depth).
+  - [ ] Modularize script into sub-files if necessary.
 - [ ] **Phase 1: Ghost Mode**
   - [ ] Implement `--dry-run` flag in the `Do` subcommand.
   - [ ] Display full absolute paths and exact commands in dry-run mode.
@@ -25,6 +31,7 @@ prevent accidental data loss.
   - [ ] Implement `--fail-fast` halt logic.
 - [ ] **Phase 4: Auditing**
   - [ ] Implement simple local audit logger (`~/.toad/ops.log`).
-- [ ] **Verification:**
-  - [ ] Test `rm -rf` detection.
-  - [ ] Test timeout behavior with `sleep 100`.
+- [ ] **Verification**
+  - [ ] Test destructive pattern detection using the enhanced sandbox.
+  - [ ] Verify dry-run output accuracy.
+  - [ ] Perform SemVer bump.
