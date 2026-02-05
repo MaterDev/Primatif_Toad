@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs;
 use std::process::Command as StdCommand;
@@ -6,7 +6,7 @@ use tempfile::tempdir;
 
 #[test]
 fn test_version() {
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.arg("version")
         .assert()
         .success()
@@ -15,7 +15,7 @@ fn test_version() {
 
 #[test]
 fn test_list() {
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.arg("list")
         .assert()
         .success()
@@ -27,7 +27,7 @@ fn test_reveal_no_projects() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
     fs::create_dir(dir.path().join("projects"))?;
 
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("reveal")
         .arg("test")
@@ -44,7 +44,7 @@ fn test_reveal_with_project() -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("my-cool-project"))?;
 
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("reveal")
         .arg("cool")
@@ -71,7 +71,7 @@ fn test_status_mixed() -> Result<(), Box<dyn std::error::Error>> {
     StdCommand::new("git").arg("init").current_dir(&dirty_path).output()?;
     fs::write(dirty_path.join("README.md"), "hello")?;
 
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("status")
         .assert()
@@ -89,7 +89,7 @@ fn test_do_dry_run_ish() -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("proj-a"))?;
 
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     // Use -y to skip confirmation
     cmd.current_dir(dir.path())
         .arg("do")
@@ -107,7 +107,7 @@ fn test_do_dry_run_ish() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_docs() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("docs")
         .assert()
@@ -123,7 +123,7 @@ fn test_manifest() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
     fs::create_dir(dir.path().join("projects"))?;
 
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("manifest")
         .assert()
@@ -148,7 +148,7 @@ fn test_stale_context_warning() -> Result<(), Box<dyn std::error::Error>> {
     // Create a project to change the actual fingerprint
     fs::create_dir(projects_dir.join("new-proj"))?;
     
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("version")
         .assert()
@@ -162,7 +162,7 @@ fn test_create_dry_run() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
     fs::create_dir(dir.path().join("projects"))?;
 
-    let mut cmd = Command::cargo_bin("toad").unwrap();
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("create")
         .arg("new-project")
