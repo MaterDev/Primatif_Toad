@@ -6,7 +6,7 @@ use scaffold::{create_project, open_in_editor, ProjectConfig};
 use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
-use toad_core::Workspace;
+use toad_core::{VcsStatus, Workspace};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -33,6 +33,11 @@ enum Commands {
     Reveal {
         /// Case-insensitive search query
         query: String,
+    },
+    /// Scan projects and report Git status
+    Status {
+        /// Optional query to filter projects
+        query: Option<String>,
     },
     /// Generate a project manifest for AI context (Shadow)
     Manifest,
@@ -125,6 +130,84 @@ fn main() -> Result<()> {
                     println!("- {}", project);
                 }
             }
+        }
+        Commands::Status { query } => {
+            println!("{}", "--- ECOSYSTEM HEALTH SCAN ---".green().bold());
+            let projects = scan_all_projects(&workspace.projects_dir)?;
+            let mut dirty = Vec::new();
+            let mut untracked = Vec::new();
+            let mut clean_count = 0;
+            let mut no_repo_count = 0;
+            let mut total_matching = 0;
+
+            for project in projects {
+                if let Some(q) = &query {
+                    if !project.name.to_lowercase().contains(&q.to_lowercase()) {
+                        continue;
+                    }
+                }
+
+                total_matching += 1;
+
+                match project.vcs_status {
+                    VcsStatus::Dirty => dirty.push(project.name),
+                    VcsStatus::Untracked => untracked.push(project.name),
+                    VcsStatus::Clean => clean_count += 1,
+                    VcsStatus::None => no_repo_count += 1,
+                }
+            }
+
+            if total_matching == 0 {
+                println!("No projects found.");
+                return Ok(());
+            }
+
+            // --- UX Optimization: Summary View ---
+            if clean_count > 0 {
+                println!(
+                    "{} {:02}/{} projects are {}",
+                    "■".green(),
+                    clean_count,
+                    total_matching,
+                    "CLEAN".green().bold()
+                );
+            }
+
+            if no_repo_count > 0 {
+                println!(
+                    "{} {:02}/{} projects are {}",
+                    "■".yellow(),
+                    no_repo_count,
+                    total_matching,
+                    "UNTRACKED BY TOAD".yellow()
+                );
+            }
+
+            // --- Dirty Promotion ---
+            if !untracked.is_empty() {
+                println!(
+                    "\n{} {} projects have {}",
+                    "⚡".blue(),
+                    untracked.len(),
+                    "NEW FILES".blue().bold()
+                );
+                for name in untracked {
+                    println!("  {} {}", "»".blue(), name);
+                }
+            }
+
+            if !dirty.is_empty() {
+                println!(
+                    "\n{} {} projects have {}",
+                    "⚠️".red(),
+                    dirty.len(),
+                    "PENDING CHANGES".red().bold()
+                );
+                for name in dirty {
+                    println!("  {} {}", "»".red(), name);
+                }
+            }
+            println!("\n{}", "--- SCAN COMPLETE ---".green());
         }
         Commands::Manifest => {
             println!("Generating project manifest (Shadow Context)...");

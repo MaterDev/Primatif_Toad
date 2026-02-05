@@ -26,7 +26,7 @@ pub fn generate_markdown(projects: &[ProjectDetail], fingerprint: u64) -> String
             .split_whitespace()
             .collect::<Vec<&str>>()
             .join(" ");
-        
+
         // Truncate if too long to avoid table issues
         let essence_safe = if essence_escaped.len() > 100 {
             let mut chars = essence_escaped.chars();

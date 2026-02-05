@@ -12,6 +12,8 @@
 !/Justfile
 !/README.md
 !/dprint.json
+!/conductor/
+!/conductor/**
 
 # Whitelist Source Code
 !/bin/

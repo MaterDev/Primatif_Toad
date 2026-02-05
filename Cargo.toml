@@ -2,5 +2,6 @@
 members = [
   "bin/toad",
   "crates/*",
+  "crates/toad-git",
 ]
 resolver = "2"
