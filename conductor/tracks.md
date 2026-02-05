@@ -18,7 +18,7 @@ detailed plan in its respective folder.
       [./tracks/archive/toad-do/](./tracks/archive/toad-do/)_
 
 - [x] **Track: Context Integrity (Deep Fingerprinting)** _Link:
-      [./tracks/context-integrity/](./tracks/context-integrity/)_
+      [./tracks/archive/context-integrity/](./tracks/archive/context-integrity/)_
 
 - [ ] **Track: High-Performance Orchestration (Parallelism)** _Link:
       [./tracks/high-perf-orchestration/](./tracks/high-perf-orchestration/)_
