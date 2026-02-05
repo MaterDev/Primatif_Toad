@@ -91,7 +91,7 @@ Use this command to **manage your projects**. It is the installed binary.
 
 ### `just` (The Developer Runner) 🪵
 
-Use this command to **develop Primatif_Toad itself**.
+Use this command to **develop Primatif itself**.
 
 - `just install`: Compiles and installs `toad` to your system.
 - `just test`: Runs the Rust test suite.
