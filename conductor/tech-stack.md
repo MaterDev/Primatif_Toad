@@ -24,11 +24,11 @@ The project is structured as a modular Rust workspace to separate the
    execution.
 4. **`crates/toad-core` (The Source of Truth):** Shared data models, workspace
    configuration, and global state management.
-4. **`crates/toad-discovery` (The Scanner):** Implements the Strategy Pattern to
+5. **`crates/toad-discovery` (The Scanner):** Implements the Strategy Pattern to
    detect tech stacks and project structures in the `projects/` directory.
-5. **`crates/toad-manifest` (The Chronicler):** Handles report generation and AI
+6. **`crates/toad-manifest` (The Chronicler):** Handles report generation and AI
    context maps ("Shadows").
-6. **`crates/scaffold` (The Builder):** Logic for bootstrapping new project
+7. **`crates/scaffold` (The Builder):** Logic for bootstrapping new project
    templates.
 
 ## 📐 Design Principles

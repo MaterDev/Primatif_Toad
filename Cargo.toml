@@ -8,7 +8,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-license = "MIT"
-homepage = "https://github.com/MaterDev/Primatif_Toad"
-repository = "https://github.com/MaterDev/Primatif_Toad"
 authors = ["Primatif"]
+homepage = "https://github.com/MaterDev/Primatif_Toad"
+license = "MIT"
+repository = "https://github.com/MaterDev/Primatif_Toad"

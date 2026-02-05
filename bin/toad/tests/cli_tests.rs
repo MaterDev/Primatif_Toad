@@ -63,12 +63,18 @@ fn test_status_mixed() -> Result<(), Box<dyn std::error::Error>> {
     // 1. Clean Project
     let clean_path = projects_dir.join("clean-proj");
     fs::create_dir(&clean_path)?;
-    StdCommand::new("git").arg("init").current_dir(&clean_path).output()?;
+    StdCommand::new("git")
+        .arg("init")
+        .current_dir(&clean_path)
+        .output()?;
 
     // 2. Dirty Project
     let dirty_path = projects_dir.join("dirty-proj");
     fs::create_dir(&dirty_path)?;
-    StdCommand::new("git").arg("init").current_dir(&dirty_path).output()?;
+    StdCommand::new("git")
+        .arg("init")
+        .current_dir(&dirty_path)
+        .output()?;
     fs::write(dirty_path.join("README.md"), "hello")?;
 
     let mut cmd = cargo_bin_cmd!("toad");
@@ -139,15 +145,15 @@ fn test_stale_context_warning() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
-    
+
     // Create a manifest with an old fingerprint
     let shadows_dir = dir.path().join("shadows");
     fs::create_dir(&shadows_dir)?;
     fs::write(shadows_dir.join("MANIFEST.md"), "**Fingerprint:** `100`")?;
-    
+
     // Create a project to change the actual fingerprint
     fs::create_dir(projects_dir.join("new-proj"))?;
-    
+
     let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("version")
@@ -169,7 +175,9 @@ fn test_create_dry_run() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--dry-run")
         .assert()
         .success()
-        .stdout(predicate::str::contains("[Dry Run] Would create project directory"));
+        .stdout(predicate::str::contains(
+            "[Dry Run] Would create project directory",
+        ));
 
     assert!(!dir.path().join("projects").join("new-project").exists());
     Ok(())

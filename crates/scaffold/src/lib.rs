@@ -1,6 +1,6 @@
 pub mod scaffold;
 
-pub use scaffold::{create_project, open_in_editor, ProjectConfig};
+pub use scaffold::{ProjectConfig, create_project, open_in_editor};
 
 #[cfg(test)]
 mod tests;

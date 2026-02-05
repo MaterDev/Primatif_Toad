@@ -339,13 +339,13 @@ git commit -m "style(mobile): Improve button touch targets"
 
 A task is complete when:
 
-1.  All code implemented to specification
+1. All code implemented to specification
 
-1.  Unit tests written and passing
+1. Unit tests written and passing
 
-1.  Code coverage meets project requirements (>80% verified via `just coverage`)
+1. Code coverage meets project requirements (>80% verified via `just coverage`)
 
-1.  Documentation complete (if applicable)
+1. Documentation complete (if applicable)
 1. Code passes all configured linting and static analysis checks
 1. Works beautifully on mobile (if applicable)
 1. Implementation notes added to `plan.md`
@@ -449,15 +449,15 @@ A task is complete when:
 
 Before ending a development session, you MUST:
 
-1.  **Run Full QA:** Execute `just qa` and ensure all stages (Format, Lint, Test,
+1. **Run Full QA:** Execute `just qa` and ensure all stages (Format, Lint, Test,
 
-    Build) pass.
+   Build) pass.
 
-1.  **Verify Coverage:** Run `just coverage` and confirm >80% total coverage.
+1. **Verify Coverage:** Run `just coverage` and confirm >80% total coverage.
 
-1.  **Update Context:** Run `toad manifest` if any project structures or versions
+1. **Update Context:** Run `toad manifest` if any project structures or versions
 
-    changed.
+   changed.
 1. **Commit State:** Ensure all `plan.md` files in active tracks reflect the
    current progress.
 1. **Final Note:** If a significant task was left in-progress, leave a "Next

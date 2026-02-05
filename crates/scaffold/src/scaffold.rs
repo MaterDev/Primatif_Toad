@@ -1,6 +1,6 @@
 //! Logic for scaffolding new projects within the Code Control Plane.
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
