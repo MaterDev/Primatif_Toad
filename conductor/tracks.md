@@ -1,14 +1,15 @@
 # Project Tracks
 
-This file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.
+This file tracks all major tracks for the project. Each track has its own
+detailed plan in its respective folder.
 
 ---
 
-- [x] **Track: Conductor Integration**
-  *Link: [./tracks/conductor-integration/](./tracks/conductor-integration/)*
+- [x] **Track: Conductor Integration** _Link:
+      [./tracks/conductor-integration/](./tracks/conductor-integration/)_
 
-- [x] **Track: Toad Status (The Health Check)**
-  *Link: [./tracks/archive/toad-status/](./tracks/archive/toad-status/)*
+- [x] **Track: Toad Status (The Health Check)** _Link:
+      [./tracks/archive/toad-status/](./tracks/archive/toad-status/)_
 
 - [ ] **Track: Toad Do (Bulk Operations)**
 - [ ] **Track: Toad Clean (Disk Hygiene)**
