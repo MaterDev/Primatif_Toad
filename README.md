@@ -18,25 +18,24 @@ manage a vast ecosystem of independent projects. It provides a multi-threaded
 administrative layer for orchestrating workspaces, performing data-driven
 analytics, and enforcing safety guardrails across dozens of repositories.
 
-**Local-Ops** is the engineering discipline of managing the "local cloud"—the
-dense ecosystem of independent repositories, microservices, and experiments
-living on a developer’s workstation. Toad automates this daily environment,
-treating dozens of scattered folders as a single, orchestrated infrastructure
-and transforming a fragmented filesystem into a high-fidelity control plane.
+> [!CAUTION]
+> **Toad is a powerful meta-engineering tool.** Commands execute across multiple
+> independent repositories simultaneously. Misuse can lead to significant data
+> loss. Always verify your targets and commands before execution.
+
+## 👨🏾‍💻 What is Local-Ops?
+
+Local-Ops is the discipline of managing local development environments at scale.
 
 By centralizing observability and orchestration, Local-Ops solves the critical
 problems of maintenance drift and resource bloat. It provides a "bird's-eye
 view" through visual health analytics and parallel command dispatching, allowing
 a single developer to perform ecosystem-wide tasks—like security patching,
 artifact cleaning, or AI context synchronization—in seconds rather than hours.
+
 Ultimately, Local-Ops bridges the gap between raw code and developer
 productivity, ensuring that a massive portfolio of work remains a live asset
 rather than an unmanageable burden of technical debt.
-
-> [!CAUTION]
-> **Toad is a powerful meta-engineering tool.** Commands execute across multiple
-> independent repositories simultaneously. Misuse can lead to significant data
-> loss. Always verify your targets and commands before execution.
 
 ## 🪷 The v0.7.0 Bloom
 
