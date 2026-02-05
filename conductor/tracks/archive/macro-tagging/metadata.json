@@ -1,7 +1,7 @@
 {
   "track_id": "macro_tagging_20260204",
   "type": "feature",
-  "status": "new",
+  "status": "completed",
   "created_at": "2026-02-04T20:45:00Z",
   "updated_at": "2026-02-04T20:45:00Z",
   "description": "Implement bulk tagging operations and global workspace discovery"

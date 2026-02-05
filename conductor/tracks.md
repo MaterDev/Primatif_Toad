@@ -31,8 +31,8 @@ detailed plan in its respective folder.
 - [x] **Track: Toad Tag (Taxonomy)** _Link:
       [./tracks/archive/toad-tag/](./tracks/archive/toad-tag/)_
 
-- [ ] **Track: Macro Tagging & Global Orchestration** _Link:
-      [./tracks/macro-tagging/](./tracks/macro-tagging/)_
+- [x] **Track: Macro Tagging - [ ] **Track: Macro Tagging & Global Orchestration** _Link: Global Orchestration** _Link:
+      [./tracks/archive/macro-tagging/](./tracks/macro-tagging/)_
 
 - [ ] **Track: Toad Sync (Registry Cache)** _Link:
       [./tracks/toad-sync/](./tracks/toad-sync/)_
