@@ -1,17 +1,17 @@
 [package]
 name = "toad"
-version = "0.3.2"
+version = "0.3.3"
 edition = "2021"
 
 [dependencies]
 anyhow = "1.0.100"
 clap = { version = "4.5.57", features = ["derive"] }
 colored = "3.1.1"
-discovery = { version = "0.3.2", path = "../../crates/discovery" }
+discovery = { version = "0.3.3", path = "../../crates/discovery" }
 scaffold = { path = "../../crates/scaffold" }
-toad-core = { version = "0.3.2", path = "../../crates/toad-core" }
+toad-core = { version = "0.3.3", path = "../../crates/toad-core" }
 toad-git = { path = "../../crates/toad-git" }
-toad-manifest = { version = "0.3.2", path = "../../crates/toad-manifest" }
+toad-manifest = { version = "0.3.3", path = "../../crates/toad-manifest" }
 toad-ops = { path = "../../crates/toad-ops" }
 rayon = "1.10"
 indicatif = "0.17"
