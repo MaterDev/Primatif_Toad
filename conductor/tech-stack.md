@@ -12,10 +12,11 @@ The project is structured as a modular Rust workspace to separate the "Orchestra
 
 ### Component Hierarchy
 1.  **`bin/toad` (The Orchestrator):** A thin CLI wrapper that parses commands and delegates to the internal crates.
-2.  **`crates/toad-core` (The Source of Truth):** Shared data models, workspace configuration, and global state management.
-3.  **`crates/toad-discovery` (The Scanner):** Implements the Strategy Pattern to detect tech stacks and project structures in the `projects/` directory.
-4.  **`crates/toad-manifest` (The Chronicler):** Handles report generation and AI context maps ("Shadows").
-5.  **`crates/scaffold` (The Builder):** Logic for bootstrapping new project templates.
+2.  **`crates/toad-git` (The Pulse):** Modular Git status and health logic.
+3.  **`crates/toad-core` (The Source of Truth):** Shared data models, workspace configuration, and global state management.
+4.  **`crates/toad-discovery` (The Scanner):** Implements the Strategy Pattern to detect tech stacks and project structures in the `projects/` directory.
+5.  **`crates/toad-manifest` (The Chronicler):** Handles report generation and AI context maps ("Shadows").
+6.  **`crates/scaffold` (The Builder):** Logic for bootstrapping new project templates.
 
 ## 📐 Design Principles
 1.  **Modular by Default:** New capabilities must live in a dedicated crate.
