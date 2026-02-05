@@ -13,8 +13,8 @@ and thread-safe UI feedback.
 
 ## Deliverables
 
-- [ ] **Infrastructure:**
-  - [ ] Add `rayon` and `indicatif` to `Cargo.toml`.
+- [~] **Infrastructure:**
+  - [~] Add `rayon` and `indicatif` to `Cargo.toml`.
 - [ ] **Parallel Scanning:**
   - [ ] Refactor `discovery::scan_all_projects` to use parallel iterators.
 - [ ] **Parallel Execution:**

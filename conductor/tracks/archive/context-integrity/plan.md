@@ -18,8 +18,8 @@ multi-level filesystem fingerprinting.
 - [x] **Implementation:**
   - [x] Update `Workspace::get_fingerprint` to perform a multi-level scan.
         [commit: f373226]
-  - [x] Implement a fast hashing algorithm for mtime aggregation.
-        [commit: f373226]
+  - [x] Implement a fast hashing algorithm for mtime aggregation. [commit:
+        f373226]
 - [x] **Tests:**
   - [x] Unit test: Verify fingerprint changes when `README.md` is edited.
   - [x] Unit test: Verify fingerprint changes when a project is deleted.

@@ -20,7 +20,7 @@ detailed plan in its respective folder.
 - [x] **Track: Context Integrity (Deep Fingerprinting)** _Link:
       [./tracks/archive/context-integrity/](./tracks/archive/context-integrity/)_
 
-- [ ] **Track: High-Performance Orchestration (Parallelism)** _Link:
+- [~] **Track: High-Performance Orchestration (Parallelism)** _Link:
       [./tracks/high-perf-orchestration/](./tracks/high-perf-orchestration/)_
 
 - [ ] **Track: Bulk Operation Safety (Guardrails)** _Link:

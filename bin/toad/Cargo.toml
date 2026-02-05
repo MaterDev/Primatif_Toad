@@ -13,6 +13,8 @@ toad-core = { version = "0.3.1", path = "../../crates/toad-core" }
 toad-git = { path = "../../crates/toad-git" }
 toad-manifest = { version = "0.3.1", path = "../../crates/toad-manifest" }
 toad-ops = { path = "../../crates/toad-ops" }
+rayon = "1.10"
+indicatif = "0.17"
 
 [dev-dependencies]
 assert_cmd = "2.0"
