@@ -39,6 +39,19 @@ enum Commands {
         /// Optional query to filter projects
         query: Option<String>,
     },
+    /// Execute a shell command across projects matching a query
+    Do {
+        /// Command to execute
+        command: String,
+
+        /// Query to filter projects
+        #[arg(long, short = 'q')]
+        query: String,
+
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
+    },
     /// Generate a project manifest for AI context (Shadow)
     Manifest,
     /// Generate programmatic CLI documentation (Markdown)
@@ -208,6 +221,77 @@ fn main() -> Result<()> {
                 }
             }
             println!("\n{}", "--- SCAN COMPLETE ---".green());
+        }
+        Commands::Do {
+            command,
+            query,
+            yes,
+        } => {
+            println!("{}", "--- BATCH OPERATION PREFLIGHT ---".blue().bold());
+            let projects = scan_all_projects(&workspace.projects_dir)?;
+            let targets: Vec<_> = projects
+                .into_iter()
+                .filter(|p| p.name.to_lowercase().contains(&query.to_lowercase()))
+                .collect();
+
+            if targets.is_empty() {
+                println!("No projects found matching '{}'.", query);
+                return Ok(());
+            }
+
+            println!("Found {} target(s):", targets.len());
+            for project in &targets {
+                println!("  {} {}", "»".blue(), project.name);
+            }
+            println!("\nCommand: {}", command.yellow().bold());
+
+            if !*yes {
+                print!("\nExecute on {} projects? [y/N]: ", targets.len());
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted.");
+                    return Ok(());
+                }
+            }
+
+            println!("\n{}", "--- EXECUTING BATCH ---".blue().bold());
+            let mut success_count = 0;
+            let mut fail_count = 0;
+
+            for project in targets {
+                print!("Processing {}... ", project.name);
+                io::stdout().flush()?;
+
+                match toad_ops::shell::run_in_dir(&project.path, command) {
+                    Ok(res) => {
+                        if res.exit_code == 0 {
+                            println!("{}", "OK".green());
+                            success_count += 1;
+                        } else {
+                            println!("{} (Code: {})", "FAIL".red(), res.exit_code);
+                            if !res.stderr.is_empty() {
+                                println!("{}", res.stderr.dimmed());
+                            }
+                            fail_count += 1;
+                        }
+                    }
+                    Err(e) => {
+                        println!("{} (Error: {})", "ERROR".red(), e);
+                        fail_count += 1;
+                    }
+                }
+            }
+
+            println!("\n{}", "--- BATCH COMPLETE ---".blue().bold());
+            println!(
+                "{} {} Succeeded | {} {} Failed",
+                "■".green(),
+                success_count,
+                "■".red(),
+                fail_count
+            );
         }
         Commands::Manifest => {
             println!("Generating project manifest (Shadow Context)...");

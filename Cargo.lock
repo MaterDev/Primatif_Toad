@@ -449,6 +449,7 @@ dependencies = [
  "toad-core",
  "toad-git",
  "toad-manifest",
+ "toad-ops",
 ]
 
 [[package]]
