@@ -9,6 +9,6 @@ resolver = "2"
 
 [workspace.package]
 authors = ["Primatif"]
-homepage = "https://github.com/MaterDev/Primatif_Toad"
+homepage = "https://github.com/Primatif/Primatif_Toad"
 license = "MIT"
-repository = "https://github.com/MaterDev/Primatif_Toad"
+repository = "https://github.com/Primatif/Primatif_Toad"

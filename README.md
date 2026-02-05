@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Toad Project Lifecycle](https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.gif)](https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.mp4)
+[![Toad Project Lifecycle](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.gif)](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.mp4)
 
 ### Toad Control CLI
 
