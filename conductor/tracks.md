@@ -22,8 +22,8 @@ detailed plan in its respective folder.
 
 - [x] **Track: High-Performance Orchestration (Parallelism)** _Link:
       [./tracks/archive/high-perf-orchestration/](./tracks/archive/high-perf-orchestration/)_
-- [ ] **Track: Bulk Operation Safety (Guardrails)** _Link:
-      [./tracks/bulk-op-safety/](./tracks/bulk-op-safety/)_
+- [x] **Track: Bulk Operation Safety (Guardrails)** _Link:
+      [./tracks/archive/bulk-op-safety/](./tracks/bulk-op-safety/)_
 
 - [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
       [./tracks/toad-clean/](./tracks/toad-clean/)_
