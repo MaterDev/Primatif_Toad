@@ -15,8 +15,8 @@ and thread-safe UI feedback.
 
 - [x] **Infrastructure:** [commit: 91cad97]
   - [x] Add `rayon` and `indicatif` to `Cargo.toml`. [commit: 91cad97]
-- [ ] **Parallel Scanning:**
-  - [ ] Refactor `discovery::scan_all_projects` to use parallel iterators.
+- [~] **Parallel Scanning:**
+  - [~] Refactor `discovery::scan_all_projects` to use parallel iterators.
 - [ ] **Parallel Execution:**
   - [ ] Refactor `Commands::Do` to use parallel execution.
   - [ ] Implement result buffering to prevent console log interleaving.
