@@ -21,6 +21,7 @@ project management without polluting individual project histories.
 ## Core Roles
 
 - **Toad status:** Health checks across the ecosystem.
+- **Toad do:** Bulk shell operations across multiple projects.
 - **Toad reveal:** Deep discovery of project capabilities.
 - **Toad manifest:** Context generation for AI orchestration.
 - **Scaffold:** Standardized project bootstrapping.

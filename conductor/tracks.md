@@ -13,8 +13,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Coverage Uplift (Quality Target)**
   *Link: [./tracks/archive/coverage-uplift/](./tracks/archive/coverage-uplift/)*
 
-- [~] **Track: Toad Do (Bulk Operations)**
-  *Link: [./tracks/toad-do/](./tracks/toad-do/)*
+- [x] **Track: Toad Do (Bulk Operations)**
+  *Link: [./tracks/archive/toad-do/](./tracks/archive/toad-do/)*
 
 - [ ] **Track: Toad Clean (Disk Hygiene)**
 - [ ] **Track: Toad Tag (Taxonomy)**
