@@ -6,7 +6,7 @@ detailed plan in its respective folder.
 ---
 
 - [x] **Track: Conductor Integration** _Link:
-      [./tracks/archive/conductor-integration/](./tracks/conductor-integration/)_
+      [./tracks/archive/conductor-integration/](./tracks/archive/conductor-integration/)_
 
 - [x] **Track: Toad Status (The Health Check)** _Link:
       [./tracks/archive/toad-status/](./tracks/archive/toad-status/)_
@@ -22,8 +22,9 @@ detailed plan in its respective folder.
 
 - [x] **Track: High-Performance Orchestration (Parallelism)** _Link:
       [./tracks/archive/high-perf-orchestration/](./tracks/archive/high-perf-orchestration/)_
+
 - [x] **Track: Bulk Operation Safety (Guardrails)** _Link:
-      [./tracks/archive/bulk-op-safety/](./tracks/bulk-op-safety/)_
+      [./tracks/archive/bulk-op-safety/](./tracks/archive/bulk-op-safety/)_
 
 - [x] **Track: Ecosystem Analytics (Insights)** _Link:
       [./tracks/archive/ecosystem-analytics/](./tracks/ecosystem-analytics/)_
@@ -31,14 +32,14 @@ detailed plan in its respective folder.
 - [x] **Track: Toad Tag (Taxonomy)** _Link:
       [./tracks/archive/toad-tag/](./tracks/archive/toad-tag/)_
 
-- [x] **Track: Macro Tagging - [ ] **Track: Macro Tagging & Global Orchestration** _Link: Global Orchestration** _Link:
-      [./tracks/archive/macro-tagging/](./tracks/macro-tagging/)_
+- [x] **Track: Macro Tagging & Global Orchestration** _Link:
+      [./tracks/archive/macro-tagging/](./tracks/archive/macro-tagging/)_
+
+- [x] **Track: Infrastructure Hardening (Stability)** _Link:
+      [./tracks/archive/infrastructure-hardening/](./tracks/infrastructure-hardening/)_
 
 - [ ] **Track: Toad Sync (Registry Cache)** _Link:
       [./tracks/toad-sync/](./tracks/toad-sync/)_
 
 - [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
       [./tracks/toad-clean/](./tracks/toad-clean/)_
-
-- [x] **Track: Infrastructure Hardening (Stability)** _Link:
-      [./tracks/archive/infrastructure-hardening/](./tracks/infrastructure-hardening/)_
