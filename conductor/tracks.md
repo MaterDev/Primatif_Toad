@@ -34,5 +34,5 @@ detailed plan in its respective folder.
 - [ ] **Track: Toad Sync (Registry Cache)** _Link:
       [./tracks/toad-sync/](./tracks/toad-sync/)_
 
-- [~] **Track: Infrastructure Hardening (Stability)** _Link:
-  [./tracks/infrastructure-hardening/](./tracks/infrastructure-hardening/)_
+- [x] **Track: Infrastructure Hardening (Stability)** _Link:
+  [./tracks/archive/infrastructure-hardening/](./tracks/infrastructure-hardening/)_
