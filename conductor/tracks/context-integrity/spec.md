@@ -24,10 +24,12 @@ reflects the state of the managed ecosystem.
    in `projects/`.
 3. **Level 3: Structural Files:** For each project, stat the following
    "High-Value" files if they exist:
-   - `Cargo.toml`
-   - `package.json`
-   - `README.md`
-   - `go.mod`
+   - `Cargo.toml`, `Cargo.lock`
+   - `package.json`, `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`
+   - `go.mod`, `go.sum`, `go.work`
+   - `pyproject.toml`, `requirements.txt`, `poetry.lock`
+   - `README.md`, `README.markdown`, `readme.md`
+   - `Justfile`, `.gitignore`
    - `.git/index` (Detects local commits/stages)
 4. **Aggregation:** Combine all `mtime` values and the sorted list of project
    names into a single `u64` using a fast non-cryptographic hash (like `SeaHash`

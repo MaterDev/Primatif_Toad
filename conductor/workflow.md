@@ -91,6 +91,15 @@ All tasks follow a strict lifecycle:
    - **Action:** Commit this change with a descriptive message (e.g.,
      `conductor(plan): Mark task 'Create user model' as complete`).
 
+1. **Analyze and Perform SemVer Bump:**
+   - **Protocol:** Every task completion MUST be analyzed for version impact.
+   - **Patch:** Internal logic changes, refactors, or bug fixes (e.g., Track-004).
+   - **Minor:** New user-facing features or commands.
+   - **Major:** Breaking architectural or interface changes.
+   - **Action:** Update all `Cargo.toml` files in the workspace, run `cargo build`
+     to sync the lockfile, and include the version bump in the task or phase
+     commit.
+
 ### Phase Completion Verification and Checkpointing Protocol
 
 **Trigger:** This protocol is executed immediately after a task is completed
