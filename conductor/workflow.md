@@ -92,10 +92,10 @@ All tasks follow a strict lifecycle:
      `conductor(plan): Mark task 'Create user model' as complete`).
 
 1. **Analyze and Perform SemVer Bump:**
-   - **Protocol:** Every task completion MUST be analyzed for version impact.
-   - **Patch:** Internal logic changes, refactors, or bug fixes (e.g.,
-     Track-004).
-   - **Minor:** New user-facing features or commands.
+   - **Protocol:** Every task completion MUST be analyzed for version impact
+     following the logic in `.windsurf/rules/versioning.md`.
+   - **Patch:** Internal logic changes, refactors, or bug fixes.
+   - **Minor:** New user-facing features, commands, or UI enhancements.
    - **Major:** Breaking architectural or interface changes.
    - **Action:** Update all `Cargo.toml` files in the workspace, run
      `cargo build` to sync the lockfile, and include the version bump in the

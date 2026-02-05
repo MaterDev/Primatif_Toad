@@ -13,6 +13,7 @@ OUT_DIR="test_sandbox"
 STACKS="rust,node,go,generic"
 DEPTH=1
 DO_TAR=false
+CLEAN_ONLY=false
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -22,6 +23,7 @@ while [[ "$#" -gt 0 ]]; do
         -s|--stacks) STACKS="$2"; shift ;;
         -d|--depth) DEPTH="$2"; shift ;;
         -t|--tar) DO_TAR=true ;;
+        --clean) CLEAN_ONLY=true ;;
         -h|--help)
             echo "Usage: ./mksandbox.sh [options]"
             echo "Options:"
@@ -30,6 +32,7 @@ while [[ "$#" -gt 0 ]]; do
             echo "  -s, --stacks LIST  Comma-separated tech stacks (rust,node,go,generic)"
             echo "  -d, --depth N      Nesting depth of project files (default: 1)"
             echo "  -t, --tar          Archive the output to a .tar.gz"
+            echo "  --clean            Remove the specified output directory and exit"
             exit 0
             ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
@@ -37,10 +40,22 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+if [[ "$CLEAN_ONLY" == true ]]; then
+    if [[ -d "$OUT_DIR" ]]; then
+        echo "🧹 Cleaning up sandbox: $OUT_DIR"
+        rm -rf "$OUT_DIR"
+        echo "✅ Cleanup complete."
+    else
+        echo "ℹ️ Directory '$OUT_DIR' does not exist. Nothing to clean."
+    fi
+    exit 0
+fi
+
 echo "🐸 Generating sandbox with $COUNT projects in '$OUT_DIR'..."
 echo "🛠️ Configuration: Stacks=[$STACKS], Depth=$DEPTH"
 
 mkdir -p "$OUT_DIR/projects"
+touch "$OUT_DIR/.toad-root"
 
 # Split stacks into array
 IFS=',' read -ra STACK_ARRAY <<< "$STACKS"

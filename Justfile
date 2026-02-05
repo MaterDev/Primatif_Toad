@@ -14,9 +14,19 @@ install:
 
 # --- Quality Assurance (QA) ---
 
-# Run full QA suite (Format -> Lint -> Test -> Build)
-qa: fmt lint test build
+# Run full QA suite (Sync -> Format -> Lint -> Test -> Build)
+qa: sync-version fmt lint test build
     @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
+
+# Sync README version with Cargo.toml
+sync-version:
+    ./scripts/sync_version.sh
+
+# Setup Git hooks
+setup-hooks:
+    @mkdir -p .git/hooks
+    @ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
+    @echo "✅ Git hooks installed."
 
 # Run all tests
 test:

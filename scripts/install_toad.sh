@@ -6,6 +6,10 @@ set -e
 
 echo "Installing Toad Control..."
 
+# 0. Setup Git hooks and sync version
+just setup-hooks
+just sync-version
+
 # 1. Install the binary
 cargo install --path bin/toad --force
 

@@ -4,154 +4,92 @@
 
 ### Toad Control CLI
 
-_The modular meta-engineering platform._
+_The modular meta-engineering control plane._
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version: v0.7.0](https://img.shields.io/badge/version-v0.7.0-green.svg)](Cargo.toml)
+[![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
 
 ---
 </div>
 
-**🐸 `Toad`** is a **DevOps Overlay and Developer CLI (Toad)** designed to
-manage a modular ecosystem of independent projects. It acts as a clean
-administrative layer for orchestrating workspaces, discovering patterns, and
-unified project management.
+**🐸 `Toad`** is a **High-Performance Meta-Engineering Platform** designed to
+manage a vast ecosystem of independent projects. It provides a multi-threaded
+administrative layer for orchestrating workspaces, performing data-driven
+analytics, and enforcing safety guardrails across dozens of repositories.
 
-## Core Roles
+## 🚀 The v0.7.0 Capabilities
 
-- **Workspace Orchestration:** Uses a "whitelist-only" strategy to manage the
-  `projects/` directory as an external collection of independent repositories.
-- **Discovery & Scaffolding:** Automates project pattern detection and component
-  generation via specialized Rust crates (`discovery`, `scaffold`).
-- **Unified Tooling:** Centralizes quality gates and management scripts for a
-  diverse set of local codebases without impacting their individual Git
-  histories.
+- **⚡ Multi-Core Parallelism:** Leverages `rayon` for sub-second scanning and
+  concurrent bulk command execution across 100+ projects.
+- **🛡️ Safety Guardrails:** Built-in "Danger Pattern" detection (`rm -rf`,
+  `reset --hard`) with forced `PROCEED` confirmations and `--dry-run` modes.
+- **📊 Visual Analytics:** High-fidelity disk usage auditing with the **Atari
+  Heatmap** and a "Bloat Index" (Source vs. Artifact ratio).
+- **🏷️ Taxonomy (Tagging):** Ubiquitous filtering across all commands using
+  procedural hashtags (`#rust`, `#node`) and custom persistent tags.
+- **🌎 Global Anchor:** System-wide CLI access via `toad home`, allowing management
+  from any directory on your Mac.
 
 ## Quick Start
 
 1. **Install:** `just install`
-2. **Setup:** `toad manifest` (Build your initial project map)
-3. **Use:** `toad create my-project`
+2. **Anchor:** `toad home .` (Set your current directory as the system default)
+3. **Analyze:** `toad stats` (See your ecosystem's health heatmap)
+4. **Tag:** `toad tag --harvest` (Automatically categorize your projects)
+
 ---
 
-## 🐸 Installation & Setup
+## 🐸 Core Commands
+
+### 📈 Analytics & Health
+- `toad status`: Check Git health and activity tiers across the ecosystem.
+- `toad stats`: View the visual disk usage heatmap and artifact bloat analysis.
+- `toad reveal <query>`: Search for projects by name or `#tag`.
+
+### 🛠️ Orchestration (Bulk Ops)
+- `toad do "<command>"`: Execute shell commands across matching projects in parallel.
+- `toad do "git pull" --tag stable`: Batch update only your stable tools.
+- `toad do "rm -rf target" --dry-run`: Safely preview destructive maintenance.
+
+### 🏷️ Taxonomy & Context
+- `toad tag <project> <tag>`: Assign custom metadata.
+- `toad tag --query "ui" #frontend`: Bulk tag projects by name.
+- `toad manifest`: Synchronize high-fidelity AI context ("Shadows").
+
+---
+
+## 🏗️ Architecture
+
+Toad is built as a modular Rust workspace, ensuring logic is decoupled and
+reusable:
+
+- **`toad` (The Orchestrator):** The primary CLI binary.
+- **`toad-core`:** Shared data models, global configuration, and fingerprinting.
+- **`discovery`:** Strategy-based tech stack detection and parallel scanning.
+- **`toad-ops`:** Shell execution engine with safety filters and timeouts.
+- **`scaffold`:** Boilerplate generation logic.
+
+---
+
+## 🌊 Development
 
 ### Prerequisites
 
-#### For Users (Running Toad)
-
 - **Rust & Cargo:** (Latest stable)
 - **Just:** [just command runner](https://github.com/casey/just)
-- **Git:** Required for project management and VCS health checks.
-
-#### For Developers (Contributing)
-
-- **Node.js & NPM:** Required for markdown linting tools.
-- **Markdownlint CLI:** `npm install -g markdownlint-cli`
 - **Dprint:** `cargo install dprint` (Formatted code and docs)
-- **Tarpaulin:** `cargo install cargo-tarpaulin` (Code coverage reporting)
+- **Tarpaulin:** `cargo install cargo-tarpaulin` (Coverage reporting)
 
-### Installing Toad 🪵
+### Quality Gates
 
-Run the following command from the root of this repository:
-
-```bash
-just install
-```
-
-This script will compile the project in release mode and install the `toad`
-binary to your `~/.cargo/bin` directory. Ensure this directory is in your
-system's `PATH`.
-
-### Initial Configuration
-
-Once installed, run the manifest command to allow Toad to "learn" your existing
-`projects/` directory and map out the lily pads:
+We maintain a strict **>80% code coverage** mandate. Before every commit, run:
 
 ```bash
-toad manifest
+just qa
 ```
 
-Verify the installation with:
-
-```bash
-toad version
-```
-
----
-
-## 🌊 Tooling Roles
-
-### `toad` (The Installed Tool) 🐸
-
-Use this command to **manage your projects**. It is the installed binary.
-
-- `toad create <name>`: Scaffold a new project.
-- `toad reveal <query>`: Find existing projects.
-- `toad list`: See all commands.
-
-### `just` (The Developer Runner) 🪵
-
-Use this command to **develop Primatif itself**.
-
-- `just install`: Compiles and installs `toad` to your system.
-- `just test`: Runs the Rust test suite.
-- `just coverage`: Runs code coverage reporting (requires `cargo-tarpaulin`).
-- `just cli`: Runs the _local_ (uninstalled) version of the CLI code.
-
----
-
-## Architecture 🪷
-
-- **Workspace:** Rust-based monorepo.
-- **`bin/toad`**: Unified CLI interface (The Orchestrator).
-- **`crates/`**: Modular capabilities:
-  - `toad-core`: Shared data models and workspace context.
-  - `toad-discovery`: Project scanning and tech stack detection strategies.
-  - `toad-manifest`: Markdown reporting and context shadow generation.
-  - `scaffold`: Project generation logic.
-- **`projects/`**: Directory for managed projects (ignored by Git).
-- **`shadows/`**: Directory for AI context metadata (ignored by Git).
-
-## Features 🐸
-
-### 1. Project Scaffolding 🪵
-
-Standardized project creation within the `projects/` directory.
-
-#### Requirements
-
-- `just`
-- `git`
-- `vscode` / `windsurf` (Optional)
-
-#### Usage
-
-```bash
-toad create <project-name>
-```
-
-### 2. Project Discovery (Reveal) 🔍
-
-Search for projects by name.
-
-#### Usage
-
-```bash
-toad reveal cli
-```
-
-## Development 🌊
-
-```bash
-# Run tests
-just test
-
-# Check coverage
-just coverage
-
-# Run the local code without installing
-just cli list
-```
+This executes formatting, clippy, unit tests, and coverage verification.
 
 ---
 

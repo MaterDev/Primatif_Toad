@@ -1,0 +1,8 @@
+#!/bin/bash
+# Pre-commit hook to keep README version in sync
+
+# Run the sync script
+./scripts/sync_version.sh
+
+# Stage the README if it was changed
+git add README.md

@@ -23,6 +23,7 @@
 !/bin/
 !/crates/
 !/scripts/
+!/scripts/**
 !/docs/
 
 # Rust Ignore (Standard)
