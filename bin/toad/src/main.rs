@@ -262,14 +262,13 @@ fn main() -> Result<()> {
             let pb = ProgressBar::new(targets.len() as u64);
             pb.set_style(
                 ProgressStyle::default_bar()
-                    .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/black}] {pos}/{len} ({eta}) {msg}")?
+                    .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/black}] {pos}/{len} ({eta})")?
                     .progress_chars("■-"),
             );
 
             let results: Vec<_> = targets
                 .into_par_iter()
                 .map(|project| {
-                    pb.set_message(format!("Processing {}...", project.name));
                     let res = toad_ops::shell::run_in_dir(&project.path, command);
                     pb.inc(1);
                     (project.name, res)

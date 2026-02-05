@@ -172,7 +172,8 @@ fn test_stale_context_warning() -> Result<(), Box<dyn std::error::Error>> {
     // Create a manifest with an old fingerprint
     let shadows_dir = dir.path().join("shadows");
     fs::create_dir(&shadows_dir)?;
-    fs::write(shadows_dir.join("MANIFEST.md"), "**Fingerprint:** `100`")?;
+    // Use 0 to guarantee a mismatch since real fingerprints are non-zero when projects exist
+    fs::write(shadows_dir.join("MANIFEST.md"), "**Fingerprint:** `0`")?;
 
     // Create a project to change the actual fingerprint
     fs::create_dir(projects_dir.join("new-proj"))?;
