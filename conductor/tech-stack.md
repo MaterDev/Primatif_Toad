@@ -23,7 +23,7 @@ The project is structured as a modular Rust workspace to separate the
 3. **`crates/toad-ops` (The Hand):** General operational logic and shell
    execution.
 4. **`crates/toad-core` (The Source of Truth):** Shared data models, workspace
-   configuration, and global state management.
+   configuration, and high-fidelity filesystem fingerprinting.
 5. **`crates/toad-discovery` (The Scanner):** Implements the Strategy Pattern to
    detect tech stacks and project structures in the `projects/` directory.
 6. **`crates/toad-manifest` (The Chronicler):** Handles report generation and AI

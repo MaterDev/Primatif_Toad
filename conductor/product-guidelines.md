@@ -30,8 +30,9 @@ agents.
   specs live in the `conductor/` directory.
 - **Track-Based History:** Major features are documented as "Tracks" with
   specific implementation plans that act as a live state machine.
-- **Context Integrity:** Use `toad manifest` to ensure the AI's view of the
-  `projects/` directory is always synchronized with the actual filesystem.
+- **Context Integrity:** Employs multi-level mtime fingerprinting to ensure
+  the AI's view of the `projects/` directory is always synchronized with the
+  actual filesystem.
 
 ## 4. Engineering Tone
 
