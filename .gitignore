@@ -17,7 +17,7 @@
 !/dprint.json
 !/conductor/
 !/conductor/**
-!/images/
+!/assets/
 
 # Whitelist Source Code
 !/bin/
