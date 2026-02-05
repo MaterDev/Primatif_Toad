@@ -114,21 +114,11 @@ This executes formatting, clippy, unit tests, and coverage verification.
 
 ---
 
-<!-- Frogger Crossing Scene -->
+<!-- Project Lifecycle Visualization -->
 
 <div align="center">
 
-```text
-    🐸                 🐸        🪷   🪷   🪷   🪷   🪷   🪷
-
-~~~~~🌊🌊🌊🌊🌊🌊🌊🌊~~~~~🪵🪵🪵~~~~~🌊🌊🌊🌊🌊🌊🌊🌊~~~~~
-
-🐸                                   🐸
-
-    🪷   🪷   🪷   🪷   🪷   🪷        🐸                 🐸
-
-~~~~~🌊🌊🌊🌊🌊🌊🌊🌊~~~~~🪵🪵🪵~~~~~🌊🌊🌊🌊🌊🌊🌊🌊~~~~~
-```
+<video src="assets/video.mp4" width="100%" controls autoplay loop muted></video>
 
 <!-- Hop safely, little toads! 🐸 -->
 
