@@ -9,7 +9,7 @@ _The modular meta-engineering platform._
 ---
 </div>
 
-**Primatif_Toad** is a **DevOps Overlay and Developer CLI (Toad)** designed to
+**🐸 `Toad`** is a **DevOps Overlay and Developer CLI (Toad)** designed to
 manage a modular ecosystem of independent projects. It acts as a clean
 administrative layer for orchestrating workspaces, discovering patterns, and
 unified project management.
