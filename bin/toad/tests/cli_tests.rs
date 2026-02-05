@@ -25,6 +25,7 @@ fn test_list() {
 #[test]
 fn test_reveal_no_projects() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     fs::create_dir(dir.path().join("projects"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
@@ -40,6 +41,7 @@ fn test_reveal_no_projects() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_reveal_with_project() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("my-cool-project"))?;
@@ -57,6 +59,7 @@ fn test_reveal_with_project() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_status_mixed() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
 
@@ -91,6 +94,7 @@ fn test_status_mixed() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_do_dry_run_ish() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("proj-a"))?;
@@ -113,6 +117,7 @@ fn test_do_dry_run_ish() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_do_multiple_parallel() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
 
@@ -136,6 +141,7 @@ fn test_do_multiple_parallel() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_docs() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
         .arg("docs")
@@ -150,6 +156,7 @@ fn test_docs() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_manifest() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     fs::create_dir(dir.path().join("projects"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
@@ -166,6 +173,7 @@ fn test_manifest() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_stale_context_warning() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
 
@@ -190,6 +198,7 @@ fn test_stale_context_warning() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_create_dry_run() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     fs::create_dir(dir.path().join("projects"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
@@ -210,6 +219,7 @@ fn test_create_dry_run() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_stats_basic() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
 
@@ -231,6 +241,7 @@ fn test_stats_basic() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_tagging_flow() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("tag-proj"))?;
@@ -242,7 +253,7 @@ fn test_tagging_flow() -> Result<(), Box<dyn std::error::Error>> {
         .arg("active")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Assigned tag 'active'"));
+        .stdout(predicate::str::contains("Processed 1 projects."));
 
     let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())

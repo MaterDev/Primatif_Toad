@@ -29,7 +29,10 @@ detailed plan in its respective folder.
       [./tracks/archive/ecosystem-analytics/](./tracks/ecosystem-analytics/)_
 
 - [x] **Track: Toad Tag (Taxonomy)** _Link:
-  [./tracks/archive/toad-tag/](./tracks/toad-tag/)_
+      [./tracks/archive/toad-tag/](./tracks/archive/toad-tag/)_
+
+- [ ] **Track: Macro Tagging & Global Orchestration** _Link:
+      [./tracks/macro-tagging/](./tracks/macro-tagging/)_
 
 - [ ] **Track: Toad Sync (Registry Cache)** _Link:
       [./tracks/toad-sync/](./tracks/toad-sync/)_

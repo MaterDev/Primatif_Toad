@@ -24,7 +24,8 @@ organization and filtering.
   - [x] Implement `toad tag` command. [commit: c8132d3]
   - [x] Implement `toad untag` command. [commit: c8132d3]
 - [x] **CLI API: Filtering** [commit: c8132d3]
-  - [x] Add `--tag` filter to `reveal`, `status`, `do`, and `stats`. [commit: c8132d3]
+  - [x] Add `--tag` filter to `reveal`, `status`, `do`, and `stats`. [commit:
+        c8132d3]
 - [x] **Verification** [commit: c8132d3]
   - [x] Verify tag persistence after CLI calls. [commit: c8132d3]
   - [x] Perform SemVer bump. [commit: c8132d3]

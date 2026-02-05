@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use clap::{CommandFactory, Parser, Subcommand};
 use colored::*;
 use discovery::scan_all_projects;
@@ -65,6 +65,11 @@ enum Commands {
         #[arg(long, short = 'a')]
         all: bool,
     },
+    /// Manage the global Toad workspace anchor
+    Home {
+        /// Set a new absolute path for the Toad home
+        path: Option<String>,
+    },
     /// Execute a shell command across projects matching a query
     Do {
         /// Command to execute
@@ -90,19 +95,47 @@ enum Commands {
         #[arg(long, short = 'f')]
         fail_fast: bool,
     },
-    /// Assign a tag to a project
+    /// Assign a tag to projects
     Tag {
-        /// Project name
-        project: String,
+        /// Project name (optional if using filters)
+        project: Option<String>,
         /// Tag name
-        tag: String,
+        tag: Option<String>,
+
+        /// Filter by name query
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+
+        /// Filter by existing tag
+        #[arg(long, short = 't')]
+        filter_tag: Option<String>,
+
+        /// Automatically assign tags based on detected stacks
+        #[arg(long)]
+        harvest: bool,
+
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
-    /// Remove a tag from a project
+    /// Remove a tag from projects
     Untag {
-        /// Project name
-        project: String,
+        /// Project name (optional if using filters)
+        project: Option<String>,
         /// Tag name
         tag: String,
+
+        /// Filter by name query
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+
+        /// Filter by existing tag
+        #[arg(long, short = 't')]
+        filter_tag: Option<String>,
+
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
     /// Generate a project manifest for AI context (Shadow)
     Manifest,
@@ -130,7 +163,24 @@ fn print_banner() {
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let workspace = Workspace::new();
+
+    // --- Context Discovery ---
+    let discovered = Workspace::discover();
+    let workspace = discovered
+        .as_ref()
+        .cloned()
+        .unwrap_or_else(|_| Workspace::with_root(PathBuf::from(".")));
+
+    // Check if the current command requires a valid workspace
+    match &cli.command {
+        Commands::Home { .. } | Commands::Version | Commands::List => {}
+        _ => {
+            if let Err(e) = &discovered {
+                println!("{} {}", "ERROR:".red().bold(), e);
+                return Ok(());
+            }
+        }
+    }
 
     // --- Context Health Check ---
     let manifest_path = workspace.manifest_path();
@@ -420,6 +470,54 @@ fn main() -> Result<()> {
                 );
             }
         }
+        Commands::Home { path } => {
+            if let Some(new_path) = path {
+                let p = PathBuf::from(new_path);
+                if !p.exists() {
+                    bail!("Path does not exist: {:?}", p);
+                }
+                let abs_path = fs::canonicalize(p)?;
+                if !abs_path.join(".toad-root").exists() {
+                    println!(
+                        "{} Path does not contain a '.toad-root' marker.",
+                        "WARNING:".yellow().bold()
+                    );
+                    print!("Initialize as a new Toad home? [y/N]: ");
+                    io::stdout().flush()?;
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input)?;
+                    if !input.trim().to_lowercase().starts_with('y') {
+                        println!("Aborted.");
+                        return Ok(());
+                    }
+                    fs::write(abs_path.join(".toad-root"), "")?;
+                }
+
+                let config = toad_core::GlobalConfig {
+                    home_pointer: abs_path.clone(),
+                };
+                config.save()?;
+                println!(
+                    "{} Anchor updated to: {:?}",
+                    "SUCCESS:".green().bold(),
+                    abs_path
+                );
+            } else {
+                match discovered {
+                    Ok(ws) => {
+                        println!(
+                            "{} Current Toad Home: {:?}",
+                            "ACTIVE:".green().bold(),
+                            ws.root
+                        );
+                    }
+                    Err(e) => {
+                        println!("{} {}", "ORPHANED:".red().bold(), e);
+                        println!("Use 'toad home <path>' to anchor this system.");
+                    }
+                }
+            }
+        }
         Commands::Do {
             command,
             query,
@@ -593,26 +691,174 @@ fn main() -> Result<()> {
                 }
             );
         }
-        Commands::Tag { project, tag } => {
+        Commands::Tag {
+            project,
+            tag,
+            query,
+            filter_tag,
+            harvest,
+            yes,
+        } => {
             let mut registry = TagRegistry::load(&workspace.tags_path())?;
-            registry.add_tag(project, tag);
+            let projects = scan_all_projects(&workspace)?;
+            let mut targets = Vec::new();
+
+            // 1. Logic for --harvest
+            if *harvest {
+                println!("{} Harvesting stack tags...", "INFO:".blue().bold());
+                for p in projects {
+                    let stack_tag = p.stack.to_string().to_lowercase();
+                    registry.add_tag(&p.name, &stack_tag);
+                    targets.push(p.name);
+                }
+            }
+            // 2. Logic for specific project
+            else if let Some(p_name) = project {
+                if let Some(t_name) = tag {
+                    registry.add_tag(p_name, t_name);
+                    targets.push(p_name.clone());
+                } else {
+                    bail!("Must provide a tag name.");
+                }
+            }
+            // 3. Logic for filters
+            else if query.is_some() || filter_tag.is_some() {
+                let matching: Vec<_> = projects
+                    .into_iter()
+                    .filter(|p| {
+                        let name_match = match query {
+                            Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                            None => true,
+                        };
+                        let tag_match = match filter_tag {
+                            Some(ref t) => {
+                                let target = if t.starts_with('#') {
+                                    t.clone()
+                                } else {
+                                    format!("#{}", t)
+                                };
+                                p.tags.contains(&target)
+                            }
+                            None => true,
+                        };
+                        name_match && tag_match
+                    })
+                    .collect();
+
+                if matching.is_empty() {
+                    println!("No projects found matching filters.");
+                    return Ok(());
+                }
+
+                if let Some(t_name) = tag {
+                    println!("Found {} target(s):", matching.len());
+                    for p in &matching {
+                        println!("  {} {}", "»".blue(), p.name);
+                    }
+
+                    if !*yes {
+                        print!("\nAssign tag '{}' to these projects? [y/N]: ", t_name);
+                        io::stdout().flush()?;
+                        let mut input = String::new();
+                        io::stdin().read_line(&mut input)?;
+                        if !input.trim().to_lowercase().starts_with('y') {
+                            println!("Aborted.");
+                            return Ok(());
+                        }
+                    }
+
+                    for p in matching {
+                        registry.add_tag(&p.name, t_name);
+                        targets.push(p.name);
+                    }
+                } else {
+                    bail!("Must provide a tag name to assign.");
+                }
+            } else {
+                bail!("Must provide a project name or use filters (--query, --tag, --harvest).");
+            }
+
             registry.save(&workspace.tags_path())?;
             println!(
-                "{} Assigned tag '{}' to project '{}'",
+                "{} Processed {} projects.",
                 "SUCCESS:".green().bold(),
-                tag,
-                project
+                targets.len()
             );
         }
-        Commands::Untag { project, tag } => {
+        Commands::Untag {
+            project,
+            tag,
+            query,
+            filter_tag,
+            yes,
+        } => {
             let mut registry = TagRegistry::load(&workspace.tags_path())?;
-            registry.remove_tag(project, tag);
+            let projects = scan_all_projects(&workspace)?;
+            let mut targets = Vec::new();
+
+            // 1. Logic for specific project
+            if let Some(p_name) = project {
+                registry.remove_tag(p_name, tag);
+                targets.push(p_name.clone());
+            }
+            // 2. Logic for filters
+            else if query.is_some() || filter_tag.is_some() {
+                let matching: Vec<_> = projects
+                    .into_iter()
+                    .filter(|p| {
+                        let name_match = match query {
+                            Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                            None => true,
+                        };
+                        let tag_match = match filter_tag {
+                            Some(ref t) => {
+                                let target = if t.starts_with('#') {
+                                    t.clone()
+                                } else {
+                                    format!("#{}", t)
+                                };
+                                p.tags.contains(&target)
+                            }
+                            None => true,
+                        };
+                        name_match && tag_match
+                    })
+                    .collect();
+
+                if matching.is_empty() {
+                    println!("No projects found matching filters.");
+                    return Ok(());
+                }
+
+                println!("Found {} target(s):", matching.len());
+                for p in &matching {
+                    println!("  {} {}", "»".blue(), p.name);
+                }
+
+                if !*yes {
+                    print!("\nRemove tag '{}' from these projects? [y/N]: ", tag);
+                    io::stdout().flush()?;
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input)?;
+                    if !input.trim().to_lowercase().starts_with('y') {
+                        println!("Aborted.");
+                        return Ok(());
+                    }
+                }
+
+                for p in matching {
+                    registry.remove_tag(&p.name, tag);
+                    targets.push(p.name);
+                }
+            } else {
+                bail!("Must provide a project name or use filters (--query, --tag).");
+            }
+
             registry.save(&workspace.tags_path())?;
             println!(
-                "{} Removed tag '{}' from project '{}'",
+                "{} Processed {} projects.",
                 "SUCCESS:".green().bold(),
-                tag,
-                project
+                targets.len()
             );
         }
         Commands::Manifest => {
