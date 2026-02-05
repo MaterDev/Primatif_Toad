@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::{CommandFactory, Parser, Subcommand};
 use colored::*;
-use discovery::{find_projects, scan_all_projects};
+use discovery::scan_all_projects;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 use scaffold::{create_project, open_in_editor, ProjectConfig};
@@ -10,7 +10,7 @@ use std::io::{self, Write};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
-use toad_core::{VcsStatus, Workspace};
+use toad_core::{TagRegistry, VcsStatus, Workspace};
 use toad_ops::stats::{calculate_project_stats, format_size};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -38,16 +38,28 @@ enum Commands {
     Reveal {
         /// Case-insensitive search query
         query: String,
+
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
     },
     /// Scan projects and report Git status
     Status {
         /// Optional query to filter projects
         query: Option<String>,
+
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
     },
     /// Ecosystem health and disk usage analytics
     Stats {
         /// Optional query to filter projects
         query: Option<String>,
+
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
 
         /// Show details for all matching projects
         #[arg(long, short = 'a')]
@@ -62,6 +74,10 @@ enum Commands {
         #[arg(long, short = 'q')]
         query: String,
 
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+
         /// Skip confirmation prompt
         #[arg(long, short = 'y')]
         yes: bool,
@@ -73,6 +89,20 @@ enum Commands {
         /// Halt the entire batch if a single project fails
         #[arg(long, short = 'f')]
         fail_fast: bool,
+    },
+    /// Assign a tag to a project
+    Tag {
+        /// Project name
+        project: String,
+        /// Tag name
+        tag: String,
+    },
+    /// Remove a tag from a project
+    Untag {
+        /// Project name
+        project: String,
+        /// Tag name
+        tag: String,
     },
     /// Generate a project manifest for AI context (Shadow)
     Manifest,
@@ -154,21 +184,44 @@ fn main() -> Result<()> {
                 _ => println!("Skipping editor launch."),
             }
         }
-        Commands::Reveal { query } => {
+        Commands::Reveal { query, tag } => {
             println!("Searching for projects matching '{}'...", query);
-            let matches = find_projects(&workspace.projects_dir, query, 30)?;
+            let projects = scan_all_projects(&workspace)?;
+            let matches: Vec<_> = projects
+                .into_iter()
+                .filter(|p| {
+                    let name_match = p.name.to_lowercase().contains(&query.to_lowercase());
+                    let tag_match = match tag {
+                        Some(t) => {
+                            let target = if t.starts_with('#') {
+                                t.clone()
+                            } else {
+                                format!("#{}", t)
+                            };
+                            p.tags.contains(&target)
+                        }
+                        None => true,
+                    };
+                    name_match && tag_match
+                })
+                .collect();
 
             if matches.is_empty() {
                 println!("No projects found.");
             } else {
                 for project in matches {
-                    println!("- {}", project);
+                    let tags_display = if project.tags.is_empty() {
+                        String::new()
+                    } else {
+                        format!(" {}", project.tags.join(" ").dimmed())
+                    };
+                    println!("- {}{}", project.name, tags_display);
                 }
             }
         }
-        Commands::Status { query } => {
+        Commands::Status { query, tag } => {
             println!("{}", "--- ECOSYSTEM HEALTH SCAN ---".green().bold());
-            let projects = scan_all_projects(&workspace.projects_dir)?;
+            let projects = scan_all_projects(&workspace)?;
             let mut dirty = Vec::new();
             let mut untracked = Vec::new();
             let mut clean_count = 0;
@@ -178,6 +231,17 @@ fn main() -> Result<()> {
             for project in projects {
                 if let Some(q) = &query {
                     if !project.name.to_lowercase().contains(&q.to_lowercase()) {
+                        continue;
+                    }
+                }
+
+                if let Some(t) = &tag {
+                    let target = if t.starts_with('#') {
+                        t.clone()
+                    } else {
+                        format!("#{}", t)
+                    };
+                    if !project.tags.contains(&target) {
                         continue;
                     }
                 }
@@ -244,17 +308,28 @@ fn main() -> Result<()> {
             }
             println!("\n{}", "--- SCAN COMPLETE ---".green());
         }
-        Commands::Stats { query, all } => {
+        Commands::Stats { query, tag, all } => {
             println!("{}", "--- ECOSYSTEM ANALYTICS ---".green().bold());
-            let projects = scan_all_projects(&workspace.projects_dir)?;
+            let projects = scan_all_projects(&workspace)?;
             let matching: Vec<_> = projects
                 .into_iter()
                 .filter(|p| {
-                    if let Some(q) = &query {
-                        p.name.to_lowercase().contains(&q.to_lowercase())
-                    } else {
-                        true
-                    }
+                    let name_match = match query {
+                        Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                        None => true,
+                    };
+                    let tag_match = match tag {
+                        Some(ref t) => {
+                            let target = if t.starts_with('#') {
+                                t.clone()
+                            } else {
+                                format!("#{}", t)
+                            };
+                            p.tags.contains(&target)
+                        }
+                        None => true,
+                    };
+                    name_match && tag_match
                 })
                 .collect();
 
@@ -348,15 +423,30 @@ fn main() -> Result<()> {
         Commands::Do {
             command,
             query,
+            tag,
             yes,
             dry_run,
             fail_fast,
         } => {
             println!("{}", "--- BATCH OPERATION PREFLIGHT ---".blue().bold());
-            let projects = scan_all_projects(&workspace.projects_dir)?;
+            let projects = scan_all_projects(&workspace)?;
             let targets: Vec<_> = projects
                 .into_iter()
-                .filter(|p| p.name.to_lowercase().contains(&query.to_lowercase()))
+                .filter(|p| {
+                    let name_match = p.name.to_lowercase().contains(&query.to_lowercase());
+                    let tag_match = match tag {
+                        Some(t) => {
+                            let target = if t.starts_with('#') {
+                                t.clone()
+                            } else {
+                                format!("#{}", t)
+                            };
+                            p.tags.contains(&target)
+                        }
+                        None => true,
+                    };
+                    name_match && tag_match
+                })
                 .collect();
 
             if targets.is_empty() {
@@ -371,7 +461,18 @@ fn main() -> Result<()> {
                 } else {
                     String::new()
                 };
-                println!("  {} {}{}", "»".blue(), project.name, path_display);
+                let tags_display = if project.tags.is_empty() {
+                    String::new()
+                } else {
+                    format!(" {}", project.tags.join(" ").dimmed())
+                };
+                println!(
+                    "  {} {}{}{}",
+                    "»".blue(),
+                    project.name,
+                    tags_display,
+                    path_display
+                );
             }
             println!("\nCommand: {}", command.yellow().bold());
 
@@ -410,7 +511,9 @@ fn main() -> Result<()> {
             let pb = ProgressBar::new(targets.len() as u64);
             pb.set_style(
                 ProgressStyle::default_bar()
-                    .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/black}] {pos}/{len} ({eta})")?
+                    .template(
+                        "{spinner:.green} [{elapsed_precise}] [{bar:40.green/black}] {pos}/{len} ({eta})",
+                    )?
                     .progress_chars("■-"),
             );
 
@@ -490,10 +593,32 @@ fn main() -> Result<()> {
                 }
             );
         }
+        Commands::Tag { project, tag } => {
+            let mut registry = TagRegistry::load(&workspace.tags_path())?;
+            registry.add_tag(project, tag);
+            registry.save(&workspace.tags_path())?;
+            println!(
+                "{} Assigned tag '{}' to project '{}'",
+                "SUCCESS:".green().bold(),
+                tag,
+                project
+            );
+        }
+        Commands::Untag { project, tag } => {
+            let mut registry = TagRegistry::load(&workspace.tags_path())?;
+            registry.remove_tag(project, tag);
+            registry.save(&workspace.tags_path())?;
+            println!(
+                "{} Removed tag '{}' from project '{}'",
+                "SUCCESS:".green().bold(),
+                tag,
+                project
+            );
+        }
         Commands::Manifest => {
             println!("Generating project manifest (Shadow Context)...");
             let fingerprint = workspace.get_fingerprint()?;
-            let projects = scan_all_projects(&workspace.projects_dir)?;
+            let projects = scan_all_projects(&workspace)?;
 
             let output = toad_manifest::generate_markdown(&projects, fingerprint);
 

@@ -28,8 +28,8 @@ detailed plan in its respective folder.
 - [x] **Track: Ecosystem Analytics (Insights)** _Link:
       [./tracks/archive/ecosystem-analytics/](./tracks/ecosystem-analytics/)_
 
-- [ ] **Track: Toad Tag (Taxonomy)** _Link:
-      [./tracks/toad-tag/](./tracks/toad-tag/)_
+- [x] **Track: Toad Tag (Taxonomy)** _Link:
+  [./tracks/archive/toad-tag/](./tracks/toad-tag/)_
 
 - [ ] **Track: Toad Sync (Registry Cache)** _Link:
       [./tracks/toad-sync/](./tracks/toad-sync/)_

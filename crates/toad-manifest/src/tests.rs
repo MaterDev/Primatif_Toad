@@ -12,6 +12,7 @@ fn test_generate_markdown_basic() {
         vcs_status: VcsStatus::Clean,
         essence: Some("Test essence".to_string()),
         hashtags: vec!["#test".to_string()],
+        tags: vec!["#test".to_string()],
         sub_projects: Vec::new(),
     }];
 
@@ -39,6 +40,7 @@ fn test_generate_markdown_escaping() {
         vcs_status: VcsStatus::None,
         essence: Some("Pipe | [Link] https://google.com".to_string()),
         hashtags: vec![],
+        tags: vec![],
         sub_projects: Vec::new(),
     }];
 
@@ -64,6 +66,7 @@ fn test_generate_markdown_truncation() {
         vcs_status: VcsStatus::Dirty,
         essence: Some(long_essence),
         hashtags: vec!["#go".to_string()],
+        tags: vec!["#go".to_string()],
         sub_projects: Vec::new(),
     }];
 

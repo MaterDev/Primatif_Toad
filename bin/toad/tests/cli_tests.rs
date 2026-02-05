@@ -227,3 +227,40 @@ fn test_stats_basic() -> Result<(), Box<dyn std::error::Error>> {
         .stdout(predicate::str::contains("test-stats"));
     Ok(())
 }
+
+#[test]
+fn test_tagging_flow() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+    fs::create_dir(projects_dir.join("tag-proj"))?;
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .arg("tag")
+        .arg("tag-proj")
+        .arg("active")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Assigned tag 'active'"));
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .arg("reveal")
+        .arg("tag")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("#active"));
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .arg("reveal")
+        .arg("tag")
+        .arg("--tag")
+        .arg("missing")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("No projects found."));
+
+    Ok(())
+}

@@ -18,7 +18,8 @@ data-driven insights into ecosystem disk usage and project health.
   - [x] Initialize `toad-ops::stats` module. [commit: bfcb9ac]
 - [x] **Core Analytics Logic** [commit: bfcb9ac]
   - [x] Implement recursive directory size summation. [commit: bfcb9ac]
-  - [x] Implement tech-stack aware artifact detection (to compute Bloat Index). [commit: bfcb9ac]
+  - [x] Implement tech-stack aware artifact detection (to compute Bloat Index).
+        [commit: bfcb9ac]
   - [x] Integrate parallel iteration via `rayon`. [commit: bfcb9ac]
 - [x] **Visual UX (The Heatmap)** [commit: bfcb9ac]
   - [x] Implement ASCII bar chart generator. [commit: bfcb9ac]
