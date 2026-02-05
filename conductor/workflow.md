@@ -331,3 +331,20 @@ A task is complete when:
 - Document lessons learned
 - Optimize for user happiness
 - Keep things simple and maintainable
+
+## 6. Release & Versioning Protocol
+
+### Versioning Strategy
+- **Semantic Versioning (SemVer):** Strictly adhere to `MAJOR.MINOR.PATCH`.
+- **Harmonized Workspace:** All internal crates and the `toad` binary share the same version number to ensure total compatibility.
+
+### Bumping Rules
+- **Patch (0.0.x):** Bug fixes, documentation, and internal refactors.
+- **Minor (0.x.0):** New `toad` commands or significant feature track completions.
+- **Major (x.0.0):** Breaking changes to the CLI interface or core platform architecture.
+
+### Release Workflow
+1. **Prepare:** Ensure all tracks for the current milestone are marked `[x] Completed`.
+2. **Bump:** Use `just bump <level>` (to be implemented) to update all `Cargo.toml` files.
+3. **Commit:** Use the message format `chore(release): bump version to x.y.z and harmonize workspace`.
+4. **Sync:** Run `toad manifest` to update the shadow context with the new version fingerprint.
