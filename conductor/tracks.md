@@ -42,4 +42,11 @@ detailed plan in its respective folder.
       [./tracks/toad-sync/](./tracks/toad-sync/)_
 
 - [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
+
       [./tracks/toad-clean/](./tracks/toad-clean/)_
+
+
+
+- [~] **Track: Production Hardening & Audit Trail** _Link:
+
+      [./tracks/hardening-audit/](./tracks/hardening-audit/)_
