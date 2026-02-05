@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::{CommandFactory, Parser, Subcommand};
 use colored::*;
 use discovery::{find_projects, scan_all_projects};
+use rayon::prelude::*;
 use scaffold::{create_project, open_in_editor, ProjectConfig};
 use std::fs;
 use std::io::{self, Write};
@@ -257,14 +258,20 @@ fn main() -> Result<()> {
             }
 
             println!("\n{}", "--- EXECUTING BATCH ---".blue().bold());
+            let results: Vec<_> = targets
+                .into_par_iter()
+                .map(|project| {
+                    let res = toad_ops::shell::run_in_dir(&project.path, command);
+                    (project.name, res)
+                })
+                .collect();
+
             let mut success_count = 0;
             let mut fail_count = 0;
 
-            for project in targets {
-                print!("Processing {}... ", project.name);
-                io::stdout().flush()?;
-
-                match toad_ops::shell::run_in_dir(&project.path, command) {
+            for (name, outcome) in results {
+                print!("Processing {}... ", name);
+                match outcome {
                     Ok(res) => {
                         if res.exit_code == 0 {
                             println!("{}", "OK".green());

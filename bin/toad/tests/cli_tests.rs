@@ -111,6 +111,29 @@ fn test_do_dry_run_ish() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn test_do_multiple_parallel() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+
+    for i in 0..10 {
+        fs::create_dir(projects_dir.join(format!("proj-{}", i)))?;
+    }
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .arg("do")
+        .arg("echo 'hi'")
+        .arg("-q")
+        .arg("proj")
+        .arg("-y")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("10 Succeeded"));
+    Ok(())
+}
+
+#[test]
 fn test_docs() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
     let mut cmd = cargo_bin_cmd!("toad");
