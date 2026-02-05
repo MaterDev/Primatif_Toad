@@ -118,7 +118,7 @@ This executes formatting, clippy, unit tests, and coverage verification.
 
 <div align="center">
 
-<video src="assets/video.mp4" width="100%" controls autoplay loop muted></video>
+<video src="https://github.com/MaterDev/Primatif_Toad/raw/main/assets/video.mp4" width="100%" controls autoplay loop muted></video>
 
 <!-- Hop safely, little toads! 🐸 -->
 
