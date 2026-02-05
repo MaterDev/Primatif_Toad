@@ -490,7 +490,8 @@ fn main() -> Result<()> {
                         println!("Aborted.");
                         return Ok(());
                     }
-                    fs::write(abs_path.join(".toad-root"), "")?;
+                    let marker_content = "# Primatif Toad Workspace Root\n# This file identifies this directory as a Toad Control Plane home.\n# Do not delete this file if you want the 'toad' CLI to recognize this workspace.\n";
+                    fs::write(abs_path.join(".toad-root"), marker_content)?;
                 }
 
                 let config = toad_core::GlobalConfig {
