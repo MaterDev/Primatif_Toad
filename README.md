@@ -18,17 +18,17 @@ manage a vast ecosystem of independent projects. It provides a multi-threaded
 administrative layer for orchestrating workspaces, performing data-driven
 analytics, and enforcing safety guardrails across dozens of repositories.
 
-## 🚀 The v0.7.0 Capabilities
+## 🪷 The v0.7.0 Bloom
 
-- **⚡ Multi-Core Parallelism:** Leverages `rayon` for sub-second scanning and
+- **🦗 Multi-Core Parallelism:** Leverages `rayon` for sub-second scanning and
   concurrent bulk command execution across 100+ projects.
 - **🛡️ Safety Guardrails:** Built-in "Danger Pattern" detection (`rm -rf`,
   `reset --hard`) with forced `PROCEED` confirmations and `--dry-run` modes.
-- **📊 Visual Analytics:** High-fidelity disk usage auditing with the **Atari
+- **🟩 Visual Analytics:** High-fidelity disk usage auditing with the **Atari
   Heatmap** and a "Bloat Index" (Source vs. Artifact ratio).
-- **🏷️ Taxonomy (Tagging):** Ubiquitous filtering across all commands using
+- **🌿 Taxonomy (Tagging):** Ubiquitous filtering across all commands using
   procedural hashtags (`#rust`, `#node`) and custom persistent tags.
-- **🌎 Global Anchor:** System-wide CLI access via `toad home`, allowing management
+- **🍄 Global Anchor:** System-wide CLI access via `toad home`, allowing management
   from any directory on your Mac.
 
 ## Quick Start
@@ -42,24 +42,24 @@ analytics, and enforcing safety guardrails across dozens of repositories.
 
 ## 🐸 Core Commands
 
-### 📈 Analytics & Health
+### 🪷 Analytics & Health
 - `toad status`: Check Git health and activity tiers across the ecosystem.
 - `toad stats`: View the visual disk usage heatmap and artifact bloat analysis.
 - `toad reveal <query>`: Search for projects by name or `#tag`.
 
-### 🛠️ Orchestration (Bulk Ops)
+### 🪵 Orchestration (Bulk Ops)
 - `toad do "<command>"`: Execute shell commands across matching projects in parallel.
 - `toad do "git pull" --tag stable`: Batch update only your stable tools.
 - `toad do "rm -rf target" --dry-run`: Safely preview destructive maintenance.
 
-### 🏷️ Taxonomy & Context
+### 🌿 Taxonomy & Context
 - `toad tag <project> <tag>`: Assign custom metadata.
 - `toad tag --query "ui" #frontend`: Bulk tag projects by name.
 - `toad manifest`: Synchronize high-fidelity AI context ("Shadows").
 
 ---
 
-## 🏗️ Architecture
+## 🧱 Architecture
 
 Toad is built as a modular Rust workspace, ensuring logic is decoupled and
 reusable:
