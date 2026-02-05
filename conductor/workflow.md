@@ -226,6 +226,7 @@ just setup-tools   # Installs dev tools like dprint
 
 ```bash
 just test          # Runs the Rust test suite
+just coverage      # Runs code coverage reporting (>80% target)
 just lint          # Lints Rust (Clippy) and Markdown
 just fmt           # Formats all code and docs
 just qa            # Runs the full QA suite (Format -> Lint -> Test -> Build)
@@ -338,10 +339,13 @@ git commit -m "style(mobile): Improve button touch targets"
 
 A task is complete when:
 
-1. All code implemented to specification
-1. Unit tests written and passing
-1. Code coverage meets project requirements
-1. Documentation complete (if applicable)
+1.  All code implemented to specification
+
+1.  Unit tests written and passing
+
+1.  Code coverage meets project requirements (>80% verified via `just coverage`)
+
+1.  Documentation complete (if applicable)
 1. Code passes all configured linting and static analysis checks
 1. Works beautifully on mobile (if applicable)
 1. Implementation notes added to `plan.md`
@@ -445,10 +449,15 @@ A task is complete when:
 
 Before ending a development session, you MUST:
 
-1. **Run Full QA:** Execute `just qa` and ensure all stages (Format, Lint, Test,
-   Build) pass.
-1. **Update Context:** Run `toad manifest` if any project structures or versions
-   changed.
+1.  **Run Full QA:** Execute `just qa` and ensure all stages (Format, Lint, Test,
+
+    Build) pass.
+
+1.  **Verify Coverage:** Run `just coverage` and confirm >80% total coverage.
+
+1.  **Update Context:** Run `toad manifest` if any project structures or versions
+
+    changed.
 1. **Commit State:** Ensure all `plan.md` files in active tracks reflect the
    current progress.
 1. **Final Note:** If a significant task was left in-progress, leave a "Next

@@ -12,6 +12,7 @@ Commands:
   create    Create a new project directory
   reveal    Find projects matching a query
   status    Scan projects and report Git status
+  do        Execute a shell command across projects matching a query
   manifest  Generate a project manifest for AI context (Shadow)
   docs      Generate programmatic CLI documentation (Markdown)
   list      List all available commands

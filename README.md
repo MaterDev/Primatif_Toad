@@ -1,17 +1,8 @@
 <div align="center">
 
-```text
-      _   _      
-     (.)_(.)    
-  _ (   _   ) _ 
- / \/`-----'\/ \ 
- __/  ^   ^  \__
+![Toad Banner](images/cover.jpeg)
 
- P R I M A T I F
- T O A D
-```
-
-### Toad Control Plane
+### Toad Control CLI
 
 _The modular meta-engineering platform._
 
@@ -40,7 +31,7 @@ unified project management.
 3. **Use:** `toad create my-project`
 ---
 
-## 🚀 Installation & Setup
+## 🐸 Installation & Setup
 
 ### Prerequisites
 
@@ -55,8 +46,9 @@ unified project management.
 - **Node.js & NPM:** Required for markdown linting tools.
 - **Markdownlint CLI:** `npm install -g markdownlint-cli`
 - **Dprint:** `cargo install dprint` (Formatted code and docs)
+- **Tarpaulin:** `cargo install cargo-tarpaulin` (Code coverage reporting)
 
-### Installing Toad
+### Installing Toad 🪵
 
 Run the following command from the root of this repository:
 
@@ -71,7 +63,7 @@ system's `PATH`.
 ### Initial Configuration
 
 Once installed, run the manifest command to allow Toad to "learn" your existing
-`projects/` directory:
+`projects/` directory and map out the lily pads:
 
 ```bash
 toad manifest
@@ -85,9 +77,9 @@ toad version
 
 ---
 
-## 🛠️ Tooling Roles
+## 🌊 Tooling Roles
 
-### `toad` (The Installed Tool)
+### `toad` (The Installed Tool) 🐸
 
 Use this command to **manage your projects**. It is the installed binary.
 
@@ -95,17 +87,18 @@ Use this command to **manage your projects**. It is the installed binary.
 - `toad reveal <query>`: Find existing projects.
 - `toad list`: See all commands.
 
-### `just` (The Developer Runner)
+### `just` (The Developer Runner) 🪵
 
 Use this command to **develop Primatif_Toad itself**.
 
 - `just install`: Compiles and installs `toad` to your system.
 - `just test`: Runs the Rust test suite.
+- `just coverage`: Runs code coverage reporting (requires `cargo-tarpaulin`).
 - `just cli`: Runs the _local_ (uninstalled) version of the CLI code.
 
 ---
 
-## Architecture
+## Architecture 🪷
 
 - **Workspace:** Rust-based monorepo.
 - **`bin/toad`**: Unified CLI interface (The Orchestrator).
@@ -117,9 +110,9 @@ Use this command to **develop Primatif_Toad itself**.
 - **`projects/`**: Directory for managed projects (ignored by Git).
 - **`shadows/`**: Directory for AI context metadata (ignored by Git).
 
-## Features
+## Features 🐸
 
-### 1. Project Scaffolding
+### 1. Project Scaffolding 🪵
 
 Standardized project creation within the `projects/` directory.
 
@@ -135,7 +128,7 @@ Standardized project creation within the `projects/` directory.
 toad create <project-name>
 ```
 
-### 2. Project Discovery (Reveal)
+### 2. Project Discovery (Reveal) 🔍
 
 Search for projects by name.
 
@@ -145,12 +138,37 @@ Search for projects by name.
 toad reveal cli
 ```
 
-## Development
+## Development 🌊
 
 ```bash
 # Run tests
 just test
 
+# Check coverage
+just coverage
+
 # Run the local code without installing
 just cli list
 ```
+
+---
+
+<!-- Frogger Crossing Scene -->
+
+<div align="center">
+
+```text
+    🐸                 🐸        🪷   🪷   🪷   🪷   🪷   🪷
+
+~~~~~🌊🌊🌊🌊🌊🌊🌊🌊~~~~~🪵🪵🪵~~~~~🌊🌊🌊🌊🌊🌊🌊🌊~~~~~
+
+🐸                                   🐸
+
+    🪷   🪷   🪷   🪷   🪷   🪷        🐸                 🐸
+
+~~~~~🌊🌊🌊🌊🌊🌊🌊🌊~~~~~🪵🪵🪵~~~~~🌊🌊🌊🌊🌊🌊🌊🌊~~~~~
+```
+
+<!-- Hop safely, little toads! 🐸 -->
+
+</div>

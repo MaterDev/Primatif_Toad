@@ -13,8 +13,13 @@ across multiple projects matching a query.
 
 ## Deliverables
 
-- [~] Logic to execute shell commands in project directories.
-- [ ] Integration into `bin/toad` CLI (`toad do <command> --query <str>`).
+- [x] Logic to execute shell commands in project directories. [commit: 0178bd5]
+
+- [x] Integration into `bin/toad` CLI (`toad do <command> --query <str>`).
+      [commit: 48b347c]
+
 - [ ] Parallel execution support (optional/future).
-- [ ] Visual feedback for batch operation results.
-- [ ] Unit tests for command execution logic.
+
+- [x] Visual feedback for batch operation results. [commit: 48b347c]
+
+- [x] Unit tests for command execution logic. [commit: 0178bd5]

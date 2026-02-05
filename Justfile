@@ -51,9 +51,14 @@ lint:
     @command -v markdownlint > /dev/null || (echo "❌ ERROR: markdownlint-cli is NOT installed. Install with 'npm install -g markdownlint-cli'" && exit 1)
     markdownlint "**/*.md"
 
-# Install development tools (dprint)
+# Run code coverage (requires cargo-tarpaulin)
+coverage:
+    cargo tarpaulin --workspace --ignore-tests --exclude-files "projects/*"
+
+# Install development tools (dprint, tarpaulin)
 setup-tools:
     cargo install dprint
+    cargo install cargo-tarpaulin
 
 # Build the system
 build:
