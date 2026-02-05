@@ -4,7 +4,7 @@
 
 ### Toad Control CLI
 
-_The modular meta-engineering control plane._
+_Tactical Operations And Discovery_
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version: v0.7.0](https://img.shields.io/badge/version-v0.7.0-green.svg)](Cargo.toml)
@@ -13,10 +13,16 @@ _The modular meta-engineering control plane._
 ---
 </div>
 
-**🐸 `Toad`** is a **High-Performance Meta-Engineering Platform** designed to
+**🐸 `Toad`** is a **High-Performance Local-Ops Platform** designed to
 manage a vast ecosystem of independent projects. It provides a multi-threaded
 administrative layer for orchestrating workspaces, performing data-driven
 analytics, and enforcing safety guardrails across dozens of repositories.
+
+**Local-Ops** is the engineering discipline of managing the "local cloud"—the
+dense ecosystem of independent repositories, microservices, and experiments
+living on a developer’s workstation. Toad automates this daily environment,
+treating dozens of scattered folders as a single, orchestrated infrastructure
+and transforming a fragmented filesystem into a high-fidelity control plane.
 
 > [!CAUTION]
 > **Toad is a powerful meta-engineering tool.** Commands execute across multiple
