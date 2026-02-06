@@ -38,8 +38,8 @@ detailed plan in its respective folder.
 - [x] **Track: Infrastructure Hardening (Stability)** _Link:
       [./tracks/archive/infrastructure-hardening/](./tracks/infrastructure-hardening/)_
 
-- [~] **Track: Toad Sync (Registry Cache)** _Link:
-      [./tracks/toad-sync/](./tracks/toad-sync/)_
+- [x] **Track: Toad Sync (Registry Cache)** _Link:
+      [./tracks/archive/toad-sync/](./tracks/archive/toad-sync/)_
 
 - [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
 

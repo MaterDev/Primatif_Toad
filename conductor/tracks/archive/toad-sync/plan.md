@@ -12,11 +12,11 @@
     - [x] Implement: Add the `sync` command to `bin/toad` and delegate to `toad-ops`.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Sync Command' (Protocol in workflow.md)
 
-## Phase 3: Integration and Optimization
+## Phase 3: Integration and Optimization [checkpoint: 2d2fef8]
 - [x] Task: Refactor `reveal` to prefer cache over disk scan 19d71ac
     - [x] Write Tests: Verify `toad reveal` uses cached data when available.
     - [x] Implement: Update `reveal` logic to check the registry before scanning.
 - [x] Task: Implement staleness detection between cache and filesystem 52dd194
     - [x] Write Tests: Verify cache is invalidated when a "Ghost" project is detected.
     - [x] Implement: Add fingerprint/existence checks during cache lookup.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Integration and Optimization' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Integration and Optimization' (Protocol in workflow.md)
