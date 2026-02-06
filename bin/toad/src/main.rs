@@ -139,6 +139,8 @@ enum Commands {
     },
     /// Generate a project manifest for AI context (Shadow)
     Manifest,
+    /// Synchronize the project registry cache
+    Sync,
     /// Generate programmatic CLI documentation (Markdown)
     Docs,
     /// List all available commands
@@ -878,6 +880,34 @@ fn main() -> Result<()> {
                 "{} Manifest updated at: {:?}",
                 "SUCCESS:".green().bold(),
                 manifest_path
+            );
+        }
+        Commands::Sync => {
+            println!("Scanning projects...");
+            let pb = ProgressBar::new_spinner();
+            pb.set_style(
+                ProgressStyle::default_spinner()
+                    .template("{spinner:.green} [{elapsed_precise}] {msg}")?,
+            );
+            pb.set_message("Discovering projects on disk...");
+            pb.enable_steady_tick(Duration::from_millis(100));
+
+            let fingerprint = workspace.get_fingerprint()?;
+            let projects = scan_all_projects(&workspace)?;
+
+            pb.set_message("Saving to registry...");
+            let registry = toad_core::ProjectRegistry {
+                fingerprint,
+                projects,
+                last_sync: std::time::SystemTime::now(),
+            };
+            registry.save()?;
+
+            pb.finish_and_clear();
+            println!(
+                "{} Registry synchronized ({} projects found).",
+                "SUCCESS:".green().bold(),
+                registry.projects.len()
             );
         }
         Commands::Docs => {

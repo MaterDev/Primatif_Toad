@@ -263,15 +263,24 @@ fn test_tagging_flow() -> Result<(), Box<dyn std::error::Error>> {
         .success()
         .stdout(predicate::str::contains("#active"));
 
+    Ok(())
+}
+
+#[test]
+fn test_sync() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+    fs::create_dir(projects_dir.join("sync-proj"))?;
+
     let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
-        .arg("reveal")
-        .arg("tag")
-        .arg("--tag")
-        .arg("missing")
+        .arg("sync")
         .assert()
         .success()
-        .stdout(predicate::str::contains("No projects found."));
+        .stdout(predicate::str::contains("Scanning projects..."))
+        .stdout(predicate::str::contains("SUCCESS: Registry synchronized"));
 
     Ok(())
 }
