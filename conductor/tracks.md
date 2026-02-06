@@ -41,6 +41,9 @@ detailed plan in its respective folder.
 - [x] **Track: Toad Sync (Registry Cache)** _Link:
       [./tracks/archive/toad-sync/](./tracks/archive/toad-sync/)_
 
+- [ ] **Track: Dynamic Strategy Engine (Modular Stacks)** _Link:
+      [./tracks/dynamic-strategy-engine/](./tracks/dynamic-strategy-engine/)_
+
 - [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
 
       [./tracks/toad-clean/](./tracks/toad-clean/)_
