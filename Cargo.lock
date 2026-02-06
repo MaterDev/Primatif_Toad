@@ -744,6 +744,7 @@ dependencies = [
  "predicates",
  "rayon",
  "scaffold",
+ "serde_json",
  "tempfile",
  "toad-core",
  "toad-git",

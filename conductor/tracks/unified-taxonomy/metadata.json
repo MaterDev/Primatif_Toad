@@ -1,0 +1,8 @@
+{
+  "track_id": "unified_taxonomy_20260204",
+  "type": "refactor",
+  "status": "in_progress",
+  "created_at": "2026-02-04T21:30:00Z",
+  "updated_at": "2026-02-04T21:30:00Z",
+  "description": "Unify stacks, hashtags, and user tags into a single 'Ingredients' taxonomy and refactor manifest reporting"
+}

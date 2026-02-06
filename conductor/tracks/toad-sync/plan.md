@@ -15,7 +15,7 @@
 ## Phase 3: Integration and Optimization
 - [x] Task: Refactor `reveal` to prefer cache over disk scan 19d71ac
     - [x] Write Tests: Verify `toad reveal` uses cached data when available.
-    - [ ] Implement: Update `reveal` logic to check the registry before scanning.
+    - [x] Implement: Update `reveal` logic to check the registry before scanning.
 - [x] Task: Implement staleness detection between cache and filesystem 52dd194
     - [x] Write Tests: Verify cache is invalidated when a "Ghost" project is detected.
     - [x] Implement: Add fingerprint/existence checks during cache lookup.

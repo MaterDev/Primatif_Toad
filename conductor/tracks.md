@@ -38,7 +38,7 @@ detailed plan in its respective folder.
 - [x] **Track: Infrastructure Hardening (Stability)** _Link:
       [./tracks/archive/infrastructure-hardening/](./tracks/infrastructure-hardening/)_
 
-- [ ] **Track: Toad Sync (Registry Cache)** _Link:
+- [~] **Track: Toad Sync (Registry Cache)** _Link:
       [./tracks/toad-sync/](./tracks/toad-sync/)_
 
 - [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
@@ -50,3 +50,37 @@ detailed plan in its respective folder.
 - [~] **Track: Production Hardening & Audit Trail** _Link:
 
       [./tracks/hardening-audit/](./tracks/hardening-audit/)_
+
+
+
+- [~] **Track: Unified Taxonomy & Manifest Refactor** _Link:
+
+
+
+      [./tracks/unified-taxonomy/](./tracks/unified-taxonomy/)_
+
+
+
+
+
+
+
+---
+
+
+
+
+
+
+
+- [ ] **Track: Rust Context & Architecture Guide**
+
+
+
+_Link: [./tracks/rust-guide_20260205/](./tracks/rust-guide_20260205/)_
+
+
+
+
+
+
