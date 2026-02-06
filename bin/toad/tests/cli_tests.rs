@@ -284,3 +284,51 @@ fn test_sync() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_reveal_cached() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    let home = dir.path().join("fake-home");
+    fs::create_dir(&home)?;
+    let toad_dir = home.join(".toad");
+    fs::create_dir(&toad_dir)?;
+
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+
+    let mut cmd_sync = cargo_bin_cmd!("toad");
+    cmd_sync.env("HOME", &home)
+        .current_dir(dir.path())
+        .arg("sync")
+        .assert()
+        .success();
+
+    let registry_path = toad_dir.join("registry.json");
+    let mut registry_json: serde_json::Value = serde_json::from_str(&fs::read_to_string(&registry_path)?)?;
+
+    let cached_project = serde_json::json!({
+        "name": "cached-proj",
+        "path": "/tmp/cached-proj",
+        "stack": "Rust",
+        "activity": "Active",
+        "vcs_status": "Clean",
+        "essence": "Cached project",
+        "hashtags": [],
+        "tags": ["#cached"],
+        "sub_projects": []
+    });
+    registry_json["projects"].as_array_mut().unwrap().push(cached_project);
+    fs::write(&registry_path, serde_json::to_string(&registry_json)?)?;
+
+    let mut cmd_reveal = cargo_bin_cmd!("toad");
+    cmd_reveal.env("HOME", &home)
+        .current_dir(dir.path())
+        .arg("reveal")
+        .arg("cached")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("- cached-proj #cached"));
+
+    Ok(())
+}
