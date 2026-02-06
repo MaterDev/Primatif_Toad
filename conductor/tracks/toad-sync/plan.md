@@ -1,10 +1,10 @@
 # Plan: Toad Sync (Registry Cache)
 
-## Phase 1: Registry Foundation
+## Phase 1: Registry Foundation [checkpoint: d6293bd]
 - [x] Task: Implement registry caching (JSON storage) de06ab6
     - [x] Write Tests: Define `Registry` struct and verify serialization/deserialization to `~/.toad/registry.json`.
     - [x] Implement: Create the storage logic in `crates/toad-core` or a new module.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Registry Foundation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Registry Foundation' (Protocol in workflow.md)
 
 ## Phase 2: Sync Command
 - [ ] Task: Add `toad sync` command for manual refreshes
