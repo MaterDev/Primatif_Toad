@@ -7,9 +7,9 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Registry Foundation' (Protocol in workflow.md)
 
 ## Phase 2: Sync Command
-- [ ] Task: Add `toad sync` command for manual refreshes
-    - [ ] Write Tests: Verify `toad sync` triggers a full scan and updates the cache.
-    - [ ] Implement: Add the `sync` command to `bin/toad` and delegate to `toad-ops`.
+- [x] Task: Add `toad sync` command for manual refreshes ebf7704
+    - [x] Write Tests: Verify `toad sync` triggers a full scan and updates the cache.
+    - [x] Implement: Add the `sync` command to `bin/toad` and delegate to `toad-ops`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Sync Command' (Protocol in workflow.md)
 
 ## Phase 3: Integration and Optimization
