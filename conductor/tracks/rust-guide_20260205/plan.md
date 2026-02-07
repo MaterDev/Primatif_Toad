@@ -5,53 +5,53 @@ the TDD principles for documentation (structure verification and linting).
 
 ## Phase 1: Scaffolding and Infrastructure
 
-- [ ] Task: Initialize Documentation File
-  - [ ] Write Tests: Verify `docs/rust-architecture.md` exists and contains the
+- [x] Task: Initialize Documentation File
+  - [x] Write Tests: Verify `docs/rust-architecture.md` exists and contains the
         primary H1 header.
-  - [ ] Implement: Create `docs/rust-architecture.md` with title and
+  - [x] Implement: Create `docs/rust-architecture.md` with title and
         Introduction.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Scaffolding and
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Scaffolding and
       Infrastructure' (Protocol in workflow.md)
 
 ## Phase 2: Architectural Foundations
 
-- [ ] Task: Workspace Orchestration Section
-  - [ ] Write Tests: Verify section "Workspace Orchestration" exists with
+- [x] Task: Workspace Orchestration Section
+  - [x] Write Tests: Verify section "Workspace Orchestration" exists with
         content.
-  - [ ] Implement: Explain the multi-crate structure and dependency management.
-- [ ] Task: CLI Architecture Section
-  - [ ] Write Tests: Verify section "CLI Architecture" exists with `bin/toad`
+  - [x] Implement: Explain the multi-crate structure and dependency management.
+- [x] Task: CLI Architecture Section
+  - [x] Write Tests: Verify section "CLI Architecture" exists with `bin/toad`
         code examples.
-  - [ ] Implement: Detail the delegation pattern and CLI entry point.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Architectural
+  - [x] Implement: Detail the delegation pattern and CLI entry point.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Architectural
       Foundations' (Protocol in workflow.md)
 
 ## Phase 3: Deep Dives & Patterns
 
-- [ ] Task: Core Data Models Section
-  - [ ] Write Tests: Verify section "Core Data Models" exists with examples from
+- [x] Task: Core Data Models Section
+  - [x] Write Tests: Verify section "Core Data Models" exists with examples from
         `toad-core`.
-  - [ ] Implement: Explain the "Source of Truth" and shared logic.
-- [ ] Task: Strategy Pattern & Traits Section
-  - [ ] Write Tests: Verify section "Strategy Pattern" exists with
+  - [x] Implement: Explain the "Source of Truth" and shared logic.
+- [x] Task: Strategy Pattern & Traits Section
+  - [x] Write Tests: Verify section "Strategy Pattern" exists with
         `toad-discovery` trait examples.
-  - [ ] Implement: Explain trait-based extensibility and discovery logic.
-- [ ] Task: Operational Logic Section
-  - [ ] Write Tests: Verify section "Operational Logic" exists with `toad-ops`
+  - [x] Implement: Explain trait-based extensibility and discovery logic.
+- [x] Task: Operational Logic Section
+  - [x] Write Tests: Verify section "Operational Logic" exists with `toad-ops`
         examples.
-  - [ ] Implement: Explain shell execution and operational handlers.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Deep Dives &
+  - [x] Implement: Explain shell execution and operational handlers.
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Deep Dives &
       Patterns' (Protocol in workflow.md)
 
 ## Phase 4: Quality Assurance & Finalization
 
-- [ ] Task: Formatting and Linting
-  - [ ] Write Tests: Run `just lint` and `just fmt` to ensure markdown
+- [x] Task: Formatting and Linting
+  - [x] Write Tests: Run `just lint` and `just fmt` to ensure markdown
         compliance.
-  - [ ] Implement: Fix any linting or formatting issues.
-- [ ] Task: Final Review & Integration
-  - [ ] Write Tests: Verify all links within the document are valid.
-  - [ ] Implement: Perform a final read-through for technical accuracy and
+  - [x] Implement: Fix any linting or formatting issues.
+- [x] Task: Final Review & Integration
+  - [x] Write Tests: Verify all links within the document are valid.
+  - [x] Implement: Perform a final read-through for technical accuracy and
         clarity.
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Quality Assurance &
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Quality Assurance &
       Finalization' (Protocol in workflow.md)
