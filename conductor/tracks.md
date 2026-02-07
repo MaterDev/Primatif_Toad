@@ -44,9 +44,8 @@ detailed plan in its respective folder.
 - [x] **Track: Dynamic Strategy Engine (Modular Stacks)** _Link:
       [./tracks/archive/dynamic-strategy-engine/](./tracks/archive/dynamic-strategy-engine/)_
 
-- [ ] **Track: Toad Clean (Disk Hygiene)** _Link:
-
-      [./tracks/toad-clean/](./tracks/toad-clean/)_
+- [x] **Track: Toad Clean (Disk Hygiene)** _Link:
+      [./tracks/archive/toad-clean/](./tracks/archive/toad-clean/)_
 
 - [~] **Track: Production Hardening & Audit Trail** _Link:
 

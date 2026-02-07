@@ -146,6 +146,27 @@ enum Commands {
         #[command(subcommand)]
         subcommand: StrategyCommands,
     },
+    /// Reclaim disk space by removing build artifacts
+    Clean {
+        /// Optional query to filter projects
+        query: Option<String>,
+
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+
+        /// Filter by activity tier (active, cold, archive)
+        #[arg(long)]
+        tier: Option<String>,
+
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
+
+        /// Simulate the action without deleting
+        #[arg(long, short = 'd')]
+        dry_run: bool,
+    },
     /// Generate programmatic CLI documentation (Markdown)
     Docs,
     /// List all available commands
@@ -1076,7 +1097,12 @@ fn main() -> Result<()> {
                 StrategyCommands::Remove { name } => {
                     let custom_dir =
                         toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
-                    let filename = format!("{}.toml", name.to_lowercase().replace(' ', "_"));
+                    let safe_name = name
+                        .to_lowercase()
+                        .chars()
+                        .filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-')
+                        .collect::<String>();
+                    let filename = format!("{}.toml", safe_name);
                     let path = custom_dir.join(filename);
 
                     if path.exists() {
@@ -1087,6 +1113,156 @@ fn main() -> Result<()> {
                     }
                 }
             }
+        }
+        Commands::Clean {
+            query,
+            tag,
+            tier,
+            yes,
+            dry_run,
+        } => {
+            println!("{}", "--- 🌊 POND HYGIENE PRE-FLIGHT ---".blue().bold());
+            let projects = scan_all_projects(&workspace)?;
+            let targets: Vec<_> = projects
+                .into_iter()
+                .filter(|p| {
+                    let name_match = match query {
+                        Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                        None => true,
+                    };
+                    let tag_match = match tag {
+                        Some(ref t) => {
+                            let target = if t.starts_with('#') {
+                                t.clone()
+                            } else {
+                                format!("#{}", t)
+                            };
+                            p.tags.contains(&target)
+                        }
+                        None => true,
+                    };
+                    let tier_match = match tier {
+                        Some(ref tr) => {
+                            let tier_str = p.activity.to_string().to_lowercase();
+                            tier_str.contains(&tr.to_lowercase())
+                        }
+                        None => true,
+                    };
+                    name_match && tag_match && tier_match && !p.artifact_dirs.is_empty()
+                })
+                .collect();
+
+            if targets.is_empty() {
+                println!("No projects found matching filters with artifacts to clean.");
+                return Ok(());
+            }
+
+            println!("Found {} project(s) to clean:", targets.len());
+            let mut total_potential_savings = 0;
+
+            for project in &targets {
+                let stats = calculate_project_stats(&project.path, &project.artifact_dirs);
+                total_potential_savings += stats.artifact_bytes;
+
+                println!(
+                    "  {} {} ({}) -> {}",
+                    "»".blue(),
+                    project.name.bold(),
+                    project.stack.dimmed(),
+                    format_size(stats.artifact_bytes).yellow()
+                );
+                for artifact in &project.artifact_dirs {
+                    if project.path.join(artifact).exists() {
+                        println!("    {} {}", "└─".dimmed(), artifact.dimmed());
+                    }
+                }
+            }
+
+            println!(
+                "\n{} Potential Savings: {}",
+                "🌿".green(),
+                format_size(total_potential_savings).bold().green()
+            );
+
+            if !*yes && !*dry_run {
+                print!("\nProceed with cleaning? [y/N]: ");
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted.");
+                    return Ok(());
+                }
+            }
+
+            if *dry_run {
+                println!("\n{}", "--- 🌊 DRY RUN COMPLETE ---".green().bold());
+                return Ok(());
+            }
+
+            println!("\n{}", "--- 🧹 CLEANING POND ---".blue().bold());
+            let pb = ProgressBar::new(targets.len() as u64);
+            pb.set_style(
+                ProgressStyle::default_bar()
+                    .template(
+                        "{spinner:.green} [{elapsed_precise}] [{bar:40.green/black}] {pos}/{len} ({eta})",
+                    )?
+                    .progress_chars("■-"),
+            );
+
+            let results: Vec<_> = targets
+                .par_iter()
+                .map(|project| {
+                    let res = toad_ops::clean::clean_project(
+                        &project.path,
+                        &project.artifact_dirs,
+                        false,
+                    );
+                    pb.inc(1);
+                    (project.name.clone(), res)
+                })
+                .collect();
+
+            pb.finish_and_clear();
+
+            let mut success_count = 0;
+            let mut fail_count = 0;
+            let mut total_reclaimed = 0;
+
+            for (name, outcome) in results {
+                match outcome {
+                    Ok(res) => {
+                        if res.errors.is_empty() {
+                            success_count += 1;
+                        } else {
+                            println!("{} Issues cleaning {}:", "WARNING:".yellow(), name);
+                            for err in res.errors {
+                                println!("  - {}", err.red());
+                            }
+                            fail_count += 1;
+                        }
+                        total_reclaimed += res.bytes_reclaimed;
+                    }
+                    Err(e) => {
+                        println!("{} Critical error cleaning {}: {}", "ERROR:".red(), name, e);
+                        fail_count += 1;
+                    }
+                }
+            }
+
+            println!(
+                "\n{} Successfully cleaned {} projects.",
+                "🪷".green(),
+                success_count
+            );
+            if fail_count > 0 {
+                println!("{} Failed to clean {} projects.", "⚠️".red(), fail_count);
+            }
+            println!(
+                "{} Total Space Reclaimed: {}",
+                "🌿".green(),
+                format_size(total_reclaimed).bold().green()
+            );
         }
         Commands::Docs => {
             println!("Generating programmatic CLI documentation...");

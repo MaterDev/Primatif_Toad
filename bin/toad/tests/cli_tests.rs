@@ -384,3 +384,88 @@ fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_clean_dry_run() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+
+    // Setup strategies
+    let config_dir = dir.path().join(".toad");
+    fs::create_dir_all(config_dir.join("strategies/builtin"))?;
+    toad_core::strategy::StrategyRegistry::install_defaults(
+        &config_dir.join("strategies/builtin"),
+    )?;
+
+    let proj_path = projects_dir.join("test-clean");
+    fs::create_dir(&proj_path)?;
+    fs::write(proj_path.join("Cargo.toml"), "")?;
+    let target_dir = proj_path.join("target");
+    fs::create_dir(&target_dir)?;
+    fs::write(target_dir.join("junk"), "0".repeat(100))?;
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("clean")
+        .arg("--dry-run")
+        .arg("-y")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "--- 🌊 POND HYGIENE PRE-FLIGHT ---",
+        ))
+        .stdout(predicate::str::contains("test-clean"))
+        .stdout(predicate::str::contains("100 B"));
+
+    assert!(target_dir.exists());
+    Ok(())
+}
+
+#[test]
+fn test_clean_activity_tier() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+
+    // Setup strategies
+    let config_dir = dir.path().join(".toad");
+    fs::create_dir_all(config_dir.join("strategies/builtin"))?;
+    toad_core::strategy::StrategyRegistry::install_defaults(
+        &config_dir.join("strategies/builtin"),
+    )?;
+
+    // 1. Active project (newly created)
+    let active_path = projects_dir.join("active-proj");
+    fs::create_dir(&active_path)?;
+    fs::write(active_path.join("Cargo.toml"), "")?;
+    fs::create_dir(active_path.join("target"))?;
+
+    // 2. Cold project (old mtime)
+    let cold_path = projects_dir.join("cold-proj");
+    fs::create_dir(&cold_path)?;
+    fs::write(cold_path.join("Cargo.toml"), "")?;
+    fs::create_dir(cold_path.join("target"))?;
+    let cold_time =
+        std::time::SystemTime::now() - std::time::Duration::from_secs(10 * 24 * 60 * 60);
+    filetime::set_file_mtime(&cold_path, filetime::FileTime::from_system_time(cold_time))?;
+
+    // Clean only cold projects
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("clean")
+        .arg("--tier")
+        .arg("cold")
+        .arg("--dry-run")
+        .arg("-y")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("cold-proj"))
+        .stdout(predicate::str::contains("active-proj").not());
+
+    Ok(())
+}

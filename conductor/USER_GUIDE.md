@@ -51,3 +51,23 @@ A track is finished when:
 Periodically ask Gemini to "Verify the Tech Stack and Workflow." It will audit
 the current codebase against your established rules and suggest fixes if things
 are getting messy.
+
+## 7. Disk Hygiene (Cleaning the Pond)
+
+As your ecosystem grows, build artifacts (like `node_modules`, `target/`, or
+`.venv`) can consume significant disk space. Toad provides a safe, data-driven
+way to reclaim this space.
+
+### Cleaning Projects
+
+- `toad clean`: Scans projects and identifies build artifacts based on their
+  detected stack (e.g., `target` for Rust).
+- `toad clean --dry-run`: Preview what will be deleted and how much space will
+  be reclaimed without actually removing any files.
+- `toad clean --tier cold`: Clean only projects that haven't been touched in
+  over 7 days.
+- `toad clean --yes`: Skip the confirmation prompt (use with caution!).
+
+Toad includes a "Reserved Paths" safety layer that prevents it from ever
+cleaning critical files like `.git`, `src`, or configuration manifests, even if
+a custom strategy is misconfigured.

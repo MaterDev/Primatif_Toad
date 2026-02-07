@@ -49,6 +49,7 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 
 - `toad status`: Check Git health and activity tiers across the ecosystem.
 - `toad stats`: View the visual disk usage heatmap and artifact bloat analysis.
+- `toad clean`: Reclaim disk space by removing detected build artifacts.
 - `toad reveal <query>`: Search for projects by name or `#tag`.
 
 ### Orchestration (Bulk Ops)

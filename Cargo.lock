@@ -846,6 +846,7 @@ dependencies = [
  "clap",
  "colored",
  "discovery",
+ "filetime",
  "indicatif",
  "predicates",
  "rayon",
