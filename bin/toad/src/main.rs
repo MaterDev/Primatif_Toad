@@ -234,19 +234,17 @@ fn main() -> Result<()> {
         Commands::Home { .. } | Commands::Version | Commands::List | Commands::Docs
     );
 
-    if !is_bootstrap {
-        if let Err(e) = &discovered {
-            println!("{} {}", "ERROR:".red().bold(), e);
-            return Ok(());
+    let workspace = match &discovered {
+        Ok(ws) => ws.clone(),
+        Err(e) => {
+            if is_bootstrap {
+                Workspace::with_root(PathBuf::from("."))
+            } else {
+                println!("{} {}", "ERROR:".red().bold(), e);
+                return Ok(());
+            }
         }
-    }
-
-    // At this point, if it's not a bootstrap command, we have a valid workspace.
-    // If it IS a bootstrap command, we might not, so we use a dummy root if needed.
-    let workspace = discovered
-        .as_ref()
-        .cloned()
-        .unwrap_or_else(|_| Workspace::with_root(PathBuf::from(".")));
+    };
 
     // --- Context Health Check ---
     let manifest_path = workspace.manifest_path();
@@ -484,7 +482,9 @@ fn main() -> Result<()> {
             let mut results: Vec<_> = matching
                 .into_par_iter()
                 .map(|p| {
-                    let stats = calculate_project_stats(&p.path, &p.artifact_dirs);
+                    let artifact_set: std::collections::HashSet<&str> =
+                        p.artifact_dirs.iter().map(|s| s.as_str()).collect();
+                    let stats = calculate_project_stats(&p.path, &artifact_set);
                     pb.inc(1);
                     (p, stats)
                 })
@@ -587,7 +587,7 @@ fn main() -> Result<()> {
                     abs_path
                 );
             } else {
-                match discovered {
+                match &discovered {
                     Ok(ws) => {
                         println!(
                             "{} Current Toad Home: {:?}",
@@ -1077,11 +1077,12 @@ fn main() -> Result<()> {
                         toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
                     fs::create_dir_all(&custom_dir)?;
 
-                    let safe_name = name
+                    let mut safe_name = name
                         .to_lowercase()
                         .chars()
                         .filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-')
                         .collect::<String>();
+                    safe_name.truncate(64);
                     let filename = format!("{}.toml", safe_name);
                     let path = custom_dir.join(filename);
                     let content = toml::to_string(&new_strategy)?;
@@ -1097,11 +1098,12 @@ fn main() -> Result<()> {
                 StrategyCommands::Remove { name } => {
                     let custom_dir =
                         toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
-                    let safe_name = name
+                    let mut safe_name = name
                         .to_lowercase()
                         .chars()
                         .filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-')
                         .collect::<String>();
+                    safe_name.truncate(64);
                     let filename = format!("{}.toml", safe_name);
                     let path = custom_dir.join(filename);
 
@@ -1161,7 +1163,9 @@ fn main() -> Result<()> {
             let mut total_potential_savings = 0;
 
             for project in &targets {
-                let stats = calculate_project_stats(&project.path, &project.artifact_dirs);
+                let artifact_set: std::collections::HashSet<&str> =
+                    project.artifact_dirs.iter().map(|s| s.as_str()).collect();
+                let stats = calculate_project_stats(&project.path, &artifact_set);
                 total_potential_savings += stats.artifact_bytes;
 
                 println!(
