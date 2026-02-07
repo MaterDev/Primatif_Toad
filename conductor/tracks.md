@@ -52,9 +52,8 @@ detailed plan in its respective folder.
 
       [./tracks/hardening-audit/](./tracks/hardening-audit/)_
 
-- [~] **Track: Unified Taxonomy & Manifest Refactor** _Link:
-
-      [./tracks/unified-taxonomy/](./tracks/unified-taxonomy/)_
+- [x] **Track: Unified Taxonomy & Manifest Refactor** _Link:
+      [./tracks/archive/unified-taxonomy/](./tracks/archive/unified-taxonomy/)_
 
 ---
 
