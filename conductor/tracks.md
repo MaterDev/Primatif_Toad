@@ -47,9 +47,8 @@ detailed plan in its respective folder.
 - [x] **Track: Toad Clean (Disk Hygiene)** _Link:
       [./tracks/archive/toad-clean/](./tracks/archive/toad-clean/)_
 
-- [~] **Track: Production Hardening & Audit Trail** _Link:
-
-      [./tracks/hardening-audit/](./tracks/hardening-audit/)_
+- [x] **Track: Production Hardening & Audit Trail** _Link:
+      [./tracks/archive/hardening-audit/](./tracks/archive/hardening-audit/)_
 
 - [x] **Track: Unified Taxonomy & Manifest Refactor** _Link:
       [./tracks/archive/unified-taxonomy/](./tracks/archive/unified-taxonomy/)_
