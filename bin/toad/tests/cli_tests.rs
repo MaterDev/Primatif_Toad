@@ -259,8 +259,9 @@ fn test_tagging_flow() -> Result<(), Box<dyn std::error::Error>> {
         .success()
         .stdout(predicate::str::contains("Processed 1 projects."));
 
-    let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
+    let mut cmd_reveal = cargo_bin_cmd!("toad");
+    cmd_reveal
+        .current_dir(dir.path())
         .arg("reveal")
         .arg("tag")
         .assert()
@@ -466,6 +467,316 @@ fn test_clean_activity_tier() -> Result<(), Box<dyn std::error::Error>> {
         .success()
         .stdout(predicate::str::contains("cold-proj"))
         .stdout(predicate::str::contains("active-proj").not());
+
+    Ok(())
+}
+
+#[test]
+fn test_strategy_flow() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let home = dir.path().join("fake-home");
+    fs::create_dir(&home)?;
+
+    // 1. List (should show built-ins after auto-install)
+    let mut cmd_list = cargo_bin_cmd!("toad");
+    cmd_list
+        .env("HOME", &home)
+        .current_dir(dir.path())
+        .arg("strategy")
+        .arg("list")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Rust"))
+        .stdout(predicate::str::contains("NodeJS"));
+
+    // 2. Add
+    let mut cmd_add = cargo_bin_cmd!("toad");
+    cmd_add
+        .env("HOME", &home)
+        .current_dir(dir.path())
+        .arg("strategy")
+        .arg("add")
+        .arg("Zig")
+        .arg("-m")
+        .arg("build.zig")
+        .arg("-t")
+        .arg("#zig")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Strategy 'Zig' added"));
+
+    // 3. Info
+    let mut cmd_info = cargo_bin_cmd!("toad");
+    cmd_info
+        .env("HOME", &home)
+        .current_dir(dir.path())
+        .arg("strategy")
+        .arg("info")
+        .arg("Zig")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Name: Zig"))
+        .stdout(predicate::str::contains("Matches: build.zig"));
+
+    // 4. Remove
+    let mut cmd_rm = cargo_bin_cmd!("toad");
+    cmd_rm
+        .env("HOME", &home)
+        .current_dir(dir.path())
+        .arg("strategy")
+        .arg("remove")
+        .arg("Zig")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Strategy 'Zig' removed"));
+
+    Ok(())
+}
+
+#[test]
+fn test_error_no_workspace() {
+    let dir = tempdir().unwrap();
+    // No .toad-root marker here
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .arg("status")
+        .assert()
+        .success() // Should print error message and exit cleanly (Ok(()))
+        .stdout(predicate::str::contains("ERROR: Toad workspace not found"));
+}
+
+#[test]
+fn test_bootstrap_no_workspace() {
+    let dir = tempdir().unwrap();
+    // Bootstrap command 'version' should work even without a workspace
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .arg("version")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("TOAD CONTROL"));
+}
+
+#[test]
+fn test_clean_real_execution() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+
+    // Setup strategies
+    let config_dir = dir.path().join(".toad");
+    fs::create_dir_all(config_dir.join("strategies/builtin"))?;
+    toad_core::strategy::StrategyRegistry::install_defaults(
+        &config_dir.join("strategies/builtin"),
+    )?;
+
+    let proj_path = projects_dir.join("test-clean-real");
+    fs::create_dir(&proj_path)?;
+    fs::write(proj_path.join("Cargo.toml"), "")?;
+    let target_dir = proj_path.join("target");
+    fs::create_dir(&target_dir)?;
+    fs::write(target_dir.join("artifact"), "data")?;
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("clean")
+        .arg("-y") // Skip confirmation
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Successfully cleaned 1 projects"));
+
+    assert!(!target_dir.exists());
+    assert!(proj_path.exists());
+    Ok(())
+}
+
+#[test]
+fn test_tag_harvest() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+
+    // Setup strategies
+    let config_dir = dir.path().join(".toad");
+    fs::create_dir_all(config_dir.join("strategies/builtin"))?;
+    toad_core::strategy::StrategyRegistry::install_defaults(
+        &config_dir.join("strategies/builtin"),
+    )?;
+
+    // Create a Rust project
+    let rust_path = projects_dir.join("rust-harvest");
+    fs::create_dir(&rust_path)?;
+    fs::write(rust_path.join("Cargo.toml"), "")?;
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("tag")
+        .arg("--harvest")
+        .arg("-y")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Processed 1 projects"));
+
+    let mut cmd_reveal = cargo_bin_cmd!("toad");
+    cmd_reveal
+        .current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("reveal")
+        .arg("rust")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("#rust"));
+
+    Ok(())
+}
+
+#[test]
+fn test_do_destructive_abort() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+    fs::create_dir(projects_dir.join("proj-danger"))?;
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    // This command contains a destructive pattern but we won't provide 'PROCEED'
+    cmd.current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("do")
+        .arg("rm -rf /")
+        .arg("-q")
+        .arg("proj-danger")
+        .write_stdin("n\n") // Abort
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Aborted"));
+
+    Ok(())
+}
+
+#[test]
+fn test_untag_flow() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+    let proj_path = projects_dir.join("untag-proj");
+    fs::create_dir(&proj_path)?;
+
+    // 1. Tag it
+    let mut cmd_tag = cargo_bin_cmd!("toad");
+    cmd_tag
+        .current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("tag")
+        .arg("untag-proj")
+        .arg("temp")
+        .assert()
+        .success();
+
+    // 2. Untag it
+    let mut cmd_untag = cargo_bin_cmd!("toad");
+    cmd_untag
+        .current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("untag")
+        .arg("untag-proj")
+        .arg("temp")
+        .arg("-y")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Processed 1 projects"));
+
+    Ok(())
+}
+
+#[test]
+fn test_stats_all() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+    fs::create_dir(projects_dir.join("stats-proj"))?;
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("stats")
+        .arg("--all")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("TOP 1 OFFENDERS"));
+
+    Ok(())
+}
+
+#[test]
+fn test_tag_untag_filters() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+    fs::create_dir(projects_dir.join("filter-a"))?;
+    fs::create_dir(projects_dir.join("filter-b"))?;
+
+    // 1. Tag by query
+    let mut cmd_tag = cargo_bin_cmd!("toad");
+    cmd_tag
+        .current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("tag")
+        .arg("-q")
+        .arg("filter")
+        .arg("filtered")
+        .arg("-y")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Processed 2 projects"));
+
+    // 2. Untag by query
+    let mut cmd_untag = cargo_bin_cmd!("toad");
+    cmd_untag
+        .current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("untag")
+        .arg("-q")
+        .arg("filter-a")
+        .arg("filtered")
+        .arg("-y")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Processed 1 projects"));
+
+    Ok(())
+}
+
+#[test]
+fn test_do_fail_fast() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempdir()?;
+    fs::write(dir.path().join(".toad-root"), "")?;
+    let projects_dir = dir.path().join("projects");
+    fs::create_dir(&projects_dir)?;
+    fs::create_dir(projects_dir.join("proj-1"))?;
+    fs::create_dir(projects_dir.join("proj-2"))?;
+
+    let mut cmd = cargo_bin_cmd!("toad");
+    cmd.current_dir(dir.path())
+        .env("TOAD_ROOT", dir.path())
+        .arg("do")
+        .arg("false") // Will fail
+        .arg("-q")
+        .arg("proj")
+        .arg("-f") // Fail fast
+        .arg("-y")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("FAIL"));
 
     Ok(())
 }

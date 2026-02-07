@@ -123,7 +123,7 @@ enum Commands {
         /// Project name (optional if using filters)
         project: Option<String>,
         /// Tag name
-        tag: String,
+        tag: Option<String>,
 
         /// Filter by name query
         #[arg(long, short = 'q')]
@@ -814,45 +814,44 @@ fn main() -> Result<()> {
                     targets.push(p.name);
                 }
             }
-            // 2. Logic for specific project
-            else if let Some(p_name) = project {
-                if let Some(t_name) = tag {
-                    registry.add_tag(p_name, t_name);
-                    targets.push(p_name.clone());
-                } else {
-                    bail!("Must provide a tag name.");
-                }
-            }
-            // 3. Logic for filters
+            // 2. Logic for filters (MUST come before specific project logic)
             else if query.is_some() || filter_tag.is_some() {
-                let matching: Vec<_> = projects
-                    .into_iter()
-                    .filter(|p| {
-                        let name_match = match query {
-                            Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
-                            None => true,
-                        };
-                        let tag_match = match filter_tag {
-                            Some(ref t) => {
-                                let target = if t.starts_with('#') {
-                                    t.clone()
-                                } else {
-                                    format!("#{}", t)
-                                };
-                                p.tags.contains(&target)
-                            }
-                            None => true,
-                        };
-                        name_match && tag_match
-                    })
-                    .collect();
+                // If filters are used, the first positional argument (project)
+                // is actually the tag name we want to assign.
+                let t_name = match (tag, project) {
+                    (Some(t), _) => Some(t),
+                    (None, Some(p)) => Some(p),
+                    (None, None) => None,
+                };
 
-                if matching.is_empty() {
-                    println!("No projects found matching filters.");
-                    return Ok(());
-                }
+                if let Some(t_name) = t_name {
+                    let matching: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match filter_tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
 
-                if let Some(t_name) = tag {
+                    if matching.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
                     println!("Found {} target(s):", matching.len());
                     for p in &matching {
                         println!("  {} {}", "»".blue(), p.name);
@@ -875,6 +874,15 @@ fn main() -> Result<()> {
                     }
                 } else {
                     bail!("Must provide a tag name to assign.");
+                }
+            }
+            // 3. Logic for specific project
+            else if let Some(p_name) = project {
+                if let Some(t_name) = tag {
+                    registry.add_tag(p_name, t_name);
+                    targets.push(p_name.clone());
+                } else {
+                    bail!("Must provide a tag name.");
                 }
             } else {
                 bail!("Must provide a project name or use filters (--query, --tag, --harvest).");
@@ -902,65 +910,85 @@ fn main() -> Result<()> {
             let projects = scan_all_projects(&workspace)?;
             let mut targets = Vec::new();
 
-            // 1. Logic for specific project
-            if let Some(p_name) = project {
-                registry.remove_tag(p_name, tag);
-                targets.push(p_name.clone());
-            }
-            // 2. Logic for filters
-            else if query.is_some() || filter_tag.is_some() {
-                let matching: Vec<_> = projects
-                    .into_iter()
-                    .filter(|p| {
-                        let name_match = match query {
-                            Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
-                            None => true,
-                        };
-                        let tag_match = match filter_tag {
-                            Some(ref t) => {
-                                let target = if t.starts_with('#') {
-                                    t.clone()
-                                } else {
-                                    format!("#{}", t)
-                                };
-                                p.tags.contains(&target)
-                            }
-                            None => true,
-                        };
-                        name_match && tag_match
-                    })
-                    .collect();
+            // 1. Logic for filters (MUST come before specific project logic)
+            if query.is_some() || filter_tag.is_some() {
+                // If filters are used, the first positional argument (project)
+                // is actually the tag name we want to remove.
+                let t_name = match (tag, project) {
+                    (Some(t), _) => Some(t),
+                    (None, Some(p)) => Some(p),
+                    (None, None) => None,
+                };
 
-                if matching.is_empty() {
-                    println!("No projects found matching filters.");
-                    return Ok(());
-                }
+                if let Some(t_name) = t_name {
+                    let matching: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match filter_tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
 
-                println!("Found {} target(s):", matching.len());
-                for p in &matching {
-                    println!("  {} {}", "»".blue(), p.name);
-                }
-
-                if !*yes {
-                    print!("\nRemove tag '{}' from these projects? [y/N]: ", tag);
-                    io::stdout().flush()?;
-                    let mut input = String::new();
-                    io::stdin().read_line(&mut input)?;
-                    if !input.trim().to_lowercase().starts_with('y') {
-                        println!("Aborted.");
+                    if matching.is_empty() {
+                        println!("No projects found matching filters.");
                         return Ok(());
                     }
-                }
 
-                for p in matching {
-                    registry.remove_tag(&p.name, tag);
-                    targets.push(p.name);
+                    println!("Found {} target(s):", matching.len());
+                    for p in &matching {
+                        println!("  {} {}", "»".blue(), p.name);
+                    }
+
+                    if !*yes {
+                        print!("\nRemove tag '{}' from these projects? [y/N]: ", t_name);
+                        io::stdout().flush()?;
+                        let mut input = String::new();
+                        io::stdin().read_line(&mut input)?;
+                        if !input.trim().to_lowercase().starts_with('y') {
+                            println!("Aborted.");
+                            return Ok(());
+                        }
+                    }
+
+                    for p in matching {
+                        registry.remove_tag(&p.name, t_name);
+                        targets.push(p.name);
+                    }
+                } else {
+                    bail!("Must provide a tag name to remove.");
+                }
+            }
+            // 2. Logic for specific project
+            else if let Some(p_name) = project {
+                if let Some(t_name) = tag {
+                    registry.remove_tag(p_name, t_name);
+                    targets.push(p_name.clone());
+                } else {
+                    bail!("Must provide a tag name to remove.");
                 }
             } else {
                 bail!("Must provide a project name or use filters (--query, --tag).");
             }
 
-            registry.save(&workspace.tags_path())?;
+            if let Err(e) = registry.save(&workspace.tags_path()) {
+                println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
+                return Err(e);
+            }
+
             println!(
                 "{} Processed {} projects.",
                 "SUCCESS:".green().bold(),

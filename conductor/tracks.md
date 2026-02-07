@@ -53,6 +53,8 @@ detailed plan in its respective folder.
 - [x] **Track: Unified Taxonomy & Manifest Refactor** _Link:
       [./tracks/archive/unified-taxonomy/](./tracks/archive/unified-taxonomy/)_
 
+- [x] **Track: Coverage Uplift (Phase 2)** _Link:
+      [./tracks/archive/coverage-uplift-v2/](./tracks/archive/coverage-uplift-v2/)_
 ---
 
 - [x] **Track: Rust Context & Architecture Guide**
