@@ -298,14 +298,16 @@ fn test_reveal_cached() -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir(&projects_dir)?;
 
     let mut cmd_sync = cargo_bin_cmd!("toad");
-    cmd_sync.env("HOME", &home)
+    cmd_sync
+        .env("HOME", &home)
         .current_dir(dir.path())
         .arg("sync")
         .assert()
         .success();
 
     let registry_path = toad_dir.join("registry.json");
-    let mut registry_json: serde_json::Value = serde_json::from_str(&fs::read_to_string(&registry_path)?)?;
+    let mut registry_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&registry_path)?)?;
 
     let cached_project = serde_json::json!({
         "name": "cached-proj",
@@ -314,11 +316,15 @@ fn test_reveal_cached() -> Result<(), Box<dyn std::error::Error>> {
         "activity": "Active",
         "vcs_status": "Clean",
         "essence": "Cached project",
-        "hashtags": [],
         "tags": ["#cached"],
+        "taxonomy": ["#rust"],
+        "artifact_dirs": ["target"],
         "sub_projects": []
     });
-    registry_json["projects"].as_array_mut().unwrap().push(cached_project);
+    registry_json["projects"]
+        .as_array_mut()
+        .unwrap()
+        .push(cached_project);
     fs::write(&registry_path, serde_json::to_string(&registry_json)?)?;
 
     Ok(())
@@ -340,7 +346,8 @@ fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
 
     // 2. Sync to create cache
     let mut cmd_sync = cargo_bin_cmd!("toad");
-    cmd_sync.env("HOME", &home)
+    cmd_sync
+        .env("HOME", &home)
         .current_dir(dir.path())
         .arg("sync")
         .assert()
@@ -348,7 +355,8 @@ fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
 
     // 3. Verify it's found (cached)
     let mut cmd_reveal1 = cargo_bin_cmd!("toad");
-    cmd_reveal1.env("HOME", &home)
+    cmd_reveal1
+        .env("HOME", &home)
         .current_dir(dir.path())
         .arg("reveal")
         .arg("temp")
@@ -361,7 +369,8 @@ fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
 
     // 5. Verify it's NOT found (re-scan triggered by fingerprint change)
     let mut cmd_reveal2 = cargo_bin_cmd!("toad");
-    cmd_reveal2.env("HOME", &home)
+    cmd_reveal2
+        .env("HOME", &home)
         .current_dir(dir.path())
         .arg("reveal")
         .arg("temp")

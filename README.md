@@ -28,10 +28,11 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 
 ## The v0.7.0 Bloom
 
+- **Dynamic Strategy Engine:** Modular "Stack Support Plugins" allow you to add support for any language (Elixir, C#, Docker) by dropping a TOML file into `~/.toad/strategies/`.
 - **Multi-Core Parallelism:** Leverages `rayon` for sub-second scanning and concurrent bulk command execution across 100+ projects.
 - **Safety Guardrails:** Built-in "Danger Pattern" detection (`rm -rf`, `reset --hard`) with forced `PROCEED` confirmations and `--dry-run` modes.
 - **Visual Analytics:** High-fidelity disk usage auditing with the **Atari Heatmap** and a "Bloat Index" (Source vs. Artifact ratio).
-- **Taxonomy (Tagging):** Ubiquitous filtering across all commands using procedural hashtags (`#rust`, `#node`) and custom persistent tags.
+- **Taxonomy (Tagging):** Unified "Ingredients" taxonomy identifies hybrid projects and manages them through a single evidence-based pipeline.
 - **Global Anchor:** System-wide CLI access via `toad home`, allowing management from any directory on your Mac.
 
 ## Quick Start
@@ -39,8 +40,7 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 1. **Install:** `just install`
 2. **Anchor:** `toad home .` (Set your current directory as the system default)
 3. **Analyze:** `toad stats` (See your ecosystem's health heatmap)
-4. **Tag:** `toad tag --harvest` (Automatically categorize your projects)
-
+4. **Extend:** `toad strategy add Elixir --match mix.exs --tag elixir` (Add a new language support plugin)
 ---
 
 ## Core Commands
@@ -53,23 +53,46 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 
 ### Orchestration (Bulk Ops)
 
-> [!WARNING]
-> **High-Risk Operations:** Batch execution via `toad do` is potentially destructive. We strongly recommend using the `--dry-run` flag to preview changes before running them for real.
+> [!WARNING] **High-Risk Operations:** Batch execution via `toad do` is
+> potentially destructive. We strongly recommend using the `--dry-run` flag to
+> preview changes before running them for real.
 
-- `toad do "<command>"`: Execute shell commands across matching projects in parallel.
+- `toad do "<command>"`: Execute shell commands across matching projects in
+  parallel.
 - `toad do "git pull" --tag stable`: Batch update only your stable tools.
 - `toad do "rm -rf target" --dry-run`: Safely preview destructive maintenance.
 
-### Taxonomy & Context
+### Taxonomy & Stack Support
 
+- `toad strategy list`: List all installed stack support plugins (built-in and
+  custom).
+- `toad strategy add`: Interactively create a new stack support plugin.
 - `toad tag <project> <tag>`: Assign custom metadata.
-- `toad tag --query "ui" #frontend`: Bulk tag projects by name.
 - `toad manifest`: Synchronize high-fidelity AI context ("Shadows").
+
+---
+
+## 🧩 Stack Support Plugins
+
+Toad uses a data-driven "Strategy Engine" to identify projects. You can extend
+it easily:
+
+```bash
+# Add support for Elixir projects
+toad strategy add Elixir --match "mix.exs" --clean "deps,_build" --tag "#elixir"
+```
+
+This creates a TOML manifest in `~/.toad/strategies/custom/elixir.toml`. Toad
+will now identify Elixir projects, auto-tag them, and know exactly which folders
+to clean.
+
+See the [Stack Support Plugins Guide](docs/PLUGINS.md) for more details.
 
 ### Workspace Anchor
 
-> [!IMPORTANT]
-> **Context Steering:** The `toad home` command updates the global system pointer. All subsequent CLI calls will target the projects and metadata in the newly anchored directory.
+> [!IMPORTANT] **Context Steering:** The `toad home` command updates the global
+> system pointer. All subsequent CLI calls will target the projects and metadata
+> in the newly anchored directory.
 
 - `toad home .`: Anchor the current directory as your system-wide Toad home.
 - `toad home [path]`: View or set the global workspace pointer manually.
@@ -78,7 +101,8 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 
 ## Architecture
 
-Toad is built as a modular Rust workspace, ensuring logic is decoupled and reusable:
+Toad is built as a modular Rust workspace, ensuring logic is decoupled and
+reusable:
 
 - **`toad` (The Orchestrator):** The primary CLI binary.
 - **`toad-core`:** Shared data models, global configuration, and fingerprinting.

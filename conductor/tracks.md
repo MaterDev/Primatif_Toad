@@ -48,42 +48,16 @@ detailed plan in its respective folder.
 
       [./tracks/toad-clean/](./tracks/toad-clean/)_
 
-
-
 - [~] **Track: Production Hardening & Audit Trail** _Link:
 
       [./tracks/hardening-audit/](./tracks/hardening-audit/)_
 
-
-
 - [~] **Track: Unified Taxonomy & Manifest Refactor** _Link:
-
-
 
       [./tracks/unified-taxonomy/](./tracks/unified-taxonomy/)_
 
-
-
-
-
-
-
 ---
-
-
-
-
-
-
 
 - [ ] **Track: Rust Context & Architecture Guide**
 
-
-
 _Link: [./tracks/rust-guide_20260205/](./tracks/rust-guide_20260205/)_
-
-
-
-
-
-

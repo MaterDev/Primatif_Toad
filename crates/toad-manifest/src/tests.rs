@@ -1,18 +1,19 @@
 use super::generate_markdown;
 use std::path::PathBuf;
-use toad_core::{ActivityTier, ProjectDetail, ProjectStack, VcsStatus};
+use toad_core::{ActivityTier, ProjectDetail, VcsStatus};
 
 #[test]
 fn test_generate_markdown_basic() {
     let projects = vec![ProjectDetail {
         name: "test-proj".to_string(),
         path: PathBuf::from("projects/test-proj"),
-        stack: ProjectStack::Rust,
+        stack: "Rust".to_string(),
         activity: ActivityTier::Active,
         vcs_status: VcsStatus::Clean,
         essence: Some("Test essence".to_string()),
-        hashtags: vec!["#test".to_string()],
         tags: vec!["#test".to_string()],
+        taxonomy: vec!["#test".to_string()],
+        artifact_dirs: vec!["target".to_string()],
         sub_projects: Vec::new(),
     }];
 
@@ -27,7 +28,9 @@ fn test_generate_markdown_basic() {
 fn test_generate_markdown_empty() {
     let md = generate_markdown(&[], 0);
     assert!(md.contains("**Fingerprint:** `0`"));
-    assert!(md.contains("| Project | Stack | Activity | VCS | Essence (Extractive) | Hashtags |"));
+    assert!(md.contains(
+        "| Project | Stack | Activity | VCS | Essence (Extractive) | Taxonomy (Ingredients) |"
+    ));
 }
 
 #[test]
@@ -35,12 +38,13 @@ fn test_generate_markdown_escaping() {
     let projects = vec![ProjectDetail {
         name: "escape-test".to_string(),
         path: PathBuf::from("projects/escape-test"),
-        stack: ProjectStack::Generic,
+        stack: "Generic".to_string(),
         activity: ActivityTier::Archive,
         vcs_status: VcsStatus::None,
         essence: Some("Pipe | [Link] https://google.com".to_string()),
-        hashtags: vec![],
         tags: vec![],
+        taxonomy: vec![],
+        artifact_dirs: vec![],
         sub_projects: Vec::new(),
     }];
 
@@ -51,8 +55,8 @@ fn test_generate_markdown_escaping() {
     assert!(md.contains("\\[Link\\]"));
     // URL should be escaped
     assert!(md.contains("https:\\\\/google.com"));
-    // No hashtags case
-    assert!(md.contains("Pending harvest..."));
+    // No taxonomy case
+    assert!(md.contains("Generic"));
 }
 
 #[test]
@@ -61,12 +65,13 @@ fn test_generate_markdown_truncation() {
     let projects = vec![ProjectDetail {
         name: "long-proj".to_string(),
         path: PathBuf::from("projects/long-proj"),
-        stack: ProjectStack::Go,
+        stack: "Go".to_string(),
         activity: ActivityTier::Cold,
         vcs_status: VcsStatus::Dirty,
         essence: Some(long_essence),
-        hashtags: vec!["#go".to_string()],
         tags: vec!["#go".to_string()],
+        taxonomy: vec!["#go".to_string()],
+        artifact_dirs: vec!["bin".to_string()],
         sub_projects: Vec::new(),
     }];
 

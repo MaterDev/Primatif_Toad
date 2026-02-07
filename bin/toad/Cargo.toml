@@ -15,9 +15,10 @@ toad-core = { version = "0.7.0", path = "../../crates/toad-core" }
 toad-git = { path = "../../crates/toad-git" }
 toad-manifest = { version = "0.7.0", path = "../../crates/toad-manifest" }
 toad-ops = { path = "../../crates/toad-ops" }
+toml = "0.8"
 
 [dev-dependencies]
 assert_cmd = "2.0"
 predicates = "3.1"
-tempfile = "3.10"
 serde_json = "1.0"
+tempfile = "3.10"

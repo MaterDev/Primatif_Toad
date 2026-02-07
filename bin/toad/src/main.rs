@@ -141,12 +141,50 @@ enum Commands {
     Manifest,
     /// Synchronize the project registry cache
     Sync,
+    /// Manage language/stack strategies
+    Strategy {
+        #[command(subcommand)]
+        subcommand: StrategyCommands,
+    },
     /// Generate programmatic CLI documentation (Markdown)
     Docs,
     /// List all available commands
     List,
     /// Display version information and the Toad banner
     Version,
+}
+
+#[derive(Subcommand)]
+enum StrategyCommands {
+    /// List all active strategies
+    List,
+    /// Add a new custom strategy
+    Add {
+        /// Name of the strategy (e.g., Elixir)
+        name: String,
+        /// Files that identify this stack (comma-separated, e.g., mix.exs)
+        #[arg(long, short = 'm')]
+        match_files: String,
+        /// Build artifacts to clean (comma-separated, e.g., deps,_build)
+        #[arg(long, short = 'c')]
+        artifacts: Option<String>,
+        /// Tags to auto-assign (comma-separated, e.g., #elixir)
+        #[arg(long, short = 't')]
+        tags: Option<String>,
+        /// Priority for matching (higher = earlier check)
+        #[arg(long, default_value = "10")]
+        priority: i32,
+    },
+    /// Show details of a specific strategy
+    Info {
+        /// Name of the strategy
+        name: String,
+    },
+    /// Remove a custom strategy
+    Remove {
+        /// Name of the strategy
+        name: String,
+    },
 }
 
 fn print_banner() {
@@ -420,7 +458,7 @@ fn main() -> Result<()> {
             let mut results: Vec<_> = matching
                 .into_par_iter()
                 .map(|p| {
-                    let stats = calculate_project_stats(&p.path, &p.stack);
+                    let stats = calculate_project_stats(&p.path, &p.artifact_dirs);
                     pb.inc(1);
                     (p, stats)
                 })
@@ -926,6 +964,102 @@ fn main() -> Result<()> {
                 "SUCCESS:".green().bold(),
                 registry.projects.len()
             );
+        }
+        Commands::Strategy { subcommand } => {
+            let registry = toad_core::strategy::StrategyRegistry::load()?;
+
+            match subcommand {
+                StrategyCommands::List => {
+                    println!("{}", "--- ACTIVE STACK STRATEGIES ---".green().bold());
+                    for strategy in &registry.strategies {
+                        println!(
+                            "- {: <10} {} (Priority: {})",
+                            strategy.name.bold(),
+                            format!("[{}]", strategy.match_files.join(", ")).dimmed(),
+                            strategy.priority
+                        );
+                    }
+                }
+                StrategyCommands::Info { name } => {
+                    let strategy = registry
+                        .strategies
+                        .iter()
+                        .find(|s| s.name.to_lowercase() == name.to_lowercase());
+                    if let Some(s) = strategy {
+                        println!("{}: {}", "Name".bold(), s.name);
+                        println!("{}: {}", "Priority".bold(), s.priority);
+                        println!("{}: {}", "Matches".bold(), s.match_files.join(", "));
+                        println!("{}: {}", "Artifacts".bold(), s.artifacts.join(", "));
+                        println!("{}: {}", "Auto-Tags".bold(), s.tags.join(", "));
+                    } else {
+                        bail!("Strategy '{}' not found.", name);
+                    }
+                }
+                StrategyCommands::Add {
+                    name,
+                    match_files,
+                    artifacts,
+                    tags,
+                    priority,
+                } => {
+                    let new_strategy = toad_core::StackStrategy {
+                        name: name.clone(),
+                        match_files: match_files
+                            .split(',')
+                            .map(|s| s.trim().to_string())
+                            .collect(),
+                        artifacts: artifacts
+                            .clone()
+                            .unwrap_or_default()
+                            .split(',')
+                            .map(|s| s.trim().to_string())
+                            .filter(|s| !s.is_empty())
+                            .collect(),
+                        tags: tags
+                            .clone()
+                            .unwrap_or_default()
+                            .split(',')
+                            .map(|s| s.trim().to_string())
+                            .filter(|s| !s.is_empty())
+                            .collect(),
+                        priority: *priority,
+                    };
+
+                    let custom_dir =
+                        toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
+                    fs::create_dir_all(&custom_dir)?;
+
+                    let safe_name = name
+                        .to_lowercase()
+                        .chars()
+                        .filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-')
+                        .collect::<String>();
+                    let filename = format!("{}.toml", safe_name);
+                    let path = custom_dir.join(filename);
+                    let content = toml::to_string(&new_strategy)?;
+                    fs::write(&path, content)?;
+
+                    println!(
+                        "{} Strategy '{}' added and saved to {:?}",
+                        "SUCCESS:".green().bold(),
+                        name,
+                        path
+                    );
+                }
+                StrategyCommands::Remove { name } => {
+                    let custom_dir =
+                        toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
+                    let filename = format!("{}.toml", name.to_lowercase().replace(' ', "_"));
+                    let path = custom_dir.join(filename);
+
+                    if path.exists() {
+                        fs::remove_file(&path)?;
+                        println!("{} Strategy '{}' removed.", "SUCCESS:".green().bold(), name);
+                    } else {
+                        bail!("Custom strategy '{}' not found or is a built-in.", name);
+                    }
+                }
+            }
         }
         Commands::Docs => {
             println!("Generating programmatic CLI documentation...");
