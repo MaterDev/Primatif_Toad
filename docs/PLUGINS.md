@@ -1,11 +1,11 @@
-# Stack Support Plugin System
+# 🌿 Stack Support Plugin System
 
 Toad uses a modular, evidence-based "Strategy Engine" to identify projects,
 assign tags, and manage disk hygiene. This system allows users to add support
 for any programming language, framework, or tool without modifying the Toad
 source code.
 
-## 🧩 How it Works
+## 🪷 How it Works
 
 A **Stack Strategy** is a TOML manifest that defines:
 
@@ -15,7 +15,7 @@ A **Stack Strategy** is a TOML manifest that defines:
    to delete).
 4. **Priority:** The order in which strategies are checked.
 
-## 📂 Strategy Locations
+## 🌾 Strategy Locations
 
 - **Built-in:** Managed by Toad (located in `~/.toad/strategies/builtin/`).
   These are your defaults (Rust, Node, Go, etc.).
@@ -69,7 +69,7 @@ priority = 10
 - `priority`: Higher numbers are checked first. Monorepos usually have higher
   priority (20) than individual languages (10).
 
-## 🚀 Advanced Use Cases
+## 🐸 Advanced Use Cases
 
 - **Hybrid Projects:** If a project matches multiple strategies (e.g., a Rust
   project with a Dockerfile), it will receive tags and cleanup rules from

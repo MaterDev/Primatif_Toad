@@ -12,7 +12,7 @@ cleanup() {
 🧹 Tearing down ephemeral environment: $TEMP_ROOT"
     rm -rf "$TEMP_ROOT"
 }
-trap cleanup EXIT
+trap cleanup EXIT SIGINT SIGTERM SIGHUP
 
 echo "🌊 Initializing ephemeral environment at $SANDBOX_DIR..."
 

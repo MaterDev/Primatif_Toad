@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+echo "🔍 Verifying documentation integrity..."
+
+# Regenerate CLI docs
+cargo run -p toad -- docs > /dev/null 2>&1
+
+# Check for diffs in docs/
+if ! git diff --exit-code docs/; then
+    echo "❌ Documentation is out of sync with the binary!"
+    echo "Please commit the changes in the 'docs/' directory before pushing."
+    exit 1
+fi
+
+echo "✅ Documentation verified."
+exit 0

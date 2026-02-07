@@ -19,6 +19,7 @@ Commands:
   untag     Remove a tag from projects
   manifest  Generate a project manifest for AI context (Shadow)
   sync      Synchronize the project registry cache
+  strategy  Manage language/stack strategies
   docs      Generate programmatic CLI documentation (Markdown)
   list      List all available commands
   version   Display version information and the Toad banner

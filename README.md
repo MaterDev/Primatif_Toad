@@ -7,7 +7,7 @@
 The modular meta-engineering platform.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version: v0.7.0](https://img.shields.io/badge/version-v0.7.0-green.svg)](Cargo.toml)
+[![Version: v1.0.0](https://img.shields.io/badge/version-v1.0.0-green.svg)](Cargo.toml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
 
 ---
@@ -26,7 +26,7 @@ By centralizing observability and orchestration, Local-Ops solves the critical p
 
 Ultimately, Local-Ops bridges the gap between raw code and developer productivity, ensuring that a massive portfolio of work remains a live asset rather than an unmanageable burden of technical debt.
 
-## The v0.7.0 Bloom
+## The v1.0.0 Bloom
 
 - **Dynamic Strategy Engine:** Modular "Stack Support Plugins" allow you to add support for any language (Elixir, C#, Docker) by dropping a TOML file into `~/.toad/strategies/`.
 - **Multi-Core Parallelism:** Leverages `rayon` for sub-second scanning and concurrent bulk command execution across 100+ projects.
@@ -35,7 +35,7 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 - **Taxonomy (Tagging):** Unified "Ingredients" taxonomy identifies hybrid projects and manages them through a single evidence-based pipeline.
 - **Global Anchor:** System-wide CLI access via `toad home`, allowing management from any directory on your Mac.
 
-## Quick Start
+## 🐸 Quick Start
 
 1. **Install:** `just install`
 2. **Anchor:** `toad home .` (Set your current directory as the system default)
@@ -72,7 +72,7 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 
 ---
 
-## 🧩 Stack Support Plugins
+## 🌿 Stack Support Plugins
 
 Toad uses a data-driven "Strategy Engine" to identify projects. You can extend
 it easily:
@@ -99,7 +99,7 @@ See the [Stack Support Plugins Guide](docs/PLUGINS.md) for more details.
 
 ---
 
-## Architecture
+## 🪵 Architecture
 
 Toad is built as a modular Rust workspace, ensuring logic is decoupled and
 reusable:

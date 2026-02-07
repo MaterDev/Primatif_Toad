@@ -85,8 +85,12 @@ fn test_status_mixed() -> Result<(), Box<dyn std::error::Error>> {
         .arg("status")
         .assert()
         .success()
-        .stdout(predicate::str::contains("01/2 projects are CLEAN"))
-        .stdout(predicate::str::contains("1 projects have NEW FILES"))
+        .stdout(predicate::str::contains(
+            "01/2 projects are HEALTHY & CLEAN",
+        ))
+        .stdout(predicate::str::contains(
+            "1 projects have NEW GROWTH (UNTRACKED)",
+        ))
         .stdout(predicate::str::contains("dirty-proj"));
     Ok(())
 }

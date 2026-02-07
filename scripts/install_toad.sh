@@ -4,7 +4,7 @@ set -e
 # Primatif_Toad Installer
 # Installs the Toad Control CLI to the local Cargo bin directory.
 
-echo "Installing Toad Control..."
+echo "🐸 Cultivating the Toad Control ecosystem..."
 
 # 0. Setup Git hooks and sync version
 just setup-hooks
@@ -21,5 +21,5 @@ if ! command -v toad &> /dev/null; then
 fi
 
 # 3. Print Welcome Banner
-echo -e "\nInstallation Complete!"
+echo -e "\n🐸 Toad is ready to jump!"
 toad version

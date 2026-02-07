@@ -4,7 +4,7 @@
 
 - **Priority:** Medium
 - **Owner:** Gemini (Solo-Dev Support)
-- **Status:** In-Progress
+- **Status:** Completed
 
 ## Objective
 
@@ -18,7 +18,7 @@ organization and filtering.
   - [x] Implement JSON persistence in `shadows/tags.json`. [commit: c8132d3]
 - [x] **Discovery Integration** [commit: c8132d3]
   - [x] Update `ProjectDetail` model to include tags. [commit: c8132d3]
-  - [ ] Refactor discovery to merge procedurally detected tags with persistent
+  - [x] Refactor discovery to merge procedurally detected tags with persistent
         ones.
 - [x] **CLI API: Tag Management** [commit: c8132d3]
   - [x] Implement `toad tag` command. [commit: c8132d3]

@@ -32,4 +32,3 @@ taxonomy across the platform.
   - [x] Perform SemVer bump.
 - [x] **Release v1.0.0 (RC)**
   - [x] Final audit of all systems.
-

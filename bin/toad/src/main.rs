@@ -206,21 +206,26 @@ fn main() -> Result<()> {
 
     // --- Context Discovery ---
     let discovered = Workspace::discover();
+
+    // Commands that don't require a valid workspace
+    let is_bootstrap = matches!(
+        &cli.command,
+        Commands::Home { .. } | Commands::Version | Commands::List | Commands::Docs
+    );
+
+    if !is_bootstrap {
+        if let Err(e) = &discovered {
+            println!("{} {}", "ERROR:".red().bold(), e);
+            return Ok(());
+        }
+    }
+
+    // At this point, if it's not a bootstrap command, we have a valid workspace.
+    // If it IS a bootstrap command, we might not, so we use a dummy root if needed.
     let workspace = discovered
         .as_ref()
         .cloned()
         .unwrap_or_else(|_| Workspace::with_root(PathBuf::from(".")));
-
-    // Check if the current command requires a valid workspace
-    match &cli.command {
-        Commands::Home { .. } | Commands::Version | Commands::List => {}
-        _ => {
-            if let Err(e) = &discovered {
-                println!("{} {}", "ERROR:".red().bold(), e);
-                return Ok(());
-            }
-        }
-    }
 
     // --- Context Health Check ---
     let manifest_path = workspace.manifest_path();
@@ -372,20 +377,20 @@ fn main() -> Result<()> {
             if clean_count > 0 {
                 println!(
                     "{} {:02}/{} projects are {}",
-                    "■".green(),
+                    "🪷".green(),
                     clean_count,
                     total_matching,
-                    "CLEAN".green().bold()
+                    "HEALTHY & CLEAN".green().bold()
                 );
             }
 
             if no_repo_count > 0 {
                 println!(
                     "{} {:02}/{} projects are {}",
-                    "■".yellow(),
+                    "🌾".yellow(),
                     no_repo_count,
                     total_matching,
-                    "UNTRACKED BY TOAD".yellow()
+                    "OUTSIDE THE TOAD POND (UNTRACKED)".yellow()
                 );
             }
 
@@ -393,12 +398,12 @@ fn main() -> Result<()> {
             if !untracked.is_empty() {
                 println!(
                     "\n{} {} projects have {}",
-                    "⚡".blue(),
+                    "🌿".green(),
                     untracked.len(),
-                    "NEW FILES".blue().bold()
+                    "NEW GROWTH (UNTRACKED)".green().bold()
                 );
                 for name in untracked {
-                    println!("  {} {}", "»".blue(), name);
+                    println!("  {} {}", "»".green(), name);
                 }
             }
 
@@ -407,7 +412,7 @@ fn main() -> Result<()> {
                     "\n{} {} projects have {}",
                     "⚠️".red(),
                     dirty.len(),
-                    "PENDING CHANGES".red().bold()
+                    "PENDING CHANGES (DIRTY)".red().bold()
                 );
                 for name in dirty {
                     println!("  {} {}", "»".red(), name);
@@ -675,10 +680,10 @@ fn main() -> Result<()> {
 
             let failed = AtomicBool::new(false);
             let results: Vec<_> = targets
-                .into_par_iter()
+                .par_iter()
                 .map(|project| {
                     if *fail_fast && failed.load(Ordering::Relaxed) {
-                        return (project.name, None);
+                        return (project.name.clone(), None);
                     }
 
                     let res = toad_ops::shell::run_in_dir(
@@ -696,7 +701,7 @@ fn main() -> Result<()> {
                     }
 
                     pb.inc(1);
-                    (project.name, Some(res))
+                    (project.name.clone(), Some(res))
                 })
                 .collect();
 
@@ -748,6 +753,24 @@ fn main() -> Result<()> {
                     String::new()
                 }
             );
+
+            // --- Audit Logging ---
+            let entry = toad_ops::audit::AuditEntry {
+                timestamp: chrono::Local::now().to_rfc3339(),
+                command: command.to_string(),
+                target_count: targets.len(),
+                success_count,
+                fail_count,
+                skip_count,
+                user: whoami::username(),
+            };
+            if let Err(e) = toad_ops::audit::log_operation(entry) {
+                println!(
+                    "{} Failed to write to audit log: {}",
+                    "WARNING:".yellow(),
+                    e
+                );
+            }
         }
         Commands::Tag {
             project,
@@ -765,7 +788,7 @@ fn main() -> Result<()> {
             if *harvest {
                 println!("{} Harvesting stack tags...", "INFO:".blue().bold());
                 for p in projects {
-                    let stack_tag = p.stack.to_string().to_lowercase();
+                    let stack_tag = p.stack.to_lowercase();
                     registry.add_tag(&p.name, &stack_tag);
                     targets.push(p.name);
                 }
@@ -836,7 +859,11 @@ fn main() -> Result<()> {
                 bail!("Must provide a project name or use filters (--query, --tag, --harvest).");
             }
 
-            registry.save(&workspace.tags_path())?;
+            if let Err(e) = registry.save(&workspace.tags_path()) {
+                println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
+                return Err(e);
+            }
+
             println!(
                 "{} Processed {} projects.",
                 "SUCCESS:".green().bold(),
@@ -973,7 +1000,7 @@ fn main() -> Result<()> {
                     println!("{}", "--- ACTIVE STACK STRATEGIES ---".green().bold());
                     for strategy in &registry.strategies {
                         println!(
-                            "- {: <10} {} (Priority: {})",
+                            "🌿 {: <10} {} (Priority: {})",
                             strategy.name.bold(),
                             format!("[{}]", strategy.match_files.join(", ")).dimmed(),
                             strategy.priority
