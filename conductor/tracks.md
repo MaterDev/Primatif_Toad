@@ -55,6 +55,6 @@ detailed plan in its respective folder.
 
 ---
 
-- [ ] **Track: Rust Context & Architecture Guide**
+- [x] **Track: Rust Context & Architecture Guide**
 
-_Link: [./tracks/rust-guide_20260205/](./tracks/rust-guide_20260205/)_
+      _Link: [./tracks/archive/rust-guide_20260205/](./tracks/archive/rust-guide_20260205/)_
