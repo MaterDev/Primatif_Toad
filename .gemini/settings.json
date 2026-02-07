@@ -7,8 +7,7 @@
   "context": {
     "files": [
       ".gemini/GEMINI.md",
-      ".gemini/SESSIONS.md",
-      "docs/CONVENTIONS.md"
+      ".gemini/SESSIONS.md"
     ],
     "folders": [
       "projects",

@@ -7,7 +7,7 @@
 The modular meta-engineering platform.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version: v1.0.0](https://img.shields.io/badge/version-v1.0.0-green.svg)](Cargo.toml)
+[![Version: v1.0.1](https://img.shields.io/badge/version-v1.0.1-green.svg)](Cargo.toml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
 
 ---
@@ -87,7 +87,7 @@ This creates a TOML manifest in `~/.toad/strategies/custom/elixir.toml`. Toad
 will now identify Elixir projects, auto-tag them, and know exactly which folders
 to clean.
 
-See the [Stack Support Plugins Guide](docs/PLUGINS.md) for more details.
+See the [Stack Support Plugins Guide](docs/guides/PLUGINS.md) for more details.
 
 ### Workspace Anchor
 

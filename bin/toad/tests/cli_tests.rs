@@ -153,7 +153,12 @@ fn test_docs() -> Result<(), Box<dyn std::error::Error>> {
         .success()
         .stdout(predicate::str::contains("SUCCESS: Documentation updated"));
 
-    assert!(dir.path().join("docs").join("CLI.md").exists());
+    assert!(dir
+        .path()
+        .join("docs")
+        .join("guides")
+        .join("CLI.md")
+        .exists());
     Ok(())
 }
 

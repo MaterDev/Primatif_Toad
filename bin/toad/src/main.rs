@@ -783,7 +783,7 @@ fn main() -> Result<()> {
                 success_count,
                 fail_count,
                 skip_count,
-                user: whoami::username(),
+                user: whoami::username().unwrap_or_else(|_| "unknown".to_string()),
             };
             if let Err(e) = toad_ops::audit::log_operation(entry) {
                 println!(
@@ -1309,7 +1309,7 @@ fn main() -> Result<()> {
             output.push_str(&help);
             output.push_str("\n```\n");
 
-            let docs_path = PathBuf::from("docs/CLI.md");
+            let docs_path = PathBuf::from("docs/guides/CLI.md");
             if let Some(parent) = docs_path.parent() {
                 fs::create_dir_all(parent)?;
             }

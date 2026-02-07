@@ -22,4 +22,5 @@
 - [**User Guide**](./USER_GUIDE.md): How to use Conductor in your solo-dev
   workflow.
 
-- [**CLI Reference**](../docs/CLI.md): Programmatic command documentation.
+- [**CLI Reference**](../docs/guides/CLI.md): Programmatic command
+  documentation.
