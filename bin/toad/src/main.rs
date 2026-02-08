@@ -326,6 +326,9 @@ enum ProjectCommand {
         /// Explicitly set the context type (hub, pond, generic)
         #[arg(long, short = 't', value_enum)]
         context_type: Option<ContextTypeChoice>,
+        /// AI Vendors to sync memory to (comma-separated: windsurf,cursor,gemini)
+        #[arg(long, short = 'a')]
+        ai: Option<String>,
     },
     /// Switch the active project context
     Switch {
@@ -349,6 +352,9 @@ enum ProjectCommand {
         /// New context type
         #[arg(long, short = 't', value_enum)]
         context_type: Option<ContextTypeChoice>,
+        /// Update AI Vendors
+        #[arg(long, short = 'a')]
+        ai: Option<String>,
     },
     /// Remove a registered context
     Delete {
@@ -890,6 +896,7 @@ fn main() -> Result<()> {
                         } else {
                             toad_core::ContextType::Generic
                         },
+                        ai_vendors: Vec::new(),
                         registered_at: std::time::SystemTime::now(),
                     },
                 );
@@ -1397,6 +1404,38 @@ fn main() -> Result<()> {
                 "SUCCESS:".green().bold(),
                 manifest_path
             );
+
+            // Generate Agnostic Blueprint
+            println!("Generating Agnostic Architectural Blueprint...");
+            let blueprint = toad_manifest::generate_blueprint(&projects);
+
+            // Distribution
+            let mut distributed = false;
+            if let Some(name) = &workspace.active_context {
+                if let Ok(Some(config)) = toad_core::GlobalConfig::load(None) {
+                    if let Some(ctx) = config.project_contexts.get(name) {
+                        if !ctx.ai_vendors.is_empty() {
+                            println!("Distributing blueprint to AI vendors: {}...", ctx.ai_vendors.join(", "));
+                            let synced = toad_ops::workflow::distribute_blueprint(
+                                &workspace.root,
+                                &ctx.ai_vendors,
+                                &blueprint,
+                            )?;
+                            for path in synced {
+                                println!("  {} Sync: {:?}", "»".green(), path);
+                            }
+                            distributed = true;
+                        }
+                    }
+                }
+            }
+
+            if !distributed {
+                // Fallback to agnostic blueprint at root if no vendors registered or context not found
+                let map_path = workspace.root.join("toad-blueprint.md");
+                fs::write(&map_path, &blueprint)?;
+                println!("{} Agnostic blueprint updated at: {:?}", "SUCCESS:".green().bold(), map_path);
+            }
         }
         Commands::Sync => {
             println!("Scanning projects...");
@@ -1738,6 +1777,7 @@ fn main() -> Result<()> {
                     path,
                     description,
                     context_type,
+                    ai,
                 } => {
                     let abs_path = fs::canonicalize(PathBuf::from(path))?;
                     if !abs_path.exists() {
@@ -1758,10 +1798,17 @@ fn main() -> Result<()> {
                         toad_core::ContextType::Generic
                     };
 
+                    let ai_vendors = if let Some(a) = ai {
+                        a.split(',').map(|s| s.trim().to_string()).collect()
+                    } else {
+                        Vec::new()
+                    };
+
                     let ctx = toad_core::ProjectContext {
                         path: abs_path.clone(),
                         description: description.clone(),
                         context_type: detected_type,
+                        ai_vendors,
                         registered_at: std::time::SystemTime::now(),
                     };
 
@@ -1806,6 +1853,9 @@ fn main() -> Result<()> {
                             if let Some(desc) = &ctx.description {
                                 println!("  Description: {}", desc);
                             }
+                            if !ctx.ai_vendors.is_empty() {
+                                println!("  AI Vendors:  {}", ctx.ai_vendors.join(", "));
+                            }
                         }
                     } else {
                         println!(
@@ -1822,10 +1872,10 @@ fn main() -> Result<()> {
                     } else {
                         // Header
                         println!(
-                            "{:<15} {:<10} {:<40} {:<30} ACTIVE",
-                            "NAME", "TYPE", "PATH", "DESCRIPTION"
+                            "{:<15} {:<10} {:<15} {:<40} ACTIVE",
+                            "NAME", "TYPE", "VENDORS", "PATH"
                         );
-                        println!("{:-<15} {:-<10} {:-<40} {:-<30} {:-<6}", "", "", "", "", "");
+                        println!("{:-<15} {:-<10} {:-<15} {:-<40} {:-<6}", "", "", "", "", "");
 
                         let mut names: Vec<_> = config.project_contexts.keys().collect();
                         names.sort();
@@ -1837,13 +1887,17 @@ fn main() -> Result<()> {
                             } else {
                                 ""
                             };
-                            let desc = ctx.description.as_deref().unwrap_or("-");
+                            let vendors = if ctx.ai_vendors.is_empty() {
+                                "-".to_string()
+                            } else {
+                                ctx.ai_vendors.join(",")
+                            };
                             println!(
-                                "{:<15} {:<10} {:<40?} {:<30} {:^6}",
+                                "{:<15} {:<10} {:<15} {:<40?} {:^6}",
                                 name.bold(),
                                 ctx.context_type.to_string(),
+                                vendors,
                                 ctx.path,
-                                desc,
                                 active
                             );
                         }
@@ -1854,6 +1908,7 @@ fn main() -> Result<()> {
                     path,
                     description,
                     context_type,
+                    ai,
                 } => {
                     let ctx = config
                         .project_contexts
@@ -1868,6 +1923,9 @@ fn main() -> Result<()> {
                     }
                     if let Some(t) = context_type {
                         ctx.context_type = toad_core::ContextType::from(*t);
+                    }
+                    if let Some(a) = ai {
+                        ctx.ai_vendors = a.split(',').map(|s| s.trim().to_string()).collect();
                     }
                     config.save(None)?;
                     println!("{} Context '{}' updated.", "SUCCESS:".green().bold(), name);

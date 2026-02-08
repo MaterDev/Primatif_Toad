@@ -7,13 +7,15 @@
   "context": {
     "files": [
       ".gemini/GEMINI.md",
-      ".gemini/SESSIONS.md"
+      ".gemini/SESSIONS.md",
+      "CROSS_REPO_MAP.md"
     ],
     "folders": [
       "projects",
       "scripts",
       "work_orders",
-      "docs"
+      "docs",
+      "conductor"
     ]
   },
   "rules": {
