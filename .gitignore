@@ -1,49 +1,17 @@
-# --- Primatif_Toad: Submodule Boundary Strategy ---
+# --- Primatif_Toad .gitignore (Blacklist Strategy) ---
+# Per-context artifacts (shadows, registry, tags) now live in ~/.toad/contexts/,
+# so the workspace root no longer needs a whitelist boundary.
 
-# 1. Ignore everything by default
-/*
-
-# 2. Whitelist Admin Tools & Root Config
-!/.markdownlint.json
-!/.markdownlintignore
-!/.gemini/
-!/.geminiignore
-!/.gitignore
-!/.gitmodules
-!/.windsurf/
-!/.toad-root
-!/Cargo.toml
-!/Cargo.lock
-!/Justfile
-!/LICENSE
-!/README.md
-!/CHANGELOG.md
-!/dprint.json
-!/conductor/
-!/conductor/**
-!/assets/
-
-# 3. Whitelist Internal Modules
-!/bin/
-!/bin/**
-!/scripts/
-!/scripts/**
-!/docs/
-!/docs/**
-
-# 4. Whitelist Submodule Pointers (The boundary)
-!/crates/
-!/crates/*/
-# Do NOT whitelist the contents of crates/* by default; Git handles submodule tracking.
-# However, we allow the Cargo.toml of the workspace to see them.
-!/crates/*/Cargo.toml
-
-# 5. Global Ignores (Across all boundaries)
+# Build artifacts
 target/
 **/*.rs.bk
+
+# OS & editor
 .DS_Store
 *.log
+*.swp
+*~
 
-# 6. Critical: Explicitly ignore submodule internal Git state
-# This prevents the parent repo from ever trying to stage the submodule's history.
+# Submodule internal Git state
+# Prevents the parent repo from staging submodule history.
 crates/*/.git

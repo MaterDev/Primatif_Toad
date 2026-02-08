@@ -1,0 +1,21 @@
+[licenses]
+unlicensed = "deny"
+allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unlicense"]
+
+# BUSL-1.1 is allowed only for our own crates
+[[licenses.exceptions]]
+allow = ["BUSL-1.1"]
+name = "discovery"
+[[licenses.exceptions]]
+allow = ["BUSL-1.1"]
+name = "toad-git"
+[[licenses.exceptions]]
+allow = ["BUSL-1.1"]
+name = "toad-manifest"
+[[licenses.exceptions]]
+allow = ["BUSL-1.1"]
+name = "toad-ops"
+
+[bans]
+multiple-versions = "warn"
+# Internal boundary enforcement is handled by scripts/check_license_boundary.sh
