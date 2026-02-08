@@ -10,7 +10,10 @@ protecting its advanced intelligence layer under a source-available license
 
 ## Core Goals
 
-1. **Workspace Orchestration:** Manage the `projects/` directory as an external
+1. **Named Project Contexts:** Manage multiple independent workspace roots
+   (e.g., development workspaces, client projects) with explicit context
+   switching and isolated scan caches.
+2. **Workspace Orchestration:** Manage the `projects/` directory as an external
    collection of independent repositories using a "whitelist-only" strategy.
 2. **Open Core Licensing:** Maintain a clear boundary between open-source
    contracts (MIT) and protected intelligence (BUSL-1.1).

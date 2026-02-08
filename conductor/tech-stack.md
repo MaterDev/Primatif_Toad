@@ -24,7 +24,7 @@ The project is structured as a modular Rust workspace to separate the
 3. **`crates/toad-ops` (The Hand) [BUSL-1.1]:** General operational logic, shell
    execution, and custom workflow management.
 4. **`crates/toad-core` (The Source of Truth) [MIT]:** Shared data models,
-   contracts, workspace discovery, and project contexts.
+   contracts, workspace discovery, and Named Project Contexts.
 5. **`crates/toad-discovery` (The Scanner) [BUSL-1.1]:** Scanning intelligence
    to detect tech stacks and submodule structures.
 6. **`crates/toad-manifest` (The Chronicler) [BUSL-1.1]:** Handles report
