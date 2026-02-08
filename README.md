@@ -6,8 +6,6 @@
 
 The modular meta-engineering platform.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![License: BSL-1.1](https://img.shields.io/badge/License-BSL--1.1-blue.svg)](crates/toad-git/LICENSE)
 [![Version: v1.0.2](https://img.shields.io/badge/version-v1.0.2-green.svg)](Cargo.toml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
 
@@ -44,11 +42,10 @@ toad home .
 toad status
 ```
 
-## What's New in v1.0.2 "Open Core"
+## What's New in v1.0.2
 
-- **Open-Core Architecture:** Codebase split into MIT (open) and BSL-1.1
-  (source-available) components across separate git repositories, managed as
-  submodules.
+- **Modular Architecture:** Codebase organized into specialized internal crates
+  across separate git repositories, managed as submodules.
 - **Multi-Repo Git Orchestration (`toad ggit`):** First-class git operations
   across all repos — status, commit, push, pull, sync, branch listing, and
   submodule alignment.
@@ -155,48 +152,37 @@ See the [Stack Support Plugins Guide](docs/guides/PLUGINS.md) for more details.
 
 ## 🪵 Architecture
 
-Toad is built as a modular Rust workspace using an **open-core** model. Each
-crate is its own git repository, managed as a submodule:
+Toad is built as a modular Rust workspace. Each crate is its own git repository,
+managed as a submodule:
 
 ```text
-Primatif_Toad/                          (MIT — Hub)
-├── bin/toad/                           CLI binary (MIT)
+Primatif_Toad/                          (Hub)
+├── bin/toad/                           CLI binary
 ├── crates/
-│   ├── toad-core/                      Data models & config (MIT)
-│   ├── toad-scaffold/                  Project scaffolding (MIT)
-│   ├── toad-discovery/                 Ecosystem scanning (BSL-1.1)
-│   ├── toad-git/                       Git orchestration (BSL-1.1)
-│   ├── toad-manifest/                  Context generation (BSL-1.1)
-│   └── toad-ops/                       Batch ops & safety (BSL-1.1)
+│   ├── toad-core/                      Data models & config
+│   ├── toad-scaffold/                  Project scaffolding
+│   ├── toad-discovery/                 Ecosystem scanning
+│   ├── toad-git/                       Git orchestration
+│   ├── toad-manifest/                  Context generation
+│   └── toad-ops/                       Batch ops & safety
 ├── docs/
 └── scripts/
 ```
 
-### License Split
-
-| Component                                                 | License     | Rationale                                                                        |
-| :-------------------------------------------------------- | :---------- | :------------------------------------------------------------------------------- |
-| `bin/toad`, `toad-core`, `toad-scaffold`                  | **MIT**     | CLI glue, data models, scaffolding — open-source face of the project             |
-| `toad-discovery`, `toad-git`, `toad-manifest`, `toad-ops` | **BSL-1.1** | Intelligence layer — scanning, git orchestration, context generation, operations |
-
-BSL-1.1 crates are **source-available**: publicly visible, cloneable, and usable
-for non-commercial purposes. They automatically convert to MIT on
-**2034-02-07**.
-
 ### Dependency Graph
 
 ```text
-bin/toad (MIT)
-├── toad-core       (MIT)        ← shared data models
-├── toad-scaffold   (MIT)        ← project creation
-├── toad-discovery  (BSL-1.1)    ← depends on: toad-core, toad-git
-├── toad-git        (BSL-1.1)    ← depends on: toad-core
-├── toad-manifest   (BSL-1.1)    ← depends on: toad-core
-└── toad-ops        (BSL-1.1)    ← depends on: toad-core
+bin/toad
+├── toad-core       ← shared data models
+├── toad-scaffold   ← project creation
+├── toad-discovery  ← depends on: toad-core, toad-git
+├── toad-git        ← depends on: toad-core
+├── toad-manifest   ← depends on: toad-core
+└── toad-ops        ← depends on: toad-core
 ```
 
-No MIT crate depends on a BSL-1.1 crate. The MIT types flow downward; the
-BSL-1.1 intelligence flows upward into the MIT binary.
+The system is designed for high separation of concerns. MIT types flow
+downward; internal logic flows upward into the primary binary.
 
 ---
 
