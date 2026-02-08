@@ -21,16 +21,16 @@ The project is structured as a modular Rust workspace to separate the
    commands and delegates to the internal crates.
 2. **`crates/toad-git` (The Pulse) [BUSL-1.1]:** All Git operations, status,
    branch orchestration, and VCS intelligence.
-3. **`crates/toad-ops` (The Hand) [BUSL-1.1]:** General operational logic,
-   shell execution, and custom workflow management.
+3. **`crates/toad-ops` (The Hand) [BUSL-1.1]:** General operational logic, shell
+   execution, and custom workflow management.
 4. **`crates/toad-core` (The Source of Truth) [MIT]:** Shared data models,
    contracts, workspace discovery, and project contexts.
 5. **`crates/toad-discovery` (The Scanner) [BUSL-1.1]:** Scanning intelligence
    to detect tech stacks and submodule structures.
 6. **`crates/toad-manifest` (The Chronicler) [BUSL-1.1]:** Handles report
    generation, AI context maps, and cross-repo dependency maps.
-7. **`crates/scaffold` (The Builder) [MIT]:** Logic for bootstrapping new project
-   templates (filesystem only).
+7. **`crates/scaffold` (The Builder) [MIT]:** Logic for bootstrapping new
+   project templates (filesystem only).
 
 ## 📐 Design Principles
 
@@ -51,7 +51,6 @@ The project is structured as a modular Rust workspace to separate the
 9. **Clean Code (Platform MVP):** Favor small, single-responsibility functions,
    explicit error handling (`anyhow`), and avoid global state.
 10. **Whitelist-Only VCS:** Git ignores everything by default.
-
 
 ## 🎨 Aesthetic Standards
 

@@ -7,9 +7,13 @@
 > - Tasks: `docs/releases/v1.0.2/tasks.md` § Phase 0
 
 ## Overview
-Transition the project to an "Open Core" licensing model by splitting the monolithic MIT license into MIT (Open contracts) and BUSL-1.1 (Source-available intelligence).
+
+Transition the project to an "Open Core" licensing model by splitting the
+monolithic MIT license into MIT (Open contracts) and BUSL-1.1 (Source-available
+intelligence).
 
 ## Requirements
+
 - Each crate must have its own `LICENSE` file.
 - `Cargo.toml` license fields must match the designated tier.
 - Existing source files must have license notice headers added.
@@ -17,9 +21,12 @@ Transition the project to an "Open Core" licensing model by splitting the monoli
 - Hard gates for license boundary enforcement must be implemented.
 
 ## Boundary Rules
+
 - **MIT:** `toad-core`, `scaffold`, `bin/toad`.
 - **BUSL-1.1:** `discovery`, `toad-git`, `toad-manifest`, `toad-ops`.
 
 ## References
-- [Evolution Doc](../../../docs/releases/v1.0.2/evolution.md) — § The Licensing Strategy, § Governance
+
+- [Evolution Doc](../../../docs/releases/v1.0.2/evolution.md) — § The Licensing
+  Strategy, § Governance
 - [Task Breakdown](../../../docs/releases/v1.0.2/tasks.md) — § Phase 0

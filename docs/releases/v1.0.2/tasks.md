@@ -28,8 +28,7 @@
   - Licensor: Primatif
   - Change Date: 2034-02-07
   - Change License: MIT
-  - Additional Use Grant: non-commercial, personal, educational with
-    attribution
+  - Additional Use Grant: non-commercial, personal, educational with attribution
 - [ ] Place LICENSE file in each BSL-1.1 crate directory:
   - `crates/discovery/LICENSE`
   - `crates/toad-git/LICENSE`
@@ -73,25 +72,25 @@
       `scaffold::create_project()` returns. This keeps scaffold as a pure
       filesystem operation (Option B from evolution.md).
 - [ ] **toad-git: Add git-aware safety functions** — consider moving the
-      git-specific destructive command patterns from `toad-ops/src/safety.rs`
-      to `toad-git/src/safety.rs` as
-      `is_destructive_git_command(cmd: &str) -> bool`. Have `toad-ops` call
-      this function instead of inlining the patterns.
-- [ ] **toad-core: Evaluate `.git/index` fingerprint path** — decide whether
-      the `.git/index` path constant in `toad-core/src/lib.rs` should be
-      provided by `toad-git` as configuration or remain as a simple string
-      constant (low priority, borderline case)
+      git-specific destructive command patterns from `toad-ops/src/safety.rs` to
+      `toad-git/src/safety.rs` as
+      `is_destructive_git_command(cmd: &str) -> bool`. Have `toad-ops` call this
+      function instead of inlining the patterns.
+- [ ] **toad-core: Evaluate `.git/index` fingerprint path** — decide whether the
+      `.git/index` path constant in `toad-core/src/lib.rs` should be provided by
+      `toad-git` as configuration or remain as a simple string constant (low
+      priority, borderline case)
 - [ ] `cargo build` and `cargo test` pass after all migrations
 - [ ] Verify no crate outside `toad-git` executes `git` commands:
-      `grep -r 'Command::new("git")' crates/ --include="*.rs"` returns only
-      hits in `crates/toad-git/`
+      `grep -r 'Command::new("git")' crates/ --include="*.rs"` returns only hits
+      in `crates/toad-git/`
 
 ### P0-5: License Boundary Enforcement — Hard Gates
 
 - Ref: `§ Governance > License Boundary Enforcement: Hard Gates`
 - **This must be in place before the repo split.** Without enforcement, the
-  boundary is a suggestion that will be broken by the first AI agent or
-  tired dev who adds a convenient import.
+  boundary is a suggestion that will be broken by the first AI agent or tired
+  dev who adds a convenient import.
 
 **Layer 1: `scripts/check_license_boundary.sh`**
 
@@ -99,30 +98,29 @@
   - Hardcode the license map (MIT crates, BSL-1.1 crates) at the top
   - For each MIT crate, parse its `Cargo.toml` `[dependencies]` section
   - Check if any dependency name matches a BSL-1.1 crate
-  - If violation found: print a clear error with the offending crate pair,
-    a reference to the evolution.md rule, and a fix suggestion
+  - If violation found: print a clear error with the offending crate pair, a
+    reference to the evolution.md rule, and a fix suggestion
   - Exit 0 on pass, exit 1 on violation
 - [ ] Make the script executable (`chmod +x`)
 - [ ] Verify the script catches a simulated violation (temporarily add
-      `toad-git` as a dep of `scaffold`, run the script, confirm it fails,
-      then revert)
+      `toad-git` as a dep of `scaffold`, run the script, confirm it fails, then
+      revert)
 
-**Layer 2: Git pre-commit hook**
+**Layer 2: Git pre-commit hook** <!-- markdownlint-disable-line MD036 -->
 
 - [ ] Add `scripts/git-hooks/pre-commit` that runs
       `scripts/check_license_boundary.sh`
 - [ ] Update `scripts/install_toad.sh` or add a setup note to configure
-      `git config core.hooksPath scripts/git-hooks` so the hook is active
-      for all contributors
+      `git config core.hooksPath scripts/git-hooks` so the hook is active for
+      all contributors
 
 **Layer 3: `deny.toml` + `cargo-deny` (CI only)**
 
 - [ ] Create `deny.toml` at the workspace root with:
   - `[licenses]` section: allow MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause,
-    ISC; deny unlicensed; add `[[licenses.exceptions]]` for each BSL-1.1
-    crate
-  - `[bans]` section: document that internal boundary enforcement is handled
-    by the shell script, not `cargo-deny`
+    ISC; deny unlicensed; add `[[licenses.exceptions]]` for each BSL-1.1 crate
+  - `[bans]` section: document that internal boundary enforcement is handled by
+    the shell script, not `cargo-deny`
 - [ ] Verify `cargo deny check licenses` passes on the current workspace
 - [ ] Document in CI config (or a CI setup note) that the pipeline must run:
   1. `scripts/check_license_boundary.sh` (fast, first)
@@ -167,8 +165,8 @@
   - `toad-git`: "Git status analysis for Toad"
   - `toad-manifest`: "Context generation and manifest engine for Toad"
   - `toad-ops`: "Batch operations and safety engine for Toad"
-- [ ] Add topic tags: `toad`, `primatif`, `rust`, and license-specific
-      (`mit` or `bsl-1.1`)
+- [ ] Add topic tags: `toad`, `primatif`, `rust`, and license-specific (`mit` or
+      `bsl-1.1`)
 
 ---
 
@@ -245,10 +243,10 @@ For each crate, repeat this process:
 
 - [ ] Verify `.gitmodules` file is generated correctly
 - [ ] **Version pinning:** Verify that each submodule entry in the commit
-      explicitly references the SHA from the newly pushed `main` branch of
-      each crate repo. Run `git submodule status` and confirm every
-      submodule points to a valid, reachable commit on its remote `main`.
-      This ensures `git clone --recurse-submodules` gets a known-good state.
+      explicitly references the SHA from the newly pushed `main` branch of each
+      crate repo. Run `git submodule status` and confirm every submodule points
+      to a valid, reachable commit on its remote `main`. This ensures
+      `git clone --recurse-submodules` gets a known-good state.
 - [ ] Commit: `feat(licensing): convert crates to git submodules`
 
 ### P2-5: Verify Workspace Integrity
@@ -304,9 +302,9 @@ For each crate, repeat this process:
 > Ref: `§ Submodule-Aware Ecosystem Management`
 >
 > _Build generic submodule discovery and status as a first-class Toad feature.
-> This is not a self-management special case — any Toad user with submodules
-> in their projects benefits. Toad's own crate submodules serve as the
-> dogfooding validation._
+> This is not a self-management special case — any Toad user with submodules in
+> their projects benefits. Toad's own crate submodules serve as the dogfooding
+> validation._
 
 ### P4-1: Data Model — `SubmoduleDetail` (`toad-core`, MIT)
 
@@ -330,18 +328,18 @@ For each crate, repeat this process:
 
 - Ref: `§ Discovery Logic`
 - [ ] Add `.gitmodules` parsing logic to the discovery crate:
-  - Parse the INI-style `.gitmodules` file to extract submodule name, path,
-    and URL
+  - Parse the INI-style `.gitmodules` file to extract submodule name, path, and
+    URL
   - Handle edge cases: missing `.gitmodules`, empty file, malformed entries
 - [ ] For each parsed submodule, check initialization state:
-  - Initialized: the submodule directory exists and contains a `.git` file
-    or directory
+  - Initialized: the submodule directory exists and contains a `.git` file or
+    directory
   - Uninitialized: the directory is empty or doesn't exist
 - [ ] Populate `SubmoduleDetail` for each discovered submodule
-- [ ] Integrate submodule discovery into the existing project scan pipeline
-      so that `submodules` is populated on every `ProjectDetail`
-- [ ] Add unit tests with fixture `.gitmodules` files (0 submodules,
-      1 submodule, multiple submodules, malformed)
+- [ ] Integrate submodule discovery into the existing project scan pipeline so
+      that `submodules` is populated on every `ProjectDetail`
+- [ ] Add unit tests with fixture `.gitmodules` files (0 submodules, 1
+      submodule, multiple submodules, malformed)
 
 ### P4-3: Submodule Git Analysis (`toad-git`, BSL-1.1)
 
@@ -358,8 +356,8 @@ For each crate, repeat this process:
 ### P4-4: CLI Integration (`bin/toad`, MIT)
 
 - Ref: `§ CLI Surface`
-- [ ] Update `toad status` to display submodule status as indented children
-      of their parent project:
+- [ ] Update `toad status` to display submodule status as indented children of
+      their parent project:
 
   ```text
   myproject          ✅ Clean    🔥 Active    rust
@@ -369,14 +367,14 @@ For each crate, repeat this process:
   ```
 
 - [ ] Update `toad reveal` to include submodule details in output
-- [ ] Consider: should `toad do` recurse into submodules by default, or
-      require an explicit flag (e.g., `--recurse-submodules`)?
+- [ ] Consider: should `toad do` recurse into submodules by default, or require
+      an explicit flag (e.g., `--recurse-submodules`)?
 
 ### P4-5: Dogfooding — Toad Manages Its Own Submodules
 
 - Ref: `§ Dogfooding: Toad Manages Itself`
-- [ ] After Phase 2 (submodule conversion), verify Toad discovers its own
-      crate submodules automatically
+- [ ] After Phase 2 (submodule conversion), verify Toad discovers its own crate
+      submodules automatically
 - [ ] `toad status` shows all crate submodules with correct init/VCS state
 - [ ] Apply license taxonomy tags:
   - `toad tag toad-core mit`
@@ -394,11 +392,10 @@ For each crate, repeat this process:
 
 > Ref: `§ Project Contexts (toad project)`
 >
-> _Named project contexts let users register multiple workspace roots and
-> switch between them. This is foundational — all commands resolve their
-> targets based on the active context. Must be in place before Phase 5
-> (`toad ggit`) since git orchestration needs to know which workspace it's
-> operating in._
+> _Named project contexts let users register multiple workspace roots and switch
+> between them. This is foundational — all commands resolve their targets based
+> on the active context. Must be in place before Phase 5 (`toad ggit`) since git
+> orchestration needs to know which workspace it's operating in._
 
 ### P4b-1: Data Models — Project Context (`toad-core`, MIT)
 
@@ -413,8 +410,8 @@ For each crate, repeat this process:
 - [ ] Retain `home_pointer` for backward compatibility
 - [ ] Update `GlobalConfig::load()` to handle both old format (just
       `home_pointer`) and new format (with `project_contexts`)
-- [ ] On first load of old-format config, auto-migrate: register
-      `home_pointer` as a context named `default`, set as active
+- [ ] On first load of old-format config, auto-migrate: register `home_pointer`
+      as a context named `default`, set as active
 - [ ] Add unit tests for migration from old to new config format
 - [ ] Add unit tests for serialization/deserialization of extended config
 
@@ -426,45 +423,44 @@ For each crate, repeat this process:
 - [ ] Add `context_shadows_dir(name: &str) -> Result<PathBuf>` method that
       returns `~/.toad/contexts/<name>/shadows/`
 - [ ] Update `ProjectRegistry::registry_path()` to accept a context name
-      parameter and return `~/.toad/contexts/<name>/registry.json` instead
-      of `~/.toad/registry.json`
-- [ ] Update `ProjectRegistry::load()` and `save()` to accept the active
-      context name (resolved from `GlobalConfig`) to determine the correct
-      registry path
+      parameter and return `~/.toad/contexts/<name>/registry.json` instead of
+      `~/.toad/registry.json`
+- [ ] Update `ProjectRegistry::load()` and `save()` to accept the active context
+      name (resolved from `GlobalConfig`) to determine the correct registry path
 - [ ] Update all call sites of `ProjectRegistry::load()` and `save()` in
       `bin/toad` and other crates to pass the active context name
 - [ ] Update `Workspace::with_root()` — `shadows_dir` must resolve to
-      `~/.toad/contexts/<name>/shadows/` instead of `<root>/shadows/`.
-      The `Workspace` struct needs the active context name (or the resolved
-      context directory) during construction.
+      `~/.toad/contexts/<name>/shadows/` instead of `<root>/shadows/`. The
+      `Workspace` struct needs the active context name (or the resolved context
+      directory) during construction.
 - [ ] `Workspace::manifest_path()` and `Workspace::tags_path()` derive from
-      `shadows_dir` — no changes needed once `shadows_dir` points to the
-      correct per-context location
+      `shadows_dir` — no changes needed once `shadows_dir` points to the correct
+      per-context location
 - [ ] `Workspace::ensure_shadows()` still works — just creates the directory
       under `~/.toad/contexts/<name>/shadows/` instead of `<root>/shadows/`
 - [ ] On `toad project register`, create `~/.toad/contexts/<name>/shadows/`
       directory
 - [ ] On `toad project delete`, remove `~/.toad/contexts/<name>/` directory
-      (after the existing confirmation prompt) — this cleanly removes
-      registry, shadows, and any future per-context state
+      (after the existing confirmation prompt) — this cleanly removes registry,
+      shadows, and any future per-context state
 - [ ] **Backward compatibility migration:** On first run, if
-      `~/.toad/registry.json` exists at the old location and
-      `~/.toad/contexts/` does not exist:
+      `~/.toad/registry.json` exists at the old location and `~/.toad/contexts/`
+      does not exist:
   1. Create `~/.toad/contexts/default/shadows/`
   2. Move `~/.toad/registry.json` → `~/.toad/contexts/default/registry.json`
   3. If `<home_pointer>/shadows/` exists, move its contents (`MANIFEST.md`,
      `tags.json`) → `~/.toad/contexts/default/shadows/`
   4. Remove the now-empty `<home_pointer>/shadows/` directory
-  5. This runs alongside the `home_pointer` → `default` context migration
-      in P4b-1
+  5. This runs alongside the `home_pointer` → `default` context migration in
+     P4b-1
 - [ ] After migration, the old `~/.toad/registry.json` and
       `<workspace_root>/shadows/` must no longer exist
 - [ ] Add unit tests for context directory creation (including shadows subdir)
 - [ ] Add unit tests for context directory cleanup on delete
 - [ ] Add unit tests for registry.json migration from old to new location
 - [ ] Add unit tests for shadows migration from workspace root to context dir
-- [ ] Add unit tests verifying `ProjectRegistry::load()` reads from the
-      correct context-scoped path
+- [ ] Add unit tests verifying `ProjectRegistry::load()` reads from the correct
+      context-scoped path
 - [ ] Add unit tests verifying `Workspace::manifest_path()` and
       `Workspace::tags_path()` resolve under `~/.toad/contexts/<name>/shadows/`
 
@@ -476,8 +472,8 @@ For each crate, repeat this process:
   2. Upward search for `.toad-root` (unchanged)
   3. `active_context` → look up path in `project_contexts`
   4. Fall back to `home_pointer` if no context set
-- [ ] All existing commands that call `Workspace::discover()` automatically
-      get context-aware resolution — no changes needed in command handlers
+- [ ] All existing commands that call `Workspace::discover()` automatically get
+      context-aware resolution — no changes needed in command handlers
 - [ ] Add unit tests verifying context-based resolution, fallback to
       `home_pointer`, and env var override
 
@@ -489,10 +485,10 @@ For each crate, repeat this process:
   - If contexts already exist: register a new context using the directory's
     basename as the name, switch to it
   - Still creates `.toad-root` marker if missing (with confirmation)
-- [ ] Update `toad home` (no args) to show the current workspace root
-      resolved from the active context (not raw `home_pointer`)
-- [ ] Keep `home_pointer` in sync with the active context's path for
-      backward compatibility with any external tools reading `config.json`
+- [ ] Update `toad home` (no args) to show the current workspace root resolved
+      from the active context (not raw `home_pointer`)
+- [ ] Keep `home_pointer` in sync with the active context's path for backward
+      compatibility with any external tools reading `config.json`
 - [ ] Add unit tests for `toad home` with and without existing contexts
 
 ### P4b-5: CLI — `toad project` Subcommand (`bin/toad`, MIT)
@@ -513,8 +509,8 @@ For each crate, repeat this process:
 - [ ] `toad project switch` updates `active_context` in config and saves
 - [ ] `toad project current` displays active context name, path, description
 - [ ] `toad project list` renders a formatted table with active indicator
-- [ ] `toad project delete` prompts for `[y/N]` confirmation; rejects if
-      the context is currently active (must switch first)
+- [ ] `toad project delete` prompts for `[y/N]` confirmation; rejects if the
+      context is currently active (must switch first)
 - [ ] Format output with existing Toad visual style (colored, structured)
 - [ ] Add `--help` documentation for all `toad project` subcommands
 
@@ -527,15 +523,15 @@ For each crate, repeat this process:
   3. If `toad` is installed, register `toad-dev` context and switch to it
 - [ ] Make the script executable
 - [ ] Add usage instructions as a comment header in the script
-- [ ] Document in `README.md` or `CONTRIBUTING.md` that new contributors
-      should run `scripts/dev_setup.sh`
+- [ ] Document in `README.md` or `CONTRIBUTING.md` that new contributors should
+      run `scripts/dev_setup.sh`
 
 ### P4b-7: History Cleanup Script (Project-Specific, One-Time)
 
 - Ref: `§ Project Contexts > History Cleanup: Post-Split`
 - [ ] Create `scripts/history_cleanup.sh`:
-  - Use `git filter-repo` to remove crate `src/` directories from the
-    main repo's history after submodule conversion
+  - Use `git filter-repo` to remove crate `src/` directories from the main
+    repo's history after submodule conversion
   - Preserve submodule reference entries (`.gitmodules`, submodule pointers)
   - Include a dry-run mode that shows what would be removed
   - Include a confirmation prompt before executing (irreversible operation)
@@ -553,8 +549,8 @@ For each crate, repeat this process:
       migrate to `~/.toad/contexts/default/shadows/` on first load
 - [ ] Test `toad status` resolves against the active context's path
 - [ ] Test `toad project switch` changes which projects `toad status` shows
-- [ ] Test `toad project switch` causes `ProjectRegistry` to load from the
-      new context's `~/.toad/contexts/<name>/registry.json`
+- [ ] Test `toad project switch` causes `ProjectRegistry` to load from the new
+      context's `~/.toad/contexts/<name>/registry.json`
 - [ ] Test `TOAD_ROOT` env var still overrides the active context
 - [ ] Test `toad project delete` rejects deleting the active context
 - [ ] Test `toad project delete` removes `~/.toad/contexts/<name>/` directory
@@ -564,9 +560,9 @@ For each crate, repeat this process:
       `~/.toad/contexts/<name>/shadows/MANIFEST.md` (not workspace root)
 - [ ] Test `Workspace::tags_path()` resolves to
       `~/.toad/contexts/<name>/shadows/tags.json` (not workspace root)
-- [ ] Dogfood: register `toad-dev` and `my-code` contexts, switch between
-      them, verify all commands target the correct workspace and load the
-      correct per-context registry
+- [ ] Dogfood: register `toad-dev` and `my-code` contexts, switch between them,
+      verify all commands target the correct workspace and load the correct
+      per-context registry
 
 ---
 
@@ -615,8 +611,8 @@ For each crate, repeat this process:
 ### P5-2: Expand `toad-git` — Status & Branch (`toad-git`, BSL-1.1)
 
 - Ref: `§ Orchestration Logic (toad-git, BSL-1.1)`
-- [ ] Refactor existing `status.rs` to return `RepoStatus` instead of the
-      simple `GitStatus` enum (backward-compatible: keep enum, add richer fn)
+- [ ] Refactor existing `status.rs` to return `RepoStatus` instead of the simple
+      `GitStatus` enum (backward-compatible: keep enum, add richer fn)
 - [ ] Add `branch.rs` module:
   - `create_branch(path: &Path, name: &str) -> Result<()>`
   - `checkout_branch(path: &Path, name: &str) -> Result<()>`
@@ -646,16 +642,15 @@ For each crate, repeat this process:
   - `pull(path: &Path) -> Result<GitOpResult>`
   - `fetch(path: &Path) -> Result<GitOpResult>`
   - `ahead_behind(path: &Path) -> Result<(u32, u32)>`
-  - `sha_exists_on_remote(path: &Path, sha: &str) -> Result<bool>`
-    Check if a commit SHA exists on any remote branch
-    (`git branch -r --contains <sha>`)
+  - `sha_exists_on_remote(path: &Path, sha: &str) -> Result<bool>` Check if a
+    commit SHA exists on any remote branch (`git branch -r --contains <sha>`)
 - [ ] Add `sync.rs` module with mandatory pre-flight:
-  - `preflight_check(repos: &[&Path]) -> Result<Vec<PreflightResult>>`
-    For each submodule: verify HEAD exists on remote, no dirty state,
-    not in detached HEAD. Returns structured pass/fail per repo.
-  - `sync_submodule_refs(parent_path: &Path) -> Result<Vec<GitOpResult>>`
-    Runs `preflight_check` first — blocks if any repo fails. Updates
-    parent's index only after all checks pass.
+  - `preflight_check(repos: &[&Path]) -> Result<Vec<PreflightResult>>` For each
+    submodule: verify HEAD exists on remote, no dirty state, not in detached
+    HEAD. Returns structured pass/fail per repo.
+  - `sync_submodule_refs(parent_path: &Path) -> Result<Vec<GitOpResult>>` Runs
+    `preflight_check` first — blocks if any repo fails. Updates parent's index
+    only after all checks pass.
   - `sync_submodule_refs_force(parent_path: &Path) -> Result<Vec<GitOpResult>>`
     Bypasses pre-flight. Caller (`bin/toad`) must handle interactive
     confirmation before invoking this.
@@ -673,15 +668,15 @@ For each crate, repeat this process:
 
 - Ref: `§ Output Consolidation`
 - [ ] All `toad-git` functions that execute git commands must capture
-      stdout/stderr via `Command::new("git").output()` (not `.status()`)
-      and return `GitOpResult` with both raw output and a summary
+      stdout/stderr via `Command::new("git").output()` (not `.status()`) and
+      return `GitOpResult` with both raw output and a summary
 - [ ] Add helper function:
-  - `run_git(path: &Path, args: &[&str]) -> Result<GitOpResult>`
-    Central git command runner that captures output, builds summary,
-    and populates `GitOpResult`. All other modules use this instead
-    of calling `Command::new("git")` directly.
-- [ ] Ensure error results include: which repo, what operation, the raw
-      stderr, and an actionable hint (e.g., "run toad ggit pull -p X first")
+  - `run_git(path: &Path, args: &[&str]) -> Result<GitOpResult>` Central git
+    command runner that captures output, builds summary, and populates
+    `GitOpResult`. All other modules use this instead of calling
+    `Command::new("git")` directly.
+- [ ] Ensure error results include: which repo, what operation, the raw stderr,
+      and an actionable hint (e.g., "run toad ggit pull -p X first")
 - [ ] Add unit tests verifying output capture and summary generation
 
 ### P5-5: Branch Orchestration Data Models (`toad-core`, MIT)
@@ -708,8 +703,8 @@ For each crate, repeat this process:
 
 - Ref: `§ Branch Orchestration & Lifecycle Tracking > Orchestration Logic`
 - [ ] Add `branches.rs` module:
-  - `list_branches_across(repos: &[&Path]) -> Result<Vec<BranchGroup>>`
-    Collects all branch names across repos and groups them into a matrix.
+  - `list_branches_across(repos: &[&Path]) -> Result<Vec<BranchGroup>>` Collects
+    all branch names across repos and groups them into a matrix.
   - `branch_group_status(repos: &[&Path], branch: &str) -> Result<BranchGroup>`
     Detailed status for a specific branch group (ahead/behind, merged, etc.)
 - [ ] Add `merge_status.rs` module:
@@ -733,12 +728,12 @@ For each crate, repeat this process:
     Query GitHub API for PR status of a branch. Requires personal access token.
   - `get_pr_status_across(repos: &[(String, String)], branch: &str, token: &str) -> Result<Vec<(String, PrStatus)>>`
     PR status across all repos.
-- [ ] Handle missing token gracefully — `PrStatus::None` with a note that
-      GitHub API access is not configured
+- [ ] Handle missing token gracefully — `PrStatus::None` with a note that GitHub
+      API access is not configured
 - [ ] Add unit tests with mocked API responses
-- **Note:** This task is optional for v1.0.2. The core branch tracking
-  (P5-6) works purely with local git data. PR status is a nice-to-have
-  that can ship in a follow-up.
+- **Note:** This task is optional for v1.0.2. The core branch tracking (P5-6)
+  works purely with local git data. PR status is a nice-to-have that can ship in
+  a follow-up.
 
 ### P5-8: CLI — `toad ggit` Subcommand (`bin/toad`, MIT)
 
@@ -760,25 +755,25 @@ For each crate, repeat this process:
   - `MergeStatus { branch: String }`
   - `Align { branch: String }`
   - `Pr { project: Option<String> }`
-- [ ] Add global `--verbose` / `-v` flag to `Ggit` — when set, streams full
-      raw git output per repo instead of consolidated summaries
-- [ ] Implement project resolution: `--project <name>` resolves to the
-      submodule path via the discovered `SubmoduleDetail` list
-- [ ] Support multiple `-p` flags for commands that target multiple repos
-      (e.g., `toad ggit branch feat/x -p toad-core -p discovery`)
+- [ ] Add global `--verbose` / `-v` flag to `Ggit` — when set, streams full raw
+      git output per repo instead of consolidated summaries
+- [ ] Implement project resolution: `--project <name>` resolves to the submodule
+      path via the discovered `SubmoduleDetail` list
+- [ ] Support multiple `-p` flags for commands that target multiple repos (e.g.,
+      `toad ggit branch feat/x -p toad-core -p discovery`)
 - [ ] When `--project` is omitted, iterate over all discovered submodules
 - [ ] **Output consolidation:** Default output renders consolidated
-      `GitOpResult` summaries (one line per repo). `-v` renders full raw
-      git output with per-repo headers (`── repo-name ──`).
-- [ ] **Pre-flight in sync:** `toad ggit sync` runs preflight check and
-      blocks with structured report if any repo fails. Displays actionable
-      fix commands per repo.
+      `GitOpResult` summaries (one line per repo). `-v` renders full raw git
+      output with per-repo headers (`── repo-name ──`).
+- [ ] **Pre-flight in sync:** `toad ggit sync` runs preflight check and blocks
+      with structured report if any repo fails. Displays actionable fix commands
+      per repo.
 - [ ] **Force with confirmation:** `toad ggit sync --force` prompts for
       interactive `[y/N]` confirmation before bypassing preflight. AI agents
       must never auto-confirm this.
 - [ ] `toad ggit preflight` renders structured pass/fail per repo
-- [ ] `toad ggit branches` renders the cross-repo branch matrix with
-      aligned columns and status indicators
+- [ ] `toad ggit branches` renders the cross-repo branch matrix with aligned
+      columns and status indicators
 - [ ] `toad ggit merge-status` renders per-repo merge state with PR info
 - [ ] `toad ggit align` renders alignment report with clear pass/fail
 - [ ] `toad ggit commit --link` appends group reference trailers
@@ -788,30 +783,29 @@ For each crate, repeat this process:
 ### P5-9: Integration Testing & Dogfooding
 
 - Ref: `§ Workflow Examples`
-- [ ] Test cross-repo branch creation:
-      `toad ggit branch feat/test-branch` creates branch in all submodules
-- [ ] Test single-repo focus:
-      `toad ggit status -p discovery` shows only discovery's status
-- [ ] Test commit workflow:
-      `toad ggit add --all -p toad-core` → `toad ggit commit -m "test" -p toad-core`
-- [ ] Test sync:
-      `toad ggit sync` updates parent's submodule references
+- [ ] Test cross-repo branch creation: `toad ggit branch feat/test-branch`
+      creates branch in all submodules
+- [ ] Test single-repo focus: `toad ggit status -p discovery` shows only
+      discovery's status
+- [ ] Test commit workflow: `toad ggit add --all -p toad-core` →
+      `toad ggit commit -m "test" -p toad-core`
+- [ ] Test sync: `toad ggit sync` updates parent's submodule references
 - [ ] Test AI ergonomics: verify structured output is parseable (not just
       human-readable)
 - [ ] Dogfood with Toad's own crate submodules through a real feature branch
       workflow
-- [ ] Test branch orchestration:
-      `toad ggit branches` shows cross-repo branch matrix
-- [ ] Test branch group detail:
-      `toad ggit branches --group feat/test-branch` shows per-repo status
-- [ ] Test merge status:
-      `toad ggit merge-status feat/test-branch` reports merged/not-merged per repo
-- [ ] Test alignment check:
-      `toad ggit align feat/test-branch` reports push/clean state per repo
-- [ ] Test commit linking:
-      `toad ggit commit -m "test" -p discovery --link` appends group trailers
-- [ ] Test branch cleanup:
-      `toad ggit branch -d feat/test-branch` deletes from all repos
+- [ ] Test branch orchestration: `toad ggit branches` shows cross-repo branch
+      matrix
+- [ ] Test branch group detail: `toad ggit branches --group feat/test-branch`
+      shows per-repo status
+- [ ] Test merge status: `toad ggit merge-status feat/test-branch` reports
+      merged/not-merged per repo
+- [ ] Test alignment check: `toad ggit align feat/test-branch` reports
+      push/clean state per repo
+- [ ] Test commit linking: `toad ggit commit -m "test" -p discovery --link`
+      appends group trailers
+- [ ] Test branch cleanup: `toad ggit branch -d feat/test-branch` deletes from
+      all repos
 - [ ] Full lifecycle dogfood: create branch → work → commit → push → verify
       alignment → merge → verify merge-status → cleanup → sync
 
@@ -822,18 +816,18 @@ For each crate, repeat this process:
 > Ref: `§ Publishing Waterfall: Crates.io Release Automation`
 >
 > _This is NOT a `toad ggit` feature. It is project-specific automation for
-> publishing Toad's crates to crates.io in the correct dependency order.
-> Lives in `scripts/`, invoked manually as part of the release workflow._
+> publishing Toad's crates to crates.io in the correct dependency order. Lives
+> in `scripts/`, invoked manually as part of the release workflow._
 
 ### P5b-1: Dual Dependency Setup
 
 - Ref: `§ Dual Dependency Strategy`
-- [ ] Update all internal `Cargo.toml` dependency declarations to use the
-      dual `version` + `path` pattern, e.g.,
+- [ ] Update all internal `Cargo.toml` dependency declarations to use the dual
+      `version` + `path` pattern, e.g.,
       `toad-core = { version = "1.0.2", path = "../toad-core" }`
 - [ ] Verify `cargo build` still works with path resolution locally
-- [ ] Verify `cargo publish --dry-run` resolves the version field correctly
-      for each crate
+- [ ] Verify `cargo publish --dry-run` resolves the version field correctly for
+      each crate
 
 ### P5b-2: Create `scripts/publish_waterfall.sh`
 
@@ -848,11 +842,11 @@ For each crate, repeat this process:
      - Layer 1: `toad-git`, `toad-manifest`, `scaffold`
      - Layer 2: `discovery`, `toad-ops`
      - Layer 3: `bin/toad`
-  6. Between layers, poll `cargo search <crate>` until the new version
-     appears in the index
+  6. Between layers, poll `cargo search <crate>` until the new version appears
+     in the index
   7. After all publishes succeed, commit the `Cargo.toml` version bumps
-  8. Tag the release (`git tag v<version>`) in each submodule and the
-     parent repo
+  8. Tag the release (`git tag v<version>`) in each submodule and the parent
+     repo
 - [ ] Add `--dry-run` flag that runs steps 1–4 without publishing
 - [ ] Add error handling: if any publish fails mid-waterfall, report which
       crates succeeded and which remain, so the user can resume manually
@@ -864,8 +858,8 @@ For each crate, repeat this process:
       `scripts/publish_waterfall.sh` as the publish step
 - [ ] Ensure `scripts/sync_version.sh` is called as part of the waterfall
       (README badge sync after version bump)
-- [ ] Document the full release sequence in a comment at the top of the
-      script: bump → dry-run → publish → commit → tag → sync README
+- [ ] Document the full release sequence in a comment at the top of the script:
+      bump → dry-run → publish → commit → tag → sync README
 
 ---
 
@@ -915,8 +909,8 @@ For each crate, repeat this process:
 
 - Ref: `§ Governance > AI Agent Context Updates`
 - [ ] Add a new Core Goal: **Open Core Licensing** — maintain Toad as a
-      legitimate open-source project (MIT CLI + core types) while protecting
-      the intelligence layer under BSL-1.1
+      legitimate open-source project (MIT CLI + core types) while protecting the
+      intelligence layer under BSL-1.1
 - [ ] Update the Vision paragraph to mention the open-core model
 
 ### P6-4: Update `conductor/product-guidelines.md`
@@ -926,20 +920,19 @@ For each crate, repeat this process:
 - [ ] Document the dependency direction rule (with the ASCII diagram from
       evolution.md or a simplified version)
 - [ ] Document the new crate decision framework
-- [ ] Note that all new crate creation must include a LICENSE file and
-      `license` field in `Cargo.toml` before any code is written
+- [ ] Note that all new crate creation must include a LICENSE file and `license`
+      field in `Cargo.toml` before any code is written
 
 ### P6-5: Update `.gemini/settings.json`
 
 - [ ] Add `conductor/` to the context folders if not already present
 - [ ] Ensure `docs/releases/` is accessible to Gemini for release planning
       context
-- [ ] **Critical:** Add `CROSS_REPO_MAP.md` to the context files so Gemini
-      reads it automatically on every new chat session. This is the primary
-      mechanism ensuring AI agents start with a complete understanding of
-      the inter-repo dependency graph, type flow, and license boundaries.
-      Without this, every new session begins with the agent blind to the
-      multi-repo architecture.
+- [ ] **Critical:** Add `CROSS_REPO_MAP.md` to the context files so Gemini reads
+      it automatically on every new chat session. This is the primary mechanism
+      ensuring AI agents start with a complete understanding of the inter-repo
+      dependency graph, type flow, and license boundaries. Without this, every
+      new session begins with the agent blind to the multi-repo architecture.
 
 ### P6-6: Cross-Repo Context Map (`toad-manifest`, BSL-1.1)
 
@@ -948,33 +941,32 @@ For each crate, repeat this process:
       containing:
   - **Dependency Graph** — parse `Cargo.toml` `[dependencies]` across all
     crates, output `crate (license) ← dependent (license)` edges
-  - **Type Flow** — scan `pub struct` and `pub enum` in `toad-core`, trace
-    `use` statements in other crates to determine where types are populated
-    and displayed
+  - **Type Flow** — scan `pub struct` and `pub enum` in `toad-core`, trace `use`
+    statements in other crates to determine where types are populated and
+    displayed
   - **Call Chains** — document the function call path for each major `toad`
     command (status, ggit status, ggit sync, ggit branches, cw, create)
   - **Crate Responsibilities** — one-line summary per crate
-  - **License Boundary** — MIT vs BSL-1.1 listing with the dependency
-    direction rule
+  - **License Boundary** — MIT vs BSL-1.1 listing with the dependency direction
+    rule
 - [ ] Output the map as a section in the manifest's structured output
-- [ ] Also write the map to `CROSS_REPO_MAP.md` at the workspace root so
-      AI agents can read it without running `toad manifest`
+- [ ] Also write the map to `CROSS_REPO_MAP.md` at the workspace root so AI
+      agents can read it without running `toad manifest`
 - [ ] Regenerate `CROSS_REPO_MAP.md` every time `toad manifest` runs
-- [ ] Add `CROSS_REPO_MAP.md` to `.gemini/GEMINI.md` as a referenced
-      context file (so Gemini reads it on every session)
+- [ ] Add `CROSS_REPO_MAP.md` to `.gemini/GEMINI.md` as a referenced context
+      file (so Gemini reads it on every session)
 - [ ] Add `CROSS_REPO_MAP.md` to `.windsurf/` context if applicable
-- [ ] Add unit tests verifying the dependency graph extraction and type
-      flow scanning produce correct output for the current workspace
+- [ ] Add unit tests verifying the dependency graph extraction and type flow
+      scanning produce correct output for the current workspace
 
 ### P6-7: Validate AI Agent Navigation
 
-- [ ] With the cross-repo map in place, verify that an AI agent can trace
-      a bug from CLI to core type in ≤ 3 steps using only the map
-- [ ] Verify the map stays accurate after adding a new type to `toad-core`
-      and re-running `toad manifest`
-- [ ] Verify the map includes all new v1.0.2 types (`RepoStatus`,
-      `BranchGroup`, `GitOpResult`, `PreflightResult`, `CustomWorkflow`,
-      `WorkflowRegistry`)
+- [ ] With the cross-repo map in place, verify that an AI agent can trace a bug
+      from CLI to core type in ≤ 3 steps using only the map
+- [ ] Verify the map stays accurate after adding a new type to `toad-core` and
+      re-running `toad manifest`
+- [ ] Verify the map includes all new v1.0.2 types (`RepoStatus`, `BranchGroup`,
+      `GitOpResult`, `PreflightResult`, `CustomWorkflow`, `WorkflowRegistry`)
 
 ---
 
@@ -983,10 +975,10 @@ For each crate, repeat this process:
 > Ref: `§ Custom Workflows (toad cw)`
 >
 > _A generic extension mechanism that lets users register, manage, and invoke
-> their own shell scripts as first-class `toad` subcommands. This keeps the
-> core CLI language-agnostic while giving users a clean way to integrate
-> project-specific automation (e.g., `toad cw release` for the publish
-> waterfall script)._
+> their own shell scripts as first-class `toad` subcommands. This keeps the core
+> CLI language-agnostic while giving users a clean way to integrate
+> project-specific automation (e.g., `toad cw release` for the publish waterfall
+> script)._
 
 ### P7-1: Data Models — Workflow Registry (`toad-core`, MIT)
 
@@ -1003,42 +995,41 @@ For each crate, repeat this process:
   - `reserved_namespaces: Vec<String>`
 - [ ] Add `load` and `save` methods for `WorkflowRegistry` targeting
       `~/.toad/custom_workflows.json`
-- [ ] Add unit tests for serialization/deserialization and namespace
-      collision detection
+- [ ] Add unit tests for serialization/deserialization and namespace collision
+      detection
 
 ### P7-2: Reserved Namespace Authority (`toad-ops`, BSL-1.1)
 
 - Ref: `§ Custom Workflows > Design Principles > Namespace protection`
-- [ ] Add `reserved_command_names() -> Vec<&'static str>` function to
-      `toad-ops` that returns all built-in `toad` command names (`status`,
-      `do`, `ggit`, `create`, `home`, `stats`, `clean`, `tag`, `untag`,
-      `cw`, `project`, `help`, `version`)
-- [ ] This function is the **single source of truth** for namespace
-      protection — `toad cw register` calls this, not the JSON cache
-- [ ] On startup, sync the JSON `reserved_namespaces` cache from this
-      function so external tools reading the JSON see the current list
-- [ ] Add a unit test that compares `reserved_command_names()` output
-      against the actual `Commands` enum variants in `bin/toad` — this
-      test fails if a new command is added to the binary without updating
-      the function
+- [ ] Add `reserved_command_names() -> Vec<&'static str>` function to `toad-ops`
+      that returns all built-in `toad` command names (`status`, `do`, `ggit`,
+      `create`, `home`, `stats`, `clean`, `tag`, `untag`, `cw`, `project`,
+      `help`, `version`)
+- [ ] This function is the **single source of truth** for namespace protection —
+      `toad cw register` calls this, not the JSON cache
+- [ ] On startup, sync the JSON `reserved_namespaces` cache from this function
+      so external tools reading the JSON see the current list
+- [ ] Add a unit test that compares `reserved_command_names()` output against
+      the actual `Commands` enum variants in `bin/toad` — this test fails if a
+      new command is added to the binary without updating the function
 
 ### P7-3: Workflow Execution Logic (`toad-ops`, BSL-1.1)
 
 - Ref: `§ Custom Workflows > Execution Model`
 - [ ] Add `custom_workflow.rs` module to `toad-ops`:
   - `register(registry: &mut WorkflowRegistry, name: &str, script_path: &Path, description: &str) -> Result<()>`
-    Validates name (no namespace collision), script exists, is `.sh`,
-    is executable. Adds to registry and saves.
+    Validates name (no namespace collision), script exists, is `.sh`, is
+    executable. Adds to registry and saves.
   - `update(registry: &mut WorkflowRegistry, name: &str, script_path: Option<&Path>, description: Option<&str>) -> Result<()>`
     Updates an existing workflow's script path and/or description.
-  - `delete(registry: &mut WorkflowRegistry, name: &str) -> Result<()>`
-    Removes a workflow from the registry.
+  - `delete(registry: &mut WorkflowRegistry, name: &str) -> Result<()>` Removes
+    a workflow from the registry.
   - `run(registry: &mut WorkflowRegistry, name: &str, args: &[String]) -> Result<i32>`
     Looks up workflow, verifies script still exists, executes via
-    `sh <script_path> [args...]`, streams stdout/stderr to terminal,
-    updates `last_run_at` and `last_exit_code`, returns exit code.
-  - `list(registry: &WorkflowRegistry) -> Vec<(&str, &CustomWorkflow)>`
-    Returns all workflows sorted by name.
+    `sh <script_path> [args...]`, streams stdout/stderr to terminal, updates
+    `last_run_at` and `last_exit_code`, returns exit code.
+  - `list(registry: &WorkflowRegistry) -> Vec<(&str, &CustomWorkflow)>` Returns
+    all workflows sorted by name.
   - `info(registry: &WorkflowRegistry, name: &str) -> Result<&CustomWorkflow>`
     Returns detailed info for a single workflow.
 - [ ] Validate script path on `register` and `run`:
@@ -1047,8 +1038,8 @@ For each crate, repeat this process:
   - Must end in `.sh`
   - On `register`: warn if not executable, offer to `chmod +x`
   - On `run`: error if script has been moved/deleted since registration
-- [ ] Add unit tests for register, update, delete, list, info, and
-      validation edge cases (namespace collision, missing script, etc.)
+- [ ] Add unit tests for register, update, delete, list, info, and validation
+      edge cases (namespace collision, missing script, etc.)
 
 ### P7-4: CLI — `toad cw` Subcommand (`bin/toad`, MIT)
 
@@ -1061,15 +1052,14 @@ For each crate, repeat this process:
   - `Delete { name: String }`
   - `List`
   - `Info { name: String }`
-- [ ] `toad cw <name> [args...]` dispatches to `Run` — the `name` is the
-      first positional arg, remaining args are passed through
+- [ ] `toad cw <name> [args...]` dispatches to `Run` — the `name` is the first
+      positional arg, remaining args are passed through
 - [ ] `toad cw delete` prompts for `[y/N]` confirmation before removing
-- [ ] `toad cw register` warns if script is not executable and offers to
-      fix it
-- [ ] `toad cw list` renders a formatted table with name, description,
-      and script path (truncated if long)
-- [ ] `toad cw info` renders full detail including timestamps and last
-      run status
+- [ ] `toad cw register` warns if script is not executable and offers to fix it
+- [ ] `toad cw list` renders a formatted table with name, description, and
+      script path (truncated if long)
+- [ ] `toad cw info` renders full detail including timestamps and last run
+      status
 - [ ] Format output with existing Toad visual style (colored, structured)
 - [ ] Add `--help` documentation for all `toad cw` subcommands
 - [ ] Exit with the script's exit code when running a workflow
@@ -1084,10 +1074,9 @@ For each crate, repeat this process:
       `1.0.2` and `--dry-run` to the script as `$1` and `$2`
 - [ ] Test update: change script path and description, verify `toad cw info`
       reflects the changes
-- [ ] Test delete confirmation: `toad cw delete release` prompts before
-      removing
-- [ ] Dogfood: register `scripts/publish_waterfall.sh` as `toad cw release`
-      and run it
+- [ ] Test delete confirmation: `toad cw delete release` prompts before removing
+- [ ] Dogfood: register `scripts/publish_waterfall.sh` as `toad cw release` and
+      run it
 
 ---
 
@@ -1114,17 +1103,20 @@ For each crate, repeat this process:
 - [ ] `toad ggit sync` updates parent submodule references correctly
 - [ ] All `toad ggit` subcommands have `--help` documentation
 - [ ] `toad ggit branches` renders cross-repo branch matrix correctly
-- [ ] `toad ggit branches --group <name>` shows per-repo detail with ahead/behind
+- [ ] `toad ggit branches --group <name>` shows per-repo detail with
+      ahead/behind
 - [ ] `toad ggit merge-status <branch>` reports merged/not-merged per repo
 - [ ] `toad ggit align <branch>` reports alignment state per repo
 - [ ] `toad ggit commit --link` appends group reference trailers to commit body
 - [ ] `toad ggit branch -d <name>` deletes branch from all targeted repos
 - [ ] No git operations exist outside `toad-git`:
-      `grep -r 'Command::new("git")' crates/ --include="*.rs"` only hits `toad-git`
+      `grep -r 'Command::new("git")' crates/ --include="*.rs"` only hits
+      `toad-git`
 - [ ] `toad ggit sync` blocks when a submodule HEAD is not pushed to remote
       (ghost commit prevention)
 - [ ] `toad ggit sync` blocks when a submodule has dirty/uncommitted changes
-- [ ] `toad ggit sync --force` prompts for `[y/N]` confirmation before proceeding
+- [ ] `toad ggit sync --force` prompts for `[y/N]` confirmation before
+      proceeding
 - [ ] `toad ggit preflight` returns structured pass/fail per repo
 - [ ] Default `toad ggit` output shows consolidated one-line-per-repo summaries
 - [ ] `toad ggit -v` streams full raw git output with per-repo headers
@@ -1159,14 +1151,16 @@ For each crate, repeat this process:
 - [ ] `toad status` resolves against the active context's path (not hardcoded)
 - [ ] `TOAD_ROOT` env var still overrides the active context
 - [ ] `scripts/dev_setup.sh` works from a fresh clone and registers `toad-dev`
-- [ ] Switching between `toad-dev` and a user context changes which projects
-      all commands see
+- [ ] Switching between `toad-dev` and a user context changes which projects all
+      commands see
 - [ ] `~/.toad/contexts/<name>/` directory (with `shadows/` subdir) is created
       on `toad project register`
-- [ ] `~/.toad/contexts/<name>/registry.json` is used (not `~/.toad/registry.json`)
+- [ ] `~/.toad/contexts/<name>/registry.json` is used (not
+      `~/.toad/registry.json`)
 - [ ] `~/.toad/contexts/<name>/shadows/MANIFEST.md` and `tags.json` are used
       (not `<workspace_root>/shadows/`)
-- [ ] Old `~/.toad/registry.json` migrates to `~/.toad/contexts/default/registry.json`
+- [ ] Old `~/.toad/registry.json` migrates to
+      `~/.toad/contexts/default/registry.json`
 - [ ] Old `<workspace_root>/shadows/` contents migrate to
       `~/.toad/contexts/default/shadows/`
 - [ ] `toad project delete` removes the context's `~/.toad/contexts/<name>/` dir

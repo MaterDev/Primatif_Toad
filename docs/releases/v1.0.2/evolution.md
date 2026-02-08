@@ -2,8 +2,8 @@
 
 ## Vision
 
-The v1.0.2 release restructures Toad from a single monolithic repository into
-an **open-core multi-repo architecture**. The goal is to maintain Toad as a
+The v1.0.2 release restructures Toad from a single monolithic repository into an
+**open-core multi-repo architecture**. The goal is to maintain Toad as a
 legitimate open-source project (MIT-licensed CLI and core types) while
 protecting the intelligence layer under a source-available license (BSL-1.1).
 
@@ -21,8 +21,8 @@ around each component.
 3. **Unified Development:** Despite separate repos, the developer experience
    remains a single `cargo build` from the workspace root.
 4. **Commercial Protection:** The scanning, context generation, and operational
-   intelligence layers are protected under BSL-1.1 with an 8-year conversion
-   to MIT.
+   intelligence layers are protected under BSL-1.1 with an 8-year conversion to
+   MIT.
 5. **Source Availability:** All code remains publicly visible, cloneable, and
    explorable. The BSL-1.1 license only restricts commercial use without
    permission.
@@ -49,9 +49,9 @@ principle:
 - The **intelligence layer** (scanning, context generation, operations,
   analysis) is BSL-1.1 licensed. This protects the commercial value.
 
-Because Primatif owns all the code, the MIT binary can legally depend on
-BSL-1.1 crates. The license only restricts what **others** can do with each
-piece independently.
+Because Primatif owns all the code, the MIT binary can legally depend on BSL-1.1
+crates. The license only restricts what **others** can do with each piece
+independently.
 
 ### BSL-1.1 (Business Source License) Terms
 
@@ -94,21 +94,21 @@ Work, please contact: [contact info]
 
 ### MIT (Open Source)
 
-| Crate       | Rationale |
-| :---------- | :-------- |
-| `bin/toad`  | CLI glue — argument parsing, output formatting, user interaction. This is the open-source face of the project. |
+| Crate       | Rationale                                                                                                                                                                                                    |
+| :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bin/toad`  | CLI glue — argument parsing, output formatting, user interaction. This is the open-source face of the project.                                                                                               |
 | `toad-core` | Data models, `Workspace`, `GlobalConfig`, `StackStrategy`, `ProjectDetail`. These are the **contracts** that define the ecosystem. Keeping this MIT lets the community build tooling on the same data model. |
-| `scaffold`  | Basic project creation. Low commercial value, high community value. |
+| `scaffold`  | Basic project creation. Low commercial value, high community value.                                                                                                                                          |
 
 ### BSL-1.1 (Source-Available, 8-Year Conversion to MIT)
 
-| Crate                | Rationale |
-| :------------------- | :-------- |
-| `discovery`          | The scanning and intelligence engine. This is the core value — how Toad understands an ecosystem's structure, stacks, and relationships. |
-| `toad-git`           | Git status analysis and VCS intelligence. Feeds into discovery and operational awareness. |
-| `toad-manifest`      | Context generation logic — the AI-context brain. Becomes even more valuable with v1.1.0's deep extraction and structured data. |
-| `toad-ops`           | Batch operations, safety guardrails, audit trail. Operational intelligence that powers `toad do`, `toad clean`, and future automation. |
-| Future: `toad-mcp`   | The MCP server from v1.1.0. Direct commercial value as the agent query interface. |
+| Crate              | Rationale                                                                                                                                |
+| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| `discovery`        | The scanning and intelligence engine. This is the core value — how Toad understands an ecosystem's structure, stacks, and relationships. |
+| `toad-git`         | Git status analysis and VCS intelligence. Feeds into discovery and operational awareness.                                                |
+| `toad-manifest`    | Context generation logic — the AI-context brain. Becomes even more valuable with v1.1.0's deep extraction and structured data.           |
+| `toad-ops`         | Batch operations, safety guardrails, audit trail. Operational intelligence that powers `toad do`, `toad clean`, and future automation.   |
+| Future: `toad-mcp` | The MCP server from v1.1.0. Direct commercial value as the agent query interface.                                                        |
 
 ### Dependency Graph & License Boundaries
 
@@ -142,8 +142,8 @@ Currently, all crates live in a single git repository. This means:
 
 ### The New Architecture: Git Submodules
 
-Each crate becomes its own git repository, referenced as a submodule in the
-main workspace:
+Each crate becomes its own git repository, referenced as a submodule in the main
+workspace:
 
 ```text
 Primatif_Toad/                          ← Main repo (MIT)
@@ -183,15 +183,15 @@ Primatif_Toad/                          ← Main repo (MIT)
 
 ### GitHub Repository Map
 
-| GitHub Repo                | Visibility | License | Source Directory                 |
-| :------------------------- | :--------- | :------ | :------------------------------- |
-| `Primatif/Primatif_Toad`   | Public     | MIT     | Root (bin/toad, conductor, docs) |
-| `Primatif/toad-core`       | Public     | MIT     | `crates/toad-core/`              |
-| `Primatif/toad-scaffold`   | Public     | MIT     | `crates/scaffold/`               |
-| `Primatif/toad-discovery`  | Public     | BSL-1.1 | `crates/discovery/`              |
-| `Primatif/toad-git`        | Public     | BSL-1.1 | `crates/toad-git/`               |
-| `Primatif/toad-manifest`   | Public     | BSL-1.1 | `crates/toad-manifest/`          |
-| `Primatif/toad-ops`        | Public     | BSL-1.1 | `crates/toad-ops/`               |
+| GitHub Repo               | Visibility | License | Source Directory                 |
+| :------------------------ | :--------- | :------ | :------------------------------- |
+| `Primatif/Primatif_Toad`  | Public     | MIT     | Root (bin/toad, conductor, docs) |
+| `Primatif/toad-core`      | Public     | MIT     | `crates/toad-core/`              |
+| `Primatif/toad-scaffold`  | Public     | MIT     | `crates/scaffold/`               |
+| `Primatif/toad-discovery` | Public     | BSL-1.1 | `crates/discovery/`              |
+| `Primatif/toad-git`       | Public     | BSL-1.1 | `crates/toad-git/`               |
+| `Primatif/toad-manifest`  | Public     | BSL-1.1 | `crates/toad-manifest/`          |
+| `Primatif/toad-ops`       | Public     | BSL-1.1 | `crates/toad-ops/`               |
 
 ---
 
@@ -231,8 +231,8 @@ licensed components, embedded firmware with shared libraries, etc. Toad
 currently treats each entry in `projects/` as a flat, independent repo. It has
 no awareness of submodules nested inside those projects.
 
-After v1.0.2, Toad's own codebase will use submodules. But this feature must
-not be built as a special case for self-management — it must be a **generic,
+After v1.0.2, Toad's own codebase will use submodules. But this feature must not
+be built as a special case for self-management — it must be a **generic,
 first-class capability** that any Toad user can leverage for their own
 multi-repo ecosystems.
 
@@ -259,8 +259,8 @@ project. This means:
 
 ### Data Model Changes (`toad-core`, MIT)
 
-The existing `ProjectDetail` struct has a `sub_projects: Vec<String>` field
-that currently stores names only. This needs to evolve into a richer model:
+The existing `ProjectDetail` struct has a `sub_projects: Vec<String>` field that
+currently stores names only. This needs to evolve into a richer model:
 
 ```rust
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -316,8 +316,8 @@ This is **VCS intelligence**, so it belongs in `toad-git` (BSL-1.1).
 
 ### Dogfooding: Toad Manages Itself
 
-After the submodule feature is built, Toad's own crate repos (now submodules
-of the main repo) become the validation case:
+After the submodule feature is built, Toad's own crate repos (now submodules of
+the main repo) become the validation case:
 
 - `toad status` shows the health of all crate submodules
 - `toad do -q toad "cargo test"` runs tests across all crate submodules
@@ -352,9 +352,9 @@ generic — any user with submodules in their projects benefits equally.
 ### The Problem: Which Workspace Am I In?
 
 Toad currently has a single workspace concept: the `home_pointer` in
-`~/.toad/config.json` points to one directory, and all commands operate
-against that directory's projects. This works for the simple case — one user,
-one workspace.
+`~/.toad/config.json` points to one directory, and all commands operate against
+that directory's projects. This works for the simple case — one user, one
+workspace.
 
 But in practice, a developer often works across multiple distinct contexts:
 
@@ -365,25 +365,24 @@ But in practice, a developer often works across multiple distinct contexts:
 - **A monorepo** — `~/BigCorp/platform/` with submodules for microservices
 
 Without explicit context switching, commands like `toad status`, `toad ggit`,
-and `toad do` don't know which set of projects they should target. Worse,
-when Toad is used to develop *itself*, its own crate submodules need to be
-treated as projects — but the current `home_pointer` might be pointing at the
-user's code workspace.
+and `toad do` don't know which set of projects they should target. Worse, when
+Toad is used to develop _itself_, its own crate submodules need to be treated as
+projects — but the current `home_pointer` might be pointing at the user's code
+workspace.
 
-**We've been conflating these contexts throughout the design.** Some examples
-in this document assume `toad ggit` operates on Toad's own crates, others
-assume it operates on user projects. The `toad project` feature makes this
-explicit.
+**We've been conflating these contexts throughout the design.** Some examples in
+this document assume `toad ggit` operates on Toad's own crates, others assume it
+operates on user projects. The `toad project` feature makes this explicit.
 
 ### The Solution: Named Project Contexts
 
-Users register any number of **named project contexts** — each is a name
-paired with an absolute path to a directory that Toad should treat as a
-workspace root. Switching between contexts is a single command.
+Users register any number of **named project contexts** — each is a name paired
+with an absolute path to a directory that Toad should treat as a workspace root.
+Switching between contexts is a single command.
 
-There are no hardcoded context names. "toad-dev", "my-code", "client-work"
-are all user-defined. Toad's own development workspace is just another
-registered context — no special-casing.
+There are no hardcoded context names. "toad-dev", "my-code", "client-work" are
+all user-defined. Toad's own development workspace is just another registered
+context — no special-casing.
 
 ### Command Surface
 
@@ -437,8 +436,8 @@ toad project info <name>
 
 ### Storage: `~/.toad/config.json` (Extended)
 
-The existing `GlobalConfig` currently has only `home_pointer`. This extends
-it with a `project_contexts` map and an `active_context` field:
+The existing `GlobalConfig` currently has only `home_pointer`. This extends it
+with a `project_contexts` map and an `active_context` field:
 
 ```json
 {
@@ -465,9 +464,9 @@ it with a `project_contexts` map and an `active_context` field:
 ```
 
 **Backward compatibility:** The `home_pointer` field is retained for backward
-compatibility. On first run after upgrade, if `project_contexts` is empty,
-Toad auto-registers the existing `home_pointer` as a context named `default`
-and sets it as active. Existing users experience zero disruption.
+compatibility. On first run after upgrade, if `project_contexts` is empty, Toad
+auto-registers the existing `home_pointer` as a context named `default` and sets
+it as active. Existing users experience zero disruption.
 
 ### Data Models (`toad-core`, MIT)
 
@@ -564,22 +563,21 @@ The current `~/.toad/` directory assumes a single workspace:
     └── tags.json                 # Tag registry
 ```
 
-**The problem:** Both `registry.json` and `shadows/` are workspace-specific
-but stored in ways that break with multiple contexts:
+**The problem:** Both `registry.json` and `shadows/` are workspace-specific but
+stored in ways that break with multiple contexts:
 
-- `registry.json` sits at `~/.toad/` — a single global file for one
-  workspace's scan cache. Switching contexts makes it stale.
+- `registry.json` sits at `~/.toad/` — a single global file for one workspace's
+  scan cache. Switching contexts makes it stale.
 - `shadows/` sits at the workspace root — this pollutes the user's project
   directory with Toad-internal files (`MANIFEST.md`, `tags.json`). Users
   shouldn't have to `.gitignore` Toad artifacts in their own repos. More
-  importantly, each registered context needs its own manifest, tags, and
-  scan cache since they describe completely different sets of projects.
+  importantly, each registered context needs its own manifest, tags, and scan
+  cache since they describe completely different sets of projects.
 
 **The solution:** All per-context artifacts live under
-`~/.toad/contexts/<name>/`. This includes the registry, shadows, and any
-future per-context state. Global artifacts (config, strategies, custom
-workflows) stay at the `~/.toad/` root. Nothing is written to the user's
-workspace directory.
+`~/.toad/contexts/<name>/`. This includes the registry, shadows, and any future
+per-context state. Global artifacts (config, strategies, custom workflows) stay
+at the `~/.toad/` root. Nothing is written to the user's workspace directory.
 
 ```text
 ~/.toad/                          # NEW (multi-context)
@@ -608,14 +606,14 @@ workspace directory.
 
 **What goes where:**
 
-| Artifact | Scope | Location |
-|---|---|---|
-| `config.json` | Global | `~/.toad/config.json` |
-| `custom_workflows.json` | Global | `~/.toad/custom_workflows.json` |
-| `strategies/` | Global | `~/.toad/strategies/` |
-| `registry.json` | Per-context | `~/.toad/contexts/<name>/registry.json` |
-| `shadows/MANIFEST.md` | Per-context | `~/.toad/contexts/<name>/shadows/MANIFEST.md` |
-| `shadows/tags.json` | Per-context | `~/.toad/contexts/<name>/shadows/tags.json` |
+| Artifact                | Scope       | Location                                      |
+| ----------------------- | ----------- | --------------------------------------------- |
+| `config.json`           | Global      | `~/.toad/config.json`                         |
+| `custom_workflows.json` | Global      | `~/.toad/custom_workflows.json`               |
+| `strategies/`           | Global      | `~/.toad/strategies/`                         |
+| `registry.json`         | Per-context | `~/.toad/contexts/<name>/registry.json`       |
+| `shadows/MANIFEST.md`   | Per-context | `~/.toad/contexts/<name>/shadows/MANIFEST.md` |
+| `shadows/tags.json`     | Per-context | `~/.toad/contexts/<name>/shadows/tags.json`   |
 
 **Why everything per-context lives under `~/.toad/contexts/`:**
 
@@ -625,34 +623,33 @@ workspace directory.
   user's project directories. No `.gitignore` entries needed for Toad files.
 - All Toad state is centralized in `~/.toad/` — easy to back up, easy to
   inspect, easy to clean up.
-- When a context is deleted, removing `~/.toad/contexts/<name>/` cleanly
-  removes all associated state in one operation.
+- When a context is deleted, removing `~/.toad/contexts/<name>/` cleanly removes
+  all associated state in one operation.
 
 **Code changes required:**
 
-1. `ProjectRegistry::registry_path()` currently returns
-   `~/.toad/registry.json`. It must change to accept a context name and return
+1. `ProjectRegistry::registry_path()` currently returns `~/.toad/registry.json`.
+   It must change to accept a context name and return
    `~/.toad/contexts/<name>/registry.json`.
 
 2. `ProjectRegistry::load()` and `save()` must accept the active context name
    (or the `GlobalConfig` itself) to resolve the correct path.
 
-3. `Workspace::with_root()` currently sets `shadows_dir` to
-   `<root>/shadows/`. This must change: `shadows_dir` should resolve to
+3. `Workspace::with_root()` currently sets `shadows_dir` to `<root>/shadows/`.
+   This must change: `shadows_dir` should resolve to
    `~/.toad/contexts/<name>/shadows/` based on the active context. The
-   `Workspace` struct needs access to the context name (or the resolved
-   context directory) during construction.
+   `Workspace` struct needs access to the context name (or the resolved context
+   directory) during construction.
 
 4. `Workspace::manifest_path()` and `Workspace::tags_path()` derive from
-   `shadows_dir` — no changes needed once `shadows_dir` points to the
-   correct location.
+   `shadows_dir` — no changes needed once `shadows_dir` points to the correct
+   location.
 
 5. `Workspace::ensure_shadows()` creates the shadows directory — still works,
    just creates it under `~/.toad/contexts/<name>/shadows/` instead.
 
-6. `toad project register` must create the `~/.toad/contexts/<name>/`
-   directory (including `shadows/` subdirectory) when registering a new
-   context.
+6. `toad project register` must create the `~/.toad/contexts/<name>/` directory
+   (including `shadows/` subdirectory) when registering a new context.
 
 7. `toad project delete` must remove the `~/.toad/contexts/<name>/` directory
    (after confirmation) when deleting a context. This cleanly removes the
@@ -665,15 +662,14 @@ location and `~/.toad/contexts/` does not exist:
 
 1. Create `~/.toad/contexts/default/shadows/`
 2. Move `~/.toad/registry.json` → `~/.toad/contexts/default/registry.json`
-3. If `<home_pointer>/shadows/` exists, move its contents
-   (`MANIFEST.md`, `tags.json`) →
-   `~/.toad/contexts/default/shadows/`
+3. If `<home_pointer>/shadows/` exists, move its contents (`MANIFEST.md`,
+   `tags.json`) → `~/.toad/contexts/default/shadows/`
 4. Remove the now-empty `<home_pointer>/shadows/` directory
 5. This happens alongside the `home_pointer` → `default` context migration
 
-After migration, the old `~/.toad/registry.json` no longer exists and the
-old `<workspace_root>/shadows/` directory is gone. All per-context
-reads/writes go through `~/.toad/contexts/<name>/`.
+After migration, the old `~/.toad/registry.json` no longer exists and the old
+`<workspace_root>/shadows/` directory is gone. All per-context reads/writes go
+through `~/.toad/contexts/<name>/`.
 
 **Installation flow update:**
 
@@ -688,10 +684,10 @@ With project contexts, `toad home <path>` becomes a convenience alias for:
 1. `toad project register default <path>` (if no contexts exist yet)
 2. `toad project switch default`
 
-Or, if contexts already exist, `toad home <path>` registers a new context
-with an auto-generated name (e.g., the directory's basename) and switches to
-it. The `toad home` command (no args) continues to show the current workspace
-root — now resolved from the active context.
+Or, if contexts already exist, `toad home <path>` registers a new context with
+an auto-generated name (e.g., the directory's basename) and switches to it. The
+`toad home` command (no args) continues to show the current workspace root — now
+resolved from the active context.
 
 Long-term, `toad home` may be deprecated in favor of `toad project` commands,
 but it remains as a quick-start shortcut for new users who don't need multiple
@@ -731,8 +727,8 @@ fi
 ### History Cleanup: Post-Split
 
 After the crate code is extracted into submodule repos (Phase 2), the main
-repo's git history still contains the full crate source code. This bloats
-the repo unnecessarily since the code now lives in the submodule repos.
+repo's git history still contains the full crate source code. This bloats the
+repo unnecessarily since the code now lives in the submodule repos.
 
 **Solution:** Use `git filter-repo` to remove the crate directories from the
 main repo's history after the submodule conversion is complete. This is a
@@ -759,31 +755,31 @@ friction. The developer must constantly `cd` into submodule directories to run
 git commands, mentally track which repos have uncommitted changes, coordinate
 branch names across repos, and manage PRs for each repo independently.
 
-Using `toad do` to batch raw shell commands is a workaround, not a solution.
-It provides no structure, no error handling specific to git operations, no
+Using `toad do` to batch raw shell commands is a workaround, not a solution. It
+provides no structure, no error handling specific to git operations, no
 awareness of branch state, and no ability for AI agents to reason about the
 multi-repo git workflow.
 
 ### The Solution: `toad ggit` — First-Class Group-Git Operations
 
-`toad ggit` ("group-git") is a dedicated subcommand namespace for **structured, multi-repo
-git operations**. These are not shell passthrough — they are purpose-built
-commands that understand the submodule topology and provide structured output
-that AI agents can consume.
+`toad ggit` ("group-git") is a dedicated subcommand namespace for **structured,
+multi-repo git operations**. These are not shell passthrough — they are
+purpose-built commands that understand the submodule topology and provide
+structured output that AI agents can consume.
 
 **Key design principles:**
 
 1. **Project-scoped by default.** Every command accepts `--project <name>` (or
-   `-p <name>`) to target a specific submodule. Without it, the command
-   operates on all submodules (or the parent, depending on context).
+   `-p <name>`) to target a specific submodule. Without it, the command operates
+   on all submodules (or the parent, depending on context).
 2. **Focus mode.** When targeting a single project, the command behaves as if
    you're inside that repo — no need to `cd` into the directory.
 3. **Structured output.** Commands return structured results (not raw git
    output) that AI agents can parse and act on.
 4. **BSL-1.1 protected.** The orchestration logic lives in `toad-git` (BSL-1.1).
    The CLI surface is in `bin/toad` (MIT). Data models are in `toad-core` (MIT).
-5. **Naming:** `ggit` stands for "group-git" — short, memorable, and
-   immediately communicates the multi-repo intent.
+5. **Naming:** `ggit` stands for "group-git" — short, memorable, and immediately
+   communicates the multi-repo intent.
 
 ### Command Surface
 
@@ -878,11 +874,11 @@ toad ggit push -p toad-manifest
 
 ### Architecture & License Placement
 
-| Layer | Crate | License | Responsibility |
-| :---- | :---- | :------ | :------------- |
-| Data Models | `toad-core` | MIT | `RepoStatus`, `BranchInfo`, `CommitInfo` structs |
-| Orchestration | `toad-git` | BSL-1.1 | All git operation logic, submodule targeting, branch coordination |
-| CLI Surface | `bin/toad` | MIT | `toad ggit` subcommand parsing and output formatting |
+| Layer         | Crate       | License | Responsibility                                                    |
+| :------------ | :---------- | :------ | :---------------------------------------------------------------- |
+| Data Models   | `toad-core` | MIT     | `RepoStatus`, `BranchInfo`, `CommitInfo` structs                  |
+| Orchestration | `toad-git`  | BSL-1.1 | All git operation logic, submodule targeting, branch coordination |
+| CLI Surface   | `bin/toad`  | MIT     | `toad ggit` subcommand parsing and output formatting              |
 
 ### Data Models (`toad-core`, MIT)
 
@@ -922,8 +918,8 @@ pub struct CommitInfo {
 
 ### Orchestration Logic (`toad-git`, BSL-1.1)
 
-The `toad-git` crate currently only has `status.rs` with a single
-`check_status` function. It needs to expand into a full git operations module:
+The `toad-git` crate currently only has `status.rs` with a single `check_status`
+function. It needs to expand into a full git operations module:
 
 ```text
 crates/toad-git/src/
@@ -954,8 +950,8 @@ arbitrary commands across projects. But git operations need more:
 - **Error context:** When a push fails, `toad ggit push` tells you which repo,
   which branch, and why — not just a shell exit code.
 - **Topology awareness:** `toad ggit sync` knows about the parent-submodule
-  relationship and updates references accordingly. `toad do` has no concept
-  of this.
+  relationship and updates references accordingly. `toad do` has no concept of
+  this.
 - **License boundary:** As a first-class feature in `toad-git` (BSL-1.1), this
   is protected commercial value. `toad do` is generic infrastructure.
 - **AI ergonomics:** Structured commands with predictable flags and output are
@@ -1047,8 +1043,8 @@ toad ggit align <branch>
 
 #### Commit Message Convention
 
-To connect commits across repos, `toad ggit commit` encourages (and can
-enforce) a convention that includes the branch group context:
+To connect commits across repos, `toad ggit commit` encourages (and can enforce)
+a convention that includes the branch group context:
 
 ```text
 {type}({scope}): {description}
@@ -1127,25 +1123,25 @@ crates/toad-git/src/
 └── pr.rs              ← new: PR status via GitHub API (optional)
 ```
 
-The `pr.rs` module is optional for v1.0.2 — it requires GitHub API
-integration (personal access token). The core branch tracking
-(`branches.rs`, `merge_status.rs`, `align.rs`) works purely with local
-git data and is the priority.
+The `pr.rs` module is optional for v1.0.2 — it requires GitHub API integration
+(personal access token). The core branch tracking (`branches.rs`,
+`merge_status.rs`, `align.rs`) works purely with local git data and is the
+priority.
 
 #### Pre-flight Check: Preventing Ghost Commits
 
 Submodules are stateful pointers. When `toad ggit sync` updates the parent
 repo's index to reference a submodule's HEAD commit, that commit must actually
-exist on the submodule's remote — otherwise the parent repo becomes "broken"
-for everyone else who clones or pulls it.
+exist on the submodule's remote — otherwise the parent repo becomes "broken" for
+everyone else who clones or pulls it.
 
 **The Ghost Commit problem:**
 
 1. You work in `toad-core`, commit locally but forget to push
 2. `toad ggit sync` updates the parent's submodule pointer to your local SHA
 3. You push the parent repo
-4. Anyone who clones the parent gets a pointer to a commit that doesn't exist
-   on the `toad-core` remote — the repo is broken
+4. Anyone who clones the parent gets a pointer to a commit that doesn't exist on
+   the `toad-core` remote — the repo is broken
 
 **The fix: `toad ggit sync` includes a mandatory pre-flight check.**
 
@@ -1175,9 +1171,9 @@ $ toad ggit sync
 ```
 
 **`--force` with confirmation:** For local-only workflows where you
-intentionally don't need the remote check, `toad ggit sync --force` bypasses
-the pre-flight — but because this is a dangerous operation that can break the
-repo for others, it requires an interactive confirmation:
+intentionally don't need the remote check, `toad ggit sync --force` bypasses the
+pre-flight — but because this is a dangerous operation that can break the repo
+for others, it requires an interactive confirmation:
 
 ```text
 $ toad ggit sync --force
@@ -1192,8 +1188,8 @@ $ toad ggit sync --force
 AI agents should never use `--force` without explicit human approval.
 
 **Standalone pre-flight:** `toad ggit preflight` runs the same checks without
-performing the sync. Useful for CI pipelines, pre-commit hooks, or just
-checking readiness before syncing:
+performing the sync. Useful for CI pipelines, pre-commit hooks, or just checking
+readiness before syncing:
 
 ```text
 toad ggit preflight
@@ -1203,20 +1199,21 @@ toad ggit preflight
 
 #### Output Consolidation
 
-When `toad ggit` executes git operations across multiple repos, each git
-command produces its own stdout/stderr output. Dumping raw git output from 6+
-repos into the terminal is noisy and unusable — especially for AI agents.
+When `toad ggit` executes git operations across multiple repos, each git command
+produces its own stdout/stderr output. Dumping raw git output from 6+ repos into
+the terminal is noisy and unusable — especially for AI agents.
 
 **Design: Toad captures and consolidates all git output.**
 
-1. **Capture:** All git command stdout/stderr is captured (not streamed
-   directly to the terminal).
+1. **Capture:** All git command stdout/stderr is captured (not streamed directly
+   to the terminal).
 2. **Summarize:** Toad produces a structured summary per repo:
-   - Success: repo name + one-line result (e.g., "pushed 3 commits to origin/main")
+   - Success: repo name + one-line result (e.g., "pushed 3 commits to
+     origin/main")
    - Failure: repo name + error message + the raw git stderr for debugging
 3. **Detail on demand:** `--verbose` (or `-v`) streams the full raw git output
-   per repo as it executes, for debugging or when you want to see exactly
-   what git is doing.
+   per repo as it executes, for debugging or when you want to see exactly what
+   git is doing.
 4. **Structured for AI:** The default (non-verbose) output is designed to be
    parseable by AI agents — structured, predictable, and actionable.
 
@@ -1253,10 +1250,10 @@ $ toad ggit push -v
 
 **Architecture:**
 
-| Layer | Responsibility |
-| :---- | :------------- |
-| `toad-git` (BSL-1.1) | Captures git stdout/stderr, returns structured `GitOpResult` |
-| `bin/toad` (MIT) | Formats `GitOpResult` into consolidated or verbose terminal output |
+| Layer                | Responsibility                                                     |
+| :------------------- | :----------------------------------------------------------------- |
+| `toad-git` (BSL-1.1) | Captures git stdout/stderr, returns structured `GitOpResult`       |
+| `bin/toad` (MIT)     | Formats `GitOpResult` into consolidated or verbose terminal output |
 
 **Data model (`toad-core`, MIT):**
 
@@ -1304,17 +1301,17 @@ toad ggit sync
 
 ## Publishing Waterfall: Crates.io Release Automation (Project-Specific)
 
-> **This is NOT a `toad ggit` feature.** `toad ggit` is a generic multi-repo
-> git orchestration tool for any project. Crates.io publishing is specific to
-> Rust workspaces and to the Toad project itself. The solution lives in
-> `scripts/`, not in the CLI.
+> **This is NOT a `toad ggit` feature.** `toad ggit` is a generic multi-repo git
+> orchestration tool for any project. Crates.io publishing is specific to Rust
+> workspaces and to the Toad project itself. The solution lives in `scripts/`,
+> not in the CLI.
 
 ### The Problem
 
 Crates.io does not allow path dependencies. To `cargo publish` the `bin/toad`
 binary, every internal crate it depends on must already be published. Because
-the crates have inter-dependencies, publishing must follow the dependency
-graph in strict topological order:
+the crates have inter-dependencies, publishing must follow the dependency graph
+in strict topological order:
 
 ```text
 Layer 0:  toad-core          (no internal deps — publish first)
@@ -1330,25 +1327,25 @@ Layer 3:  bin/toad            (depends on everything — publish last)
 ```
 
 A single struct change in `toad-core` triggers a **waterfall**: publish
-`toad-core`, wait for the crates.io index to update, bump the version in
-every downstream `Cargo.toml`, publish those crates, wait again, and finally
-publish `bin/toad`. This is an order of magnitude more work than a monorepo
+`toad-core`, wait for the crates.io index to update, bump the version in every
+downstream `Cargo.toml`, publish those crates, wait again, and finally publish
+`bin/toad`. This is an order of magnitude more work than a monorepo
 `cargo publish`.
 
 ### Dual Dependency Strategy
 
-Each crate's `Cargo.toml` must use the dual `version` + `path` pattern so
-that local development uses path resolution while crates.io uses the
-published version:
+Each crate's `Cargo.toml` must use the dual `version` + `path` pattern so that
+local development uses path resolution while crates.io uses the published
+version:
 
 ```toml
 [dependencies]
 toad-core = { version = "1.0.2", path = "../toad-core" }
 ```
 
-This must be set up correctly from the start when splitting into submodules.
-The existing `sync_version.sh` script handles README badge syncing; the
-publish script extends this pattern to `Cargo.toml` version fields.
+This must be set up correctly from the start when splitting into submodules. The
+existing `sync_version.sh` script handles README badge syncing; the publish
+script extends this pattern to `Cargo.toml` version fields.
 
 ### Solution: `scripts/publish_waterfall.sh`
 
@@ -1356,33 +1353,33 @@ A shell script in `scripts/` that automates the full publish cascade:
 
 1. **Resolve the dependency graph** — hardcoded or parsed from `Cargo.toml`
    files, ordered topologically
-2. **Bump versions** — update `version = "x.y.z"` in each crate's
-   `Cargo.toml` and all downstream dependency references
+2. **Bump versions** — update `version = "x.y.z"` in each crate's `Cargo.toml`
+   and all downstream dependency references
 3. **Dry-run check** — `cargo publish --dry-run` for each crate in order
-4. **Publish in order** — `cargo publish` for each crate, waiting for
-   crates.io index propagation between layers (poll with
+4. **Publish in order** — `cargo publish` for each crate, waiting for crates.io
+   index propagation between layers (poll with
    `cargo search <crate> | grep <version>`)
 5. **Commit version bumps** — after all publishes succeed, commit the
    `Cargo.toml` changes
-6. **Tag the release** — `git tag v<version>` in each submodule and the
-   parent repo
+6. **Tag the release** — `git tag v<version>` in each submodule and the parent
+   repo
 
-This script is invoked manually as part of the release workflow — it is not
-a `toad` CLI command. It lives alongside `sync_version.sh` and `install_toad.sh`
+This script is invoked manually as part of the release workflow — it is not a
+`toad` CLI command. It lives alongside `sync_version.sh` and `install_toad.sh`
 in the `scripts/` directory.
 
 ### Why Not a `toad ggit` Command?
 
 - `toad ggit` is **language-agnostic** — it works with any multi-repo setup
   (Rust, TypeScript, Python, mixed). Publishing to crates.io is Rust-specific.
-- `toad ggit` is **generic** — it doesn't know about `Cargo.toml`, `package.json`,
-  or any package manager. Adding language-specific publishing would violate
-  the tool's design boundary.
+- `toad ggit` is **generic** — it doesn't know about `Cargo.toml`,
+  `package.json`, or any package manager. Adding language-specific publishing
+  would violate the tool's design boundary.
 - The publish waterfall is a **project workflow**, not a git operation. It
   belongs in `scripts/` where project-specific automation lives.
-- With the Custom Workflows feature (below), this script can be registered
-  as `toad cw release` — giving it a first-class CLI entry point without
-  polluting the generic `toad` command namespace.
+- With the Custom Workflows feature (below), this script can be registered as
+  `toad cw release` — giving it a first-class CLI entry point without polluting
+  the generic `toad` command namespace.
 
 ---
 
@@ -1392,20 +1389,20 @@ Users inevitably need project-specific automation that doesn't belong in the
 generic `toad` CLI — language-specific publish scripts, deploy pipelines,
 database migrations, environment setup, etc. Rather than forcing users to
 remember script paths or maintain aliases, Toad provides a **custom workflow
-registry** that lets users register, manage, and invoke their own shell
-scripts as first-class `toad` subcommands.
+registry** that lets users register, manage, and invoke their own shell scripts
+as first-class `toad` subcommands.
 
 ### Design Principles
 
-- **Shell only.** Custom workflows must be shell scripts (`.sh`). This keeps
-  the execution model simple, portable, and auditable.
-- **Namespace protection.** Users cannot register a workflow name that
-  collides with a built-in `toad` command (`status`, `do`, `ggit`, `create`,
-  `home`, `stats`, `clean`, `tag`, `untag`, `cw`, `project`, etc.). The
-  reserved namespace list is maintained **centrally in `toad-ops`** and
-  derived programmatically from `bin/toad`'s command definitions — so any
-  future command added to the binary automatically blocks its name in the
-  workflow registry. No manual list maintenance required.
+- **Shell only.** Custom workflows must be shell scripts (`.sh`). This keeps the
+  execution model simple, portable, and auditable.
+- **Namespace protection.** Users cannot register a workflow name that collides
+  with a built-in `toad` command (`status`, `do`, `ggit`, `create`, `home`,
+  `stats`, `clean`, `tag`, `untag`, `cw`, `project`, etc.). The reserved
+  namespace list is maintained **centrally in `toad-ops`** and derived
+  programmatically from `bin/toad`'s command definitions — so any future command
+  added to the binary automatically blocks its name in the workflow registry. No
+  manual list maintenance required.
 - **Updatable.** Registered workflows can be updated (new script path, new
   description) without re-registering.
 - **Global scope.** Workflows are registered per-user in `~/.toad/`, not
@@ -1468,8 +1465,8 @@ toad cw info <name>
 
 ### Storage: `~/.toad/custom_workflows.json`
 
-The workflow registry is a JSON file in the user's global Toad config
-directory (`~/.toad/`), alongside the existing `GlobalConfig`:
+The workflow registry is a JSON file in the user's global Toad config directory
+(`~/.toad/`), alongside the existing `GlobalConfig`:
 
 ```json
 {
@@ -1492,8 +1489,19 @@ directory (`~/.toad/`), alongside the existing `GlobalConfig`:
     }
   },
   "reserved_namespaces": [
-    "status", "do", "ggit", "create", "home", "stats",
-    "clean", "tag", "untag", "cw", "project", "help", "version"
+    "status",
+    "do",
+    "ggit",
+    "create",
+    "home",
+    "stats",
+    "clean",
+    "tag",
+    "untag",
+    "cw",
+    "project",
+    "help",
+    "version"
   ]
 }
 ```
@@ -1503,14 +1511,14 @@ list is maintained centrally in `toad-ops` via a
 `reserved_command_names() -> Vec<&str>` function that returns all built-in
 command names. This function is the single source of truth:
 
-- When `toad cw register` runs, it calls `reserved_command_names()` to
-  validate — not the cached JSON list.
-- When `toad` starts, it syncs the JSON cache from the function so that
-  external tools reading the JSON see the current list.
-- When a new command is added to `bin/toad`, the developer adds its name to
-  the `reserved_command_names()` function in `toad-ops`. This is enforced
-  by a unit test that compares the function's output against the actual
-  `Commands` enum variants in `bin/toad`.
+- When `toad cw register` runs, it calls `reserved_command_names()` to validate
+  — not the cached JSON list.
+- When `toad` starts, it syncs the JSON cache from the function so that external
+  tools reading the JSON see the current list.
+- When a new command is added to `bin/toad`, the developer adds its name to the
+  `reserved_command_names()` function in `toad-ops`. This is enforced by a unit
+  test that compares the function's output against the actual `Commands` enum
+  variants in `bin/toad`.
 
 ### Data Models (`toad-core`, MIT)
 
@@ -1539,39 +1547,38 @@ When `toad cw <name> [args...]` is invoked:
 
 1. Load `~/.toad/custom_workflows.json`
 2. Look up `name` in the registry — error if not found
-3. Verify the script file still exists at the registered path — error with
-   a clear message if it's been moved or deleted
+3. Verify the script file still exists at the registered path — error with a
+   clear message if it's been moved or deleted
 4. Execute the script via `sh <script_path> [args...]`
-5. Stream stdout/stderr directly to the terminal (no capture — the user
-   wants to see their script's output in real time)
-6. After completion, update `last_run_at` and `last_exit_code` in the
-   registry
+5. Stream stdout/stderr directly to the terminal (no capture — the user wants to
+   see their script's output in real time)
+6. After completion, update `last_run_at` and `last_exit_code` in the registry
 7. Exit with the script's exit code
 
 ### Architecture
 
-| Layer | Responsibility |
-| :---- | :------------- |
-| `toad-core` (MIT) | `CustomWorkflow`, `WorkflowRegistry` structs, JSON load/save |
-| `toad-ops` (BSL-1.1) | Workflow execution logic (validate, run, update metadata) |
-| `bin/toad` (MIT) | CLI surface (`toad cw` subcommand), output formatting |
+| Layer                | Responsibility                                               |
+| :------------------- | :----------------------------------------------------------- |
+| `toad-core` (MIT)    | `CustomWorkflow`, `WorkflowRegistry` structs, JSON load/save |
+| `toad-ops` (BSL-1.1) | Workflow execution logic (validate, run, update metadata)    |
+| `bin/toad` (MIT)     | CLI surface (`toad cw` subcommand), output formatting        |
 
 ### Why `toad-ops` and Not `bin/toad`?
 
-The execution logic (script validation, path checking, exit code tracking)
-is reusable intelligence that could be consumed by other interfaces (e.g.,
-a future `toad-mcp` server for AI agents). Keeping it in `toad-ops` follows
-the same pattern as `toad do` — the binary handles CLI concerns, the crate
-handles operational logic.
+The execution logic (script validation, path checking, exit code tracking) is
+reusable intelligence that could be consumed by other interfaces (e.g., a future
+`toad-mcp` server for AI agents). Keeping it in `toad-ops` follows the same
+pattern as `toad do` — the binary handles CLI concerns, the crate handles
+operational logic.
 
 ---
 
 ## Git Operations Boundary: Everything Git → `toad-git` (BSL-1.1)
 
 All git-related logic in Toad — existing and future — must live within the
-`toad-git` crate (BSL-1.1). This is not just about the new `toad ggit`
-commands. **Any code that executes git commands, parses git output, or reasons
-about git state is git intelligence and belongs in the protected layer.**
+`toad-git` crate (BSL-1.1). This is not just about the new `toad ggit` commands.
+**Any code that executes git commands, parses git output, or reasons about git
+state is git intelligence and belongs in the protected layer.**
 
 ### The Rule
 
@@ -1582,9 +1589,9 @@ No crate outside of `toad-git` may:
 - Interpret git status, branch, or commit data
 - Detect or reason about git-specific patterns (e.g., destructive git commands)
 
-Other crates may **consume** the structured types that `toad-git` returns
-(e.g., `RepoStatus`, `BranchInfo`, `VcsStatus`), but the logic that produces
-those types must live in `toad-git`.
+Other crates may **consume** the structured types that `toad-git` returns (e.g.,
+`RepoStatus`, `BranchInfo`, `VcsStatus`), but the logic that produces those
+types must live in `toad-git`.
 
 ### Current Violations (Pre-v1.0.2)
 
@@ -1597,16 +1604,16 @@ An audit of the current codebase reveals the following violations:
    - **Impact:** `scaffold` gains a dependency on `toad-git`. Since `scaffold`
      is MIT and `toad-git` is BSL-1.1, this means `scaffold` can no longer be
      used independently without `toad-git`. **Decision needed:** either accept
-     this dependency (scaffold becomes effectively BSL-1.1 in practice), or
-     make `git init` optional in scaffold and let the caller handle it.
+     this dependency (scaffold becomes effectively BSL-1.1 in practice), or make
+     `git init` optional in scaffold and let the caller handle it.
 
 2. **`toad-ops/src/safety.rs` — destructive command detection** (BSL-1.1 crate)
    - Pattern-matches git command strings (`git reset --hard`, `git push -f`)
    - **Status:** Already in a BSL-1.1 crate, so no license violation. However,
      this is git-aware intelligence that arguably belongs in `toad-git` for
      architectural consistency. Consider moving the git-specific patterns to
-     `toad-git` and having `toad-ops` call a `toad_git::safety::is_destructive_git_command()`
-     function.
+     `toad-git` and having `toad-ops` call a
+     `toad_git::safety::is_destructive_git_command()` function.
 
 3. **`discovery/src/lib.rs` — `detect_vcs_status()`** (BSL-1.1 crate)
    - Calls `toad_git::status::check_status()` and maps the result
@@ -1622,8 +1629,8 @@ An audit of the current codebase reveals the following violations:
 
 ### Architectural Consequence for `scaffold`
 
-The `scaffold` crate is currently MIT and has no dependencies on BSL-1.1
-crates. Moving `git init` to `toad-git` creates a dependency chain:
+The `scaffold` crate is currently MIT and has no dependencies on BSL-1.1 crates.
+Moving `git init` to `toad-git` creates a dependency chain:
 
 ```text
 scaffold (MIT) → toad-git (BSL-1.1)
@@ -1634,17 +1641,16 @@ scaffold (MIT) → toad-git (BSL-1.1)
 - **Option A: Accept the dependency.** `scaffold` becomes MIT in license but
   BSL-1.1 in practice (can't function without `toad-git`). This is fine if
   scaffold is always distributed as part of Toad.
-- **Option B: Make git init optional.** `scaffold` creates the project
-  structure but doesn't init git. The caller (`bin/toad`) calls
-  `toad_git::init::init_repo()` after scaffolding. This keeps `scaffold`
-  truly independent.
-- **Option C: Move scaffold to BSL-1.1.** If scaffold's value is tightly
-  coupled to git operations, just relicense it.
+- **Option B: Make git init optional.** `scaffold` creates the project structure
+  but doesn't init git. The caller (`bin/toad`) calls
+  `toad_git::init::init_repo()` after scaffolding. This keeps `scaffold` truly
+  independent.
+- **Option C: Move scaffold to BSL-1.1.** If scaffold's value is tightly coupled
+  to git operations, just relicense it.
 
-**Recommended: Option B.** Keep `scaffold` as a pure filesystem operation
-(MIT). Let `bin/toad` orchestrate the git init step after scaffolding. This
-maintains the clean license boundary and keeps `scaffold` usable as a
-standalone library.
+**Recommended: Option B.** Keep `scaffold` as a pure filesystem operation (MIT).
+Let `bin/toad` orchestrate the git init step after scaffolding. This maintains
+the clean license boundary and keeps `scaffold` usable as a standalone library.
 
 ---
 
@@ -1662,8 +1668,8 @@ ask:
 1. **Is this a data model, trait, or contract?** → It belongs in `toad-core`
    (MIT). Types that define the shape of data flow openly.
 2. **Is this intelligence, analysis, or operational logic?** → It belongs in a
-   BSL-1.1 crate (`discovery`, `toad-ops`, `toad-manifest`, `toad-git`, or a
-   new BSL-1.1 crate). This is the protected value.
+   BSL-1.1 crate (`discovery`, `toad-ops`, `toad-manifest`, `toad-git`, or a new
+   BSL-1.1 crate). This is the protected value.
 3. **Is this CLI glue, formatting, or user interaction?** → It belongs in
    `bin/toad` (MIT). The thin orchestrator layer.
 
@@ -1671,21 +1677,20 @@ ask:
 
 When creating a new crate (e.g., `toad-mcp` for v1.1.0):
 
-- **Default to BSL-1.1** for any crate that contains intelligence, analysis,
-  or operational logic.
+- **Default to BSL-1.1** for any crate that contains intelligence, analysis, or
+  operational logic.
 - **Use MIT only** for crates that define shared contracts (types, traits) or
   provide basic utility with no commercial differentiator.
-- **Document the license choice** in the crate's `Cargo.toml` and `LICENSE`
-  file before writing any code.
+- **Document the license choice** in the crate's `Cargo.toml` and `LICENSE` file
+  before writing any code.
 
 ### Dependency Direction Rule
 
 The license boundary enforces a clean dependency direction:
 
-- **MIT crates must never depend on BSL-1.1 crates** (except the binary
-  itself). This keeps the open-source types independent.
-- **BSL-1.1 crates may depend on MIT crates** (they consume the open
-  contracts).
+- **MIT crates must never depend on BSL-1.1 crates** (except the binary itself).
+  This keeps the open-source types independent.
+- **BSL-1.1 crates may depend on MIT crates** (they consume the open contracts).
 - **BSL-1.1 crates may depend on other BSL-1.1 crates** (e.g., `discovery`
   depends on `toad-git`).
 
@@ -1714,14 +1719,14 @@ MIT Layer (open contracts)          BSL-1.1 Layer (protected intelligence)
 
 ### License Boundary Enforcement: Hard Gates
 
-The Dependency Direction Rule above is a human rule. Human rules get broken —
-by tired devs, by AI agents that hallucinate library availability, by
+The Dependency Direction Rule above is a human rule. Human rules get broken — by
+tired devs, by AI agents that hallucinate library availability, by
 well-intentioned refactors that "just need this one import." Relying on
-`.gemini/GEMINI.md` or code review to catch violations is insufficient.
-**Rules without enforcement are just suggestions.**
+`.gemini/GEMINI.md` or code review to catch violations is insufficient. **Rules
+without enforcement are just suggestions.**
 
-Toad needs a **hard gate** that fails the build immediately if an MIT crate
-ever gains a dependency on a BSL-1.1 crate.
+Toad needs a **hard gate** that fails the build immediately if an MIT crate ever
+gains a dependency on a BSL-1.1 crate.
 
 #### Two Layers of Enforcement
 
@@ -1760,9 +1765,9 @@ This script:
 
 **Layer 2: `cargo-deny` (comprehensive, catches transitive deps)**
 
-[`cargo-deny`](https://github.com/EmbarkStudios/cargo-deny) is a Rust
-ecosystem tool that enforces license policies on the full dependency graph,
-including transitive dependencies. It catches cases the simple script can't:
+[`cargo-deny`](https://github.com/EmbarkStudios/cargo-deny) is a Rust ecosystem
+tool that enforces license policies on the full dependency graph, including
+transitive dependencies. It catches cases the simple script can't:
 
 - A BSL-1.1 crate accidentally pulling in a GPL transitive dependency
 - An MIT crate depending on a third-party crate that re-exports BSL code
@@ -1795,28 +1800,27 @@ name = "toad-ops"
 # so we use the [bans] section to deny specific crate combinations
 ```
 
-**Note:** `cargo-deny` doesn't natively support "crate A with license X must
-not depend on crate B with license Y" as a first-class rule. The simple
-script (Layer 1) is the primary enforcement mechanism for the internal
-boundary. `cargo-deny` is the secondary layer for third-party license
-compliance.
+**Note:** `cargo-deny` doesn't natively support "crate A with license X must not
+depend on crate B with license Y" as a first-class rule. The simple script
+(Layer 1) is the primary enforcement mechanism for the internal boundary.
+`cargo-deny` is the secondary layer for third-party license compliance.
 
 #### Where Enforcement Runs
 
-| Gate | When | What it catches |
-| :--- | :--- | :-------------- |
+| Gate                                | When                | What it catches                    |
+| :---------------------------------- | :------------------ | :--------------------------------- |
 | `scripts/check_license_boundary.sh` | Pre-commit hook, CI | MIT crate depends on BSL-1.1 crate |
-| `cargo deny check licenses` | CI | Third-party license violations |
-| `cargo deny check bans` | CI | Banned crate usage |
+| `cargo deny check licenses`         | CI                  | Third-party license violations     |
+| `cargo deny check bans`             | CI                  | Banned crate usage                 |
 
 #### Why Both?
 
-- The **simple script** is the fast, zero-dependency gate that catches the
-  most likely violation (internal dependency direction). It runs everywhere,
+- The **simple script** is the fast, zero-dependency gate that catches the most
+  likely violation (internal dependency direction). It runs everywhere,
   including in git hooks where you don't want to invoke `cargo`.
 - **`cargo-deny`** is the comprehensive gate that catches everything else
-  (transitive deps, third-party licenses). It requires the Rust toolchain
-  and is slower, so it runs in CI only.
+  (transitive deps, third-party licenses). It requires the Rust toolchain and is
+  slower, so it runs in CI only.
 
 ### AI Agent Context Updates
 
@@ -1827,26 +1831,25 @@ during development:
 - **`.gemini/GEMINI.md`** — Add a Licensing Architecture section with the
   boundary rules and the decision framework for new code placement.
 - **`conductor/tech-stack.md`** — Update the Component Hierarchy to include
-  license annotations per crate, and add a "Licensing Architecture" section
-  to the Design Principles.
+  license annotations per crate, and add a "Licensing Architecture" section to
+  the Design Principles.
 - **`conductor/product.md`** — Add "Open Core Licensing" as a core goal.
 - **`conductor/product-guidelines.md`** — Add a "Licensing & Architecture
   Boundaries" section with the dependency direction rule.
 
 ### Cross-Repo Context Map: Solving AI Agent Navigation
 
-Splitting into submodules increases the conceptual boundaries an AI agent
-must navigate. A bug in `toad status` requires reading `bin/toad` (CLI call),
-`discovery` (scanning logic), `toad-git` (git status), and `toad-core`
-(the `RepoStatus` type). Previously all in one tree, now the agent needs to
+Splitting into submodules increases the conceptual boundaries an AI agent must
+navigate. A bug in `toad status` requires reading `bin/toad` (CLI call),
+`discovery` (scanning logic), `toad-git` (git status), and `toad-core` (the
+`RepoStatus` type). Previously all in one tree, now the agent needs to
 understand which crate owns which responsibility.
 
-**The physical reality is less scary than it sounds.** With git submodules,
-the code is still in the same directory tree — `crates/toad-git/src/status.rs`
-is at the exact same path before and after the split. For tools like
-Windsurf/Cascade that operate on the workspace directory, `grep`, `find`, and
-import-following all work identically. The submodule boundary is invisible to
-file search.
+**The physical reality is less scary than it sounds.** With git submodules, the
+code is still in the same directory tree — `crates/toad-git/src/status.rs` is at
+the exact same path before and after the split. For tools like Windsurf/Cascade
+that operate on the workspace directory, `grep`, `find`, and import-following
+all work identically. The submodule boundary is invisible to file search.
 
 **But the conceptual map matters.** An AI agent needs to know:
 
@@ -1858,8 +1861,8 @@ file search.
 **The solution: `toad manifest` generates a Cross-Repo Context Map.**
 
 The existing `toad manifest` command generates project context. It must be
-extended to include a structured map of cross-repo relationships that AI
-agents can consume as their first stop for understanding the architecture.
+extended to include a structured map of cross-repo relationships that AI agents
+can consume as their first stop for understanding the architecture.
 
 #### What the Cross-Repo Map Contains
 
@@ -1936,26 +1939,25 @@ agents can consume as their first stop for understanding the architecture.
 cross-repo map is an additional output section that:
 
 1. **Parses `Cargo.toml` files** to extract the dependency graph
-2. **Reads the license map** (from `deny.toml` or a hardcoded list) to
-   annotate each crate
-3. **Scans `pub struct` and `pub enum` declarations** in `toad-core` to
-   build the Type Flow table
-4. **Reads `use` statements** across crates to trace where types are
-   consumed
+2. **Reads the license map** (from `deny.toml` or a hardcoded list) to annotate
+   each crate
+3. **Scans `pub struct` and `pub enum` declarations** in `toad-core` to build
+   the Type Flow table
+4. **Reads `use` statements** across crates to trace where types are consumed
 5. **Outputs the map** as a structured text section in the manifest
 
 The map is regenerated every time `toad manifest` runs. It should also be
-committed as a static file (e.g., `CROSS_REPO_MAP.md` at the workspace root)
-so that AI agents can read it without running `toad manifest`.
+committed as a static file (e.g., `CROSS_REPO_MAP.md` at the workspace root) so
+that AI agents can read it without running `toad manifest`.
 
 #### Why This Is Better Than a Monorepo
 
-A well-generated cross-repo map is actually *more* navigable for AI agents
-than a monorepo with no documentation. In a monorepo, the agent has to
-*discover* the architecture by reading code. With the cross-repo map, the
-architecture is *declared* — the agent knows exactly where to look before
-reading a single line of code.
+A well-generated cross-repo map is actually _more_ navigable for AI agents than
+a monorepo with no documentation. In a monorepo, the agent has to _discover_ the
+architecture by reading code. With the cross-repo map, the architecture is
+_declared_ — the agent knows exactly where to look before reading a single line
+of code.
 
-This turns the architect's concern on its head: the split *forces* us to
-document the architecture explicitly, which makes the codebase more
-navigable, not less.
+This turns the architect's concern on its head: the split _forces_ us to
+document the architecture explicitly, which makes the codebase more navigable,
+not less.
