@@ -250,6 +250,27 @@ enum GgitCommand {
         #[arg(long, short = 'f')]
         force: bool,
     },
+    /// List all branches across repositories
+    Branches {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Show remote branches
+        #[arg(long, short = 'r')]
+        all: bool,
+    },
+    /// Force-align submodules to Hub root expectations
+    Align {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -2371,6 +2392,128 @@ fn main() -> Result<()> {
 
                     if any_fail {
                         std::process::exit(1);
+                    }
+                }
+                GgitCommand::Branches { query, tag, all } => {
+                    println!("{}", "--- MULTI-REPO BRANCH LIST ---".green().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    for p in targets {
+                        println!("\n{} {}", "»".blue(), p.name.bold());
+
+                        // Local branches
+                        let local = toad_git::branches::list_local_branches(&p.path)?;
+                        for b in local {
+                            let current_marker = if b.is_current { "*" } else { " " };
+                            let color_name = if b.is_current {
+                                b.name.green().bold()
+                            } else {
+                                b.name.normal()
+                            };
+                            println!("  {} {}", current_marker.green(), color_name);
+                        }
+
+                        // Remote branches if requested
+                        if *all {
+                            let remote = toad_git::branches::list_remote_branches(&p.path)?;
+                            for b in remote {
+                                println!("    {} {}", "remote:".dimmed(), b.name.red());
+                            }
+                        }
+
+                        // Submodules
+                        for sub in p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            let sub_branch =
+                                toad_git::branch::current_branch(&sub_path).unwrap_or_default();
+                            println!(
+                                "  {} {} ({})",
+                                "└─".dimmed(),
+                                sub.name.cyan(),
+                                sub_branch.dimmed()
+                            );
+                        }
+                    }
+                }
+                GgitCommand::Align { query, tag } => {
+                    println!("{}", "--- SUBMODULE ALIGNMENT ---".blue().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    for p in targets {
+                        if p.submodules.is_empty() {
+                            continue;
+                        }
+
+                        println!("Aligning submodules for {}...", p.name.cyan());
+                        for sub in p.submodules {
+                            let res =
+                                toad_git::align::align_submodule(&p.path, &sub.path, &sub.name)?;
+                            results.push(res);
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- ALIGNMENT SUMMARY ---");
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
                     }
                 }
             }
