@@ -73,7 +73,7 @@ detailed plan in its respective folder.
       [./tracks/archive/102-workflows/](./tracks/102-workflows/)_
 
 - [ ] **Track: v1.0.2 Governance & AI Navigation** _Link:
-      [./tracks/102-governance/](./tracks/102-governance/)_
+      [./tracks/archive/102-governance/](./tracks/102-governance/)_
 
 ---
 

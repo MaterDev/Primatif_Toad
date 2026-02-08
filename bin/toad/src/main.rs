@@ -1405,9 +1405,15 @@ fn main() -> Result<()> {
                 manifest_path
             );
 
-            // Generate Agnostic Blueprint
+            // 1. Generate Agnostic Blueprint
             println!("Generating Agnostic Architectural Blueprint...");
             let blueprint = toad_manifest::generate_blueprint(&projects);
+
+            // 2. Generate CLI Reference Skill
+            println!("Generating Toad CLI Reference Skill...");
+            let mut cmd = Cli::command();
+            let help = cmd.render_help().to_string();
+            let cli_skill = toad_manifest::generate_cli_skill(&help);
 
             // Distribution
             let mut distributed = false;
@@ -1415,11 +1421,18 @@ fn main() -> Result<()> {
                 if let Ok(Some(config)) = toad_core::GlobalConfig::load(None) {
                     if let Some(ctx) = config.project_contexts.get(name) {
                         if !ctx.ai_vendors.is_empty() {
-                            println!("Distributing blueprint to AI vendors: {}...", ctx.ai_vendors.join(", "));
-                            let synced = toad_ops::workflow::distribute_blueprint(
+                            println!(
+                                "Distributing skills to AI vendors: {}...",
+                                ctx.ai_vendors.join(", ")
+                            );
+                            let skills = vec![
+                                ("toad-blueprint".to_string(), blueprint.clone()),
+                                ("toad-cli".to_string(), cli_skill.clone()),
+                            ];
+                            let synced = toad_ops::workflow::distribute_skills(
                                 &workspace.root,
                                 &ctx.ai_vendors,
-                                &blueprint,
+                                skills,
                             )?;
                             for path in synced {
                                 println!("  {} Sync: {:?}", "»".green(), path);
@@ -1431,10 +1444,22 @@ fn main() -> Result<()> {
             }
 
             if !distributed {
-                // Fallback to agnostic blueprint at root if no vendors registered or context not found
+                // Fallback to agnostic blueprint and cli skill at root
                 let map_path = workspace.root.join("toad-blueprint.md");
                 fs::write(&map_path, &blueprint)?;
-                println!("{} Agnostic blueprint updated at: {:?}", "SUCCESS:".green().bold(), map_path);
+                println!(
+                    "{} Agnostic blueprint updated at: {:?}",
+                    "SUCCESS:".green().bold(),
+                    map_path
+                );
+
+                let cli_path = workspace.root.join("toad-cli.md");
+                fs::write(&cli_path, &cli_skill)?;
+                println!(
+                    "{} CLI reference skill updated at: {:?}",
+                    "SUCCESS:".green().bold(),
+                    cli_path
+                );
             }
         }
         Commands::Sync => {
