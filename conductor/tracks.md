@@ -67,7 +67,7 @@ detailed plan in its respective folder.
       [./tracks/102-submodule-aware/](./tracks/102-submodule-aware/)_
 
 - [ ] **Track: v1.0.2 Group-Git Orchestration** _Link:
-      [./tracks/102-ggit/](./tracks/102-ggit/)_
+      [./tracks/archive/102-ggit/](./tracks/102-ggit/)_
 
 - [ ] **Track: v1.0.2 Custom Workflows** _Link:
       [./tracks/102-workflows/](./tracks/102-workflows/)_
