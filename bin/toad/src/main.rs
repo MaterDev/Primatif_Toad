@@ -191,6 +191,9 @@ enum ProjectCommand {
         /// Optional description
         #[arg(long, short = 'd')]
         description: Option<String>,
+        /// Explicitly set the context type (hub, pond, generic)
+        #[arg(long, short = 't', value_enum)]
+        context_type: Option<ContextTypeChoice>,
     },
     /// Switch the active project context
     Switch {
@@ -211,17 +214,50 @@ enum ProjectCommand {
         /// New description
         #[arg(long, short = 'd')]
         description: Option<String>,
+        /// New context type
+        #[arg(long, short = 't', value_enum)]
+        context_type: Option<ContextTypeChoice>,
     },
     /// Remove a registered context
     Delete {
         /// Name of the context
         name: String,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
     /// Show detailed info for a context
     Info {
         /// Name of the context
         name: String,
     },
+}
+
+#[derive(clap::ValueEnum, Clone, Copy, Debug)]
+enum ContextTypeChoice {
+    Hub,
+    Pond,
+    Generic,
+}
+
+impl From<ContextTypeChoice> for toad_core::ContextType {
+    fn from(choice: ContextTypeChoice) -> Self {
+        match choice {
+            ContextTypeChoice::Hub => toad_core::ContextType::Hub,
+            ContextTypeChoice::Pond => toad_core::ContextType::Pond,
+            ContextTypeChoice::Generic => toad_core::ContextType::Generic,
+        }
+    }
+}
+
+impl From<toad_core::ContextType> for ContextTypeChoice {
+    fn from(t: toad_core::ContextType) -> Self {
+        match t {
+            toad_core::ContextType::Hub => ContextTypeChoice::Hub,
+            toad_core::ContextType::Pond => ContextTypeChoice::Pond,
+            toad_core::ContextType::Generic => ContextTypeChoice::Generic,
+        }
+    }
 }
 
 #[derive(Subcommand)]
@@ -463,9 +499,10 @@ fn main() -> Result<()> {
                     };
 
                     println!(
-                        "  {} {} {} {}",
+                        "  {} {} ({}) {} {}",
                         "└─".dimmed(),
                         sub.name.cyan(),
+                        sub.stack.dimmed(),
                         status_indicator,
                         alignment
                     );
@@ -687,6 +724,7 @@ fn main() -> Result<()> {
                     toad_core::ProjectContext {
                         path: abs_path.clone(),
                         description: Some("Registered via 'toad home'".to_string()),
+                        context_type: toad_core::ContextType::Generic,
                         registered_at: std::time::SystemTime::now(),
                     },
                 );
@@ -1458,6 +1496,7 @@ fn main() -> Result<()> {
                     name,
                     path,
                     description,
+                    context_type,
                 } => {
                     let abs_path = fs::canonicalize(PathBuf::from(path))?;
                     if !abs_path.exists() {
@@ -1468,9 +1507,20 @@ fn main() -> Result<()> {
                         bail!("Context '{}' already exists.", name);
                     }
 
+                    let detected_type = if let Some(t) = context_type {
+                        toad_core::ContextType::from(*t)
+                    } else if abs_path.join(".gitmodules").exists() {
+                        toad_core::ContextType::Hub
+                    } else if abs_path.join("projects").exists() {
+                        toad_core::ContextType::Pond
+                    } else {
+                        toad_core::ContextType::Generic
+                    };
+
                     let ctx = toad_core::ProjectContext {
                         path: abs_path.clone(),
                         description: description.clone(),
+                        context_type: detected_type,
                         registered_at: std::time::SystemTime::now(),
                     };
 
@@ -1483,9 +1533,10 @@ fn main() -> Result<()> {
 
                     config.save(None)?;
                     println!(
-                        "{} Context '{}' registered at {:?}",
+                        "{} Context '{}' ({}) registered at {:?}",
                         "SUCCESS:".green().bold(),
                         name,
+                        detected_type,
                         abs_path
                     );
                 }
@@ -1505,9 +1556,10 @@ fn main() -> Result<()> {
                     if let Some(name) = &config.active_context {
                         if let Some(ctx) = config.project_contexts.get(name) {
                             println!(
-                                "{} Active context: {}",
+                                "{} Active context: {} ({})",
                                 "ACTIVE:".green().bold(),
-                                name.bold()
+                                name.bold(),
+                                ctx.context_type
                             );
                             println!("  Path:        {:?}", ctx.path);
                             if let Some(desc) = &ctx.description {
@@ -1528,8 +1580,11 @@ fn main() -> Result<()> {
                         println!("No contexts registered.");
                     } else {
                         // Header
-                        println!("{:<15} {:<40} {:<30} ACTIVE", "NAME", "PATH", "DESCRIPTION");
-                        println!("{:-<15} {:-<40} {:-<30} {:-<6}", "", "", "", "");
+                        println!(
+                            "{:<15} {:<10} {:<40} {:<30} ACTIVE",
+                            "NAME", "TYPE", "PATH", "DESCRIPTION"
+                        );
+                        println!("{:-<15} {:-<10} {:-<40} {:-<30} {:-<6}", "", "", "", "", "");
 
                         let mut names: Vec<_> = config.project_contexts.keys().collect();
                         names.sort();
@@ -1543,8 +1598,9 @@ fn main() -> Result<()> {
                             };
                             let desc = ctx.description.as_deref().unwrap_or("-");
                             println!(
-                                "{:<15} {:<40?} {:<30} {:^6}",
+                                "{:<15} {:<10} {:<40?} {:<30} {:^6}",
                                 name.bold(),
+                                ctx.context_type.to_string(),
                                 ctx.path,
                                 desc,
                                 active
@@ -1556,6 +1612,7 @@ fn main() -> Result<()> {
                     name,
                     path,
                     description,
+                    context_type,
                 } => {
                     let ctx = config
                         .project_contexts
@@ -1568,10 +1625,13 @@ fn main() -> Result<()> {
                     if let Some(d) = description {
                         ctx.description = Some(d.clone());
                     }
+                    if let Some(t) = context_type {
+                        ctx.context_type = toad_core::ContextType::from(*t);
+                    }
                     config.save(None)?;
                     println!("{} Context '{}' updated.", "SUCCESS:".green().bold(), name);
                 }
-                ProjectCommand::Delete { name } => {
+                ProjectCommand::Delete { name, yes } => {
                     if config.active_context.as_ref() == Some(name) {
                         println!(
                             "{} Cannot delete the active context. Switch to another context first.",
@@ -1584,16 +1644,18 @@ fn main() -> Result<()> {
                         bail!("Context '{}' not found.", name);
                     }
 
-                    print!(
-                        "Are you sure you want to delete context '{}' and all its cached data? [y/N]: ",
-                        name
-                    );
-                    io::stdout().flush()?;
-                    let mut input = String::new();
-                    io::stdin().read_line(&mut input)?;
-                    if !input.trim().to_lowercase().starts_with('y') {
-                        println!("Aborted.");
-                        return Ok(());
+                    if !*yes {
+                        print!(
+                            "Are you sure you want to delete context '{}' and all its cached data? [y/N]: ",
+                            name
+                        );
+                        io::stdout().flush()?;
+                        let mut input = String::new();
+                        io::stdin().read_line(&mut input)?;
+                        if !input.trim().to_lowercase().starts_with('y') {
+                            println!("Aborted.");
+                            return Ok(());
+                        }
                     }
 
                     config.project_contexts.remove(name);
@@ -1613,6 +1675,7 @@ fn main() -> Result<()> {
                         .get(name)
                         .ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
                     println!("{}: {}", "Name".bold(), name);
+                    println!("{}: {}", "Type".bold(), ctx.context_type);
                     println!("{}: {:?}", "Path".bold(), ctx.path);
                     println!(
                         "{}: {}",
