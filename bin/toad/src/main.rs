@@ -431,10 +431,44 @@ fn main() -> Result<()> {
                 total_matching += 1;
 
                 match project.vcs_status {
-                    VcsStatus::Dirty => dirty.push(project.name),
-                    VcsStatus::Untracked => untracked.push(project.name),
+                    VcsStatus::Dirty => dirty.push(project.name.clone()),
+                    VcsStatus::Untracked => untracked.push(project.name.clone()),
                     VcsStatus::Clean => clean_count += 1,
                     VcsStatus::None => no_repo_count += 1,
+                }
+
+                // Submodule Display logic during scan
+                println!(
+                    "{} {} ({})",
+                    "»".blue(),
+                    project.name.bold(),
+                    project.stack.dimmed()
+                );
+
+                for sub in project.submodules {
+                    let status_indicator = if sub.initialized {
+                        format!("{}", sub.vcs_status)
+                    } else {
+                        "⭕ Uninit".to_string()
+                    };
+
+                    let alignment = if sub.initialized {
+                        if sub.expected_commit == sub.actual_commit {
+                            " (aligned)".dimmed()
+                        } else {
+                            " (drifted)".red().bold()
+                        }
+                    } else {
+                        "".normal()
+                    };
+
+                    println!(
+                        "  {} {} {} {}",
+                        "└─".dimmed(),
+                        sub.name.cyan(),
+                        status_indicator,
+                        alignment
+                    );
                 }
             }
 
@@ -444,6 +478,7 @@ fn main() -> Result<()> {
             }
 
             // --- UX Optimization: Summary View ---
+            println!("\n{}", "--- SUMMARY ---".green().bold());
             if clean_count > 0 {
                 println!(
                     "{} {:02}/{} projects are {}",
