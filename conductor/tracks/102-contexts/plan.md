@@ -5,7 +5,7 @@
 
 ## Phase 1: Data Models & Storage
 
-- [ ] **P4b-1: GlobalConfig Extension**
+- [~] **P4b-1: GlobalConfig Extension**
   - Add `ProjectContext` struct, `active_context`, `project_contexts` HashMap.
   - Implement auto-migration from old `home_pointer`-only config to `default`
     context.

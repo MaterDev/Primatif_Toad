@@ -263,3 +263,236 @@ fn test_global_config_migration() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_project_registry_context_paths() -> Result<()> {
+    let dir = tempdir()?;
+    let base_dir = dir.path().to_path_buf();
+
+    // 1. Global path
+    let global_path = ProjectRegistry::registry_path(None, Some(&base_dir))?;
+    assert_eq!(global_path, base_dir.join("registry.json"));
+
+    // 2. Context path
+    let context_path = ProjectRegistry::registry_path(Some("test-ctx"), Some(&base_dir))?;
+    assert_eq!(context_path, base_dir.join("contexts/test-ctx/registry.json"));
+
+    Ok(())
+}
+
+#[test]
+fn test_workspace_context_shadows() -> Result<()> {
+    let dir = tempdir()?;
+    let root = dir.path().join("work");
+    let base_dir = dir.path().join("config");
+    fs::create_dir(&root)?;
+    fs::create_dir(&base_dir)?;
+
+    // 1. No context
+    let ws1 = Workspace::with_root(root.clone(), None, Some(&base_dir));
+    assert_eq!(ws1.shadows_dir, root.join("shadows"));
+
+    // 2. With context
+    let ws2 = Workspace::with_root(root.clone(), Some("ctx-a".to_string()), Some(&base_dir));
+    assert_eq!(ws2.shadows_dir, base_dir.join("contexts/ctx-a/shadows"));
+
+    Ok(())
+}
+
+#[test]
+fn test_artifact_migration_logic() -> Result<()> {
+    let dir = tempdir()?;
+    let base_dir = dir.path().to_path_buf();
+    let root_dir = dir.path().join("my-toad-home");
+    fs::create_dir(&root_dir)?;
+
+    // Setup legacy files
+    let legacy_registry = base_dir.join("registry.json");
+    fs::write(&legacy_registry, "registry content")?;
+
+    let legacy_shadows = root_dir.join("shadows");
+    fs::create_dir(&legacy_shadows)?;
+    fs::write(legacy_shadows.join("tags.json"), "tags content")?;
+    fs::write(legacy_shadows.join("MANIFEST.md"), "manifest content")?;
+
+    let config = GlobalConfig {
+        home_pointer: root_dir.clone(),
+        active_context: Some("default".to_string()),
+        project_contexts: std::collections::HashMap::new(),
+    };
+
+    config.migrate_legacy_artifacts(Some(&base_dir))?;
+
+    // Verify registry moved
+    let new_registry = base_dir.join("contexts/default/registry.json");
+    assert!(new_registry.exists());
+    assert_eq!(fs::read_to_string(new_registry)?, "registry content");
+    assert!(!legacy_registry.exists());
+
+    // Verify shadows moved
+    let new_shadows = base_dir.join("contexts/default/shadows");
+    assert!(new_shadows.exists());
+    assert_eq!(fs::read_to_string(new_shadows.join("tags.json"))?, "tags content");
+    assert_eq!(fs::read_to_string(new_shadows.join("MANIFEST.md"))?, "manifest content");
+    assert!(!legacy_shadows.exists());
+
+    Ok(())
+}
+
+#[test]
+fn test_display_impls() {
+    assert_eq!(format!("{}", ActivityTier::Active), "🔥 Active");
+    assert_eq!(format!("{}", ActivityTier::Cold), "❄️ Cold");
+    assert_eq!(format!("{}", ActivityTier::Archive), "🗄️ Archive");
+
+    assert_eq!(format!("{}", VcsStatus::Clean), "✅ Clean");
+    assert_eq!(format!("{}", VcsStatus::Dirty), "⚠️ Dirty");
+    assert_eq!(format!("{}", VcsStatus::Untracked), "❓ Untracked");
+    assert_eq!(format!("{}", VcsStatus::None), "N/A");
+}
+
+#[test]
+fn test_workspace_discovery_env_var() -> Result<()> {
+    let dir = tempdir()?;
+    let root = dir.path().to_path_buf();
+    
+    let original_root = std::env::var("TOAD_ROOT").ok();
+    unsafe {
+        std::env::set_var("TOAD_ROOT", root.to_str().unwrap());
+    }
+
+    let ws = Workspace::discover()?;
+    assert_eq!(ws.root, fs::canonicalize(&root)?);
+
+    if let Some(val) = original_root {
+        unsafe { std::env::set_var("TOAD_ROOT", val); }
+    } else {
+        unsafe { std::env::remove_var("TOAD_ROOT"); }
+    }
+    Ok(())
+}
+
+#[test]
+#[cfg_attr(tarpaulin, ignore)]
+fn test_workspace_discovery_upward() -> Result<()> {
+    let dir = tempdir()?;
+    let root_path = dir.path().to_path_buf();
+    let root = fs::canonicalize(&root_path)?;
+    fs::write(root.join(".toad-root"), "marker")?;
+
+    let sub = root.join("depth/1/2/3");
+    fs::create_dir_all(&sub)?;
+    
+    let original_cwd = std::env::current_dir()?;
+    
+    // Use a scope to ensure Workspace::discover happens while CWD is set
+    let ws_res = {
+        std::env::set_current_dir(&sub)?;
+        let res = Workspace::discover();
+        let _ = std::env::set_current_dir(&original_cwd);
+        res
+    };
+
+    let ws = ws_res?;
+    assert_eq!(fs::canonicalize(ws.root)?, root);
+
+    // Keep dir alive until the end
+    drop(dir);
+    Ok(())
+}
+
+#[test]
+fn test_global_config_active_path() -> Result<()> {
+    let dir = tempdir()?;
+    let root1 = fs::canonicalize(dir.path())?.join("root1");
+    let root2 = fs::canonicalize(dir.path())?.join("root2");
+    fs::create_dir(&root1)?;
+    fs::create_dir(&root2)?;
+
+    let mut config = GlobalConfig {
+        home_pointer: root1.clone(),
+        active_context: None,
+        project_contexts: std::collections::HashMap::new(),
+    };
+
+    // 1. Fallback to home_pointer
+    assert_eq!(config.active_path()?, root1);
+
+    // 2. Use active context
+    config.project_contexts.insert("ctx2".to_string(), ProjectContext {
+        path: root2.clone(),
+        description: None,
+        registered_at: SystemTime::now(),
+    });
+    config.active_context = Some("ctx2".to_string());
+    assert_eq!(config.active_path()?, root2);
+
+    Ok(())
+}
+
+#[test]
+fn test_workspace_new_and_ensure() -> Result<()> {
+    let dir = tempdir()?;
+    let base_dir = fs::canonicalize(dir.path())?;
+    
+    // Set env vars so discover() works and uses our temp dir
+    let original_config = std::env::var("TOAD_CONFIG_DIR").ok();
+    let original_root = std::env::var("TOAD_ROOT").ok();
+    unsafe {
+        std::env::set_var("TOAD_CONFIG_DIR", base_dir.to_str().unwrap());
+        std::env::set_var("TOAD_ROOT", base_dir.to_str().unwrap());
+    }
+
+    // Create a dummy config so discover doesn't bail
+    let config = GlobalConfig {
+        home_pointer: base_dir.clone(),
+        active_context: Some("default".to_string()),
+        project_contexts: {
+            let mut m = std::collections::HashMap::new();
+            m.insert("default".to_string(), ProjectContext {
+                path: base_dir.clone(),
+                description: None,
+                registered_at: SystemTime::now(),
+            });
+            m
+        },
+    };
+    config.save(Some(&base_dir))?;
+
+    let ws = Workspace::new();
+    assert_eq!(fs::canonicalize(&ws.root)?, base_dir);
+    assert!(ws.shadows_dir.starts_with(&base_dir));
+    
+    ws.ensure_shadows()?;
+    assert!(ws.shadows_dir.exists());
+
+    // Restore env vars
+    if let Some(val) = original_config {
+        unsafe { std::env::set_var("TOAD_CONFIG_DIR", val); }
+    } else {
+        unsafe { std::env::remove_var("TOAD_CONFIG_DIR"); }
+    }
+    if let Some(val) = original_root {
+        unsafe { std::env::set_var("TOAD_ROOT", val); }
+    } else {
+        unsafe { std::env::remove_var("TOAD_ROOT"); }
+    }
+    Ok(())
+}
+
+#[test]
+fn test_project_registry_context_save() -> Result<()> {
+    let dir = tempdir()?;
+    let base_dir = dir.path().to_path_buf();
+    
+    let registry = ProjectRegistry::default();
+    registry.save(Some("my-ctx"), Some(&base_dir))?;
+    
+    let target = base_dir.join("contexts/my-ctx/registry.json");
+    assert!(target.exists());
+    
+    let loaded = ProjectRegistry::load(Some("my-ctx"), Some(&base_dir))?;
+    assert_eq!(loaded.fingerprint, 0);
+    
+    Ok(())
+}
