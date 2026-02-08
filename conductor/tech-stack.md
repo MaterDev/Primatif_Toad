@@ -17,7 +17,7 @@ The project is structured as a modular Rust workspace to separate the
 
 ### Component Hierarchy (The Toad Tiers)
 
-The project follows a multi-repo "Open Core" architecture linked via Git 
+The project follows a multi-repo "Open Core" architecture linked via Git
 submodules in the `crates/` directory:
 
 1. **`bin/toad` (The Orchestrator) [MIT]:** A thin CLI wrapper that parses

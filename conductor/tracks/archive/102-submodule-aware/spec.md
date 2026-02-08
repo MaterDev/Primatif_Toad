@@ -17,7 +17,8 @@ within managed projects, treating them as first-class entities.
 - Parse `.gitmodules` files during project scanning.
 - Detect "Orphan" repositories (git repos not registered as submodules).
 - Report submodule initialization state and VCS health.
-- Generate recursive shadow contexts (`MANIFEST.md`) that respect project hierarchy.
+- Generate recursive shadow contexts (`MANIFEST.md`) that respect project
+  hierarchy.
 - Display submodules as child entities in `toad status`.
 
 ## References

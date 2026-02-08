@@ -59,7 +59,7 @@ detailed plan in its respective folder.
 ---
 
 - [x] **Track: v1.0.2 Licensing Migration** _Link:
-      [./tracks/102-licensing/](./tracks/102-licensing/)_
+      [./tracks/archive/102-licensing/](./tracks/102-licensing/)_
 
 - [x] **Track: v1.0.2 Multi-Repo Split** _Link:
       [./tracks/102-multi-repo/](./tracks/102-multi-repo/)_

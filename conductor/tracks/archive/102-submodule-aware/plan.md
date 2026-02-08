@@ -9,8 +9,10 @@
   - Add to `toad-core` (MIT).
 - [ ] **P4-2: Submodule & Orphan Discovery**
   - Implement `.gitmodules` parsing in `discovery` (BUSL-1.1).
-  - Implement "Orphan" detection (directories with `.git` but not in `.gitmodules`).
-  - Update `scan_projects` to include the Hub root itself if it contains projects.
+  - Implement "Orphan" detection (directories with `.git` but not in
+    `.gitmodules`).
+  - Update `scan_projects` to include the Hub root itself if it contains
+    projects.
 
 ## Phase 2: Git Analysis & Shadows
 
@@ -25,7 +27,8 @@
 - [ ] **P4-4: CLI Integration**
   - Update `toad status` and `toad reveal` display to show hierarchy.
 - [ ] **P4-5: Self-Management**
-  - Verify Toad correctly reports status and generates shadows for its own crate submodules.
+  - Verify Toad correctly reports status and generates shadows for its own crate
+    submodules.
 
 ## References
 

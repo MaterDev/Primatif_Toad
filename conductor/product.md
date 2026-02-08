@@ -16,8 +16,8 @@ protecting its advanced intelligence layer under a source-available license
 2. **Workspace Orchestration:** Manage the `projects/` directory as an external
    collection of independent repositories using a "whitelist-only" strategy.
 3. **Open Core Multi-Repo:** Extract core logic into independent, whitelisted
-   repositories linked via Git submodules to ensure licensing isolation
-   (MIT vs. BUSL-1.1) and library stability.
+   repositories linked via Git submodules to ensure licensing isolation (MIT vs.
+   BUSL-1.1) and library stability.
 4. **Multi-Repo Git Orchestration:** Provide first-class group-git operations
    (`toad ggit`) to manage distributed submodule ecosystems.
 5. **Discovery & Scaffolding:** Automate project pattern detection and component

@@ -575,7 +575,25 @@ fn main() -> Result<()> {
         }
         Commands::Stats { query, tag, all } => {
             println!("{}", "--- ECOSYSTEM ANALYTICS ---".green().bold());
-            let projects = scan_all_projects(&workspace)?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let matching: Vec<_> = projects
                 .into_iter()
                 .filter(|p| {
@@ -788,7 +806,29 @@ fn main() -> Result<()> {
             fail_fast,
         } => {
             println!("{}", "--- BATCH OPERATION PREFLIGHT ---".blue().bold());
-            let projects = scan_all_projects(&workspace)?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                println!(
+                    "{} Registry is stale/missing. Performing one-time scan...",
+                    "INFO:".blue()
+                );
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let targets: Vec<_> = projects
                 .into_iter()
                 .filter(|p| {
@@ -978,8 +1018,26 @@ fn main() -> Result<()> {
             harvest,
             yes,
         } => {
-            let mut registry = TagRegistry::load(&workspace.tags_path())?;
-            let projects = scan_all_projects(&workspace)?;
+            let mut tag_reg = TagRegistry::load(&workspace.tags_path())?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let mut targets = Vec::new();
 
             // 1. Logic for --harvest
@@ -987,7 +1045,7 @@ fn main() -> Result<()> {
                 println!("{} Harvesting stack tags...", "INFO:".blue().bold());
                 for p in projects {
                     let stack_tag = p.stack.to_lowercase();
-                    registry.add_tag(&p.name, &stack_tag);
+                    tag_reg.add_tag(&p.name, &stack_tag);
                     targets.push(p.name);
                 }
             }
@@ -1046,7 +1104,7 @@ fn main() -> Result<()> {
                     }
 
                     for p in matching {
-                        registry.add_tag(&p.name, t_name);
+                        tag_reg.add_tag(&p.name, t_name);
                         targets.push(p.name);
                     }
                 } else {
@@ -1056,7 +1114,7 @@ fn main() -> Result<()> {
             // 3. Logic for specific project
             else if let Some(p_name) = project {
                 if let Some(t_name) = tag {
-                    registry.add_tag(p_name, t_name);
+                    tag_reg.add_tag(p_name, t_name);
                     targets.push(p_name.clone());
                 } else {
                     bail!("Must provide a tag name.");
@@ -1065,7 +1123,7 @@ fn main() -> Result<()> {
                 bail!("Must provide a project name or use filters (--query, --tag, --harvest).");
             }
 
-            if let Err(e) = registry.save(&workspace.tags_path()) {
+            if let Err(e) = tag_reg.save(&workspace.tags_path()) {
                 println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
                 return Err(e);
             }
@@ -1083,8 +1141,26 @@ fn main() -> Result<()> {
             filter_tag,
             yes,
         } => {
-            let mut registry = TagRegistry::load(&workspace.tags_path())?;
-            let projects = scan_all_projects(&workspace)?;
+            let mut tag_reg = TagRegistry::load(&workspace.tags_path())?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let mut targets = Vec::new();
 
             // 1. Logic for filters (MUST come before specific project logic)
@@ -1142,7 +1218,7 @@ fn main() -> Result<()> {
                     }
 
                     for p in matching {
-                        registry.remove_tag(&p.name, t_name);
+                        tag_reg.remove_tag(&p.name, t_name);
                         targets.push(p.name);
                     }
                 } else {
@@ -1152,7 +1228,7 @@ fn main() -> Result<()> {
             // 2. Logic for specific project
             else if let Some(p_name) = project {
                 if let Some(t_name) = tag {
-                    registry.remove_tag(p_name, t_name);
+                    tag_reg.remove_tag(p_name, t_name);
                     targets.push(p_name.clone());
                 } else {
                     bail!("Must provide a tag name to remove.");
@@ -1161,7 +1237,7 @@ fn main() -> Result<()> {
                 bail!("Must provide a project name or use filters (--query, --tag).");
             }
 
-            if let Err(e) = registry.save(&workspace.tags_path()) {
+            if let Err(e) = tag_reg.save(&workspace.tags_path()) {
                 println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
                 return Err(e);
             }
@@ -1329,7 +1405,25 @@ fn main() -> Result<()> {
             dry_run,
         } => {
             println!("{}", "--- 🌊 POND HYGIENE PRE-FLIGHT ---".blue().bold());
-            let projects = scan_all_projects(&workspace)?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let targets: Vec<_> = projects
                 .into_iter()
                 .filter(|p| {
