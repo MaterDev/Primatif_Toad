@@ -1,21 +1,22 @@
 [package]
 name = "toad"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2021"
+license = "MIT"
 
 [dependencies]
 anyhow = "1.0.100"
 chrono = "0.4"
 clap = { version = "4.5.57", features = ["derive"] }
 colored = "3.1.1"
-discovery = { version = "1.0.1", path = "../../crates/discovery" }
 indicatif = "0.18"
 rayon = "1.10"
-scaffold = { path = "../../crates/scaffold" }
-toad-core = { version = "1.0.1", path = "../../crates/toad-core" }
-toad-git = { path = "../../crates/toad-git" }
-toad-manifest = { version = "1.0.1", path = "../../crates/toad-manifest" }
-toad-ops = { path = "../../crates/toad-ops" }
+toad-core = { version = "1.0.2", path = "../../crates/toad-core" }
+toad-discovery = { version = "1.0.2", path = "../../crates/toad-discovery" }
+toad-git = { version = "1.0.2", path = "../../crates/toad-git" }
+toad-manifest = { version = "1.0.2", path = "../../crates/toad-manifest" }
+toad-ops = { version = "1.0.2", path = "../../crates/toad-ops" }
+toad-scaffold = { version = "1.0.2", path = "../../crates/toad-scaffold" }
 toml = "0.8.23"
 whoami = "2.1"
 

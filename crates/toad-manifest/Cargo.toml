@@ -1,7 +1,0 @@
-[package]
-name = "toad-manifest"
-version = "1.0.1"
-edition = "2024"
-
-[dependencies]
-toad-core = { path = "../toad-core" }

@@ -170,10 +170,11 @@ fn test_manifest() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
-        .arg("manifest")
+        .arg("skill")
+        .arg("sync")
         .assert()
         .success()
-        .stdout(predicate::str::contains("SUCCESS: Manifest updated"));
+        .stdout(predicate::str::contains("SYNCHRONIZING AI SKILLS"));
 
     assert!(dir.path().join("shadows").join("MANIFEST.md").exists());
     Ok(())
@@ -546,6 +547,9 @@ fn test_error_no_workspace() {
 
     let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
+        .env("HOME", dir.path()) // Redirect HOME to temp dir
+        .env_remove("TOAD_ROOT")
+        .env_remove("TOAD_CONFIG_DIR")
         .arg("status")
         .assert()
         .success() // Should print error message and exit cleanly (Ok(()))

@@ -1,14 +1,16 @@
 [workspace]
 members = [
   "bin/toad",
-  "crates/*",
+  "crates/toad-core",
+  "crates/toad-discovery",
   "crates/toad-git",
+  "crates/toad-manifest",
   "crates/toad-ops",
+  "crates/toad-scaffold",
 ]
 resolver = "2"
 
 [workspace.package]
 authors = ["Primatif"]
 homepage = "https://github.com/Primatif/Primatif_Toad"
-license = "MIT"
 repository = "https://github.com/Primatif/Primatif_Toad"

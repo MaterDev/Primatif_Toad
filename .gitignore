@@ -1,12 +1,15 @@
-# Ignore everything by default
+# --- Primatif_Toad: Submodule Boundary Strategy ---
+
+# 1. Ignore everything by default
 /*
 
-# Whitelist Admin Tools & Config
+# 2. Whitelist Admin Tools & Root Config
 !/.markdownlint.json
 !/.markdownlintignore
 !/.gemini/
 !/.geminiignore
 !/.gitignore
+!/.gitmodules
 !/.windsurf/
 !/.toad-root
 !/Cargo.toml
@@ -19,13 +22,27 @@
 !/conductor/**
 !/assets/
 
-# Whitelist Source Code
+# 3. Whitelist Internal Modules
 !/bin/
-!/crates/
+!/bin/**
 !/scripts/
 !/scripts/**
 !/docs/
+!/docs/**
 
-# Rust Ignore (Standard)
+# 4. Whitelist Submodule Pointers (The boundary)
+!/crates/
+!/crates/*/
+# Do NOT whitelist the contents of crates/* by default; Git handles submodule tracking.
+# However, we allow the Cargo.toml of the workspace to see them.
+!/crates/*/Cargo.toml
+
+# 5. Global Ignores (Across all boundaries)
 target/
 **/*.rs.bk
+.DS_Store
+*.log
+
+# 6. Critical: Explicitly ignore submodule internal Git state
+# This prevents the parent repo from ever trying to stage the submodule's history.
+crates/*/.git

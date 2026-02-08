@@ -58,6 +58,25 @@ detailed plan in its respective folder.
 
 ---
 
+- [x] **Track: v1.0.2 Licensing Migration** _Link:
+      [./tracks/archive/102-licensing/](./tracks/102-licensing/)_
+
+- [x] **Track: v1.0.2 Multi-Repo Split** _Link:
+      [./tracks/102-multi-repo/](./tracks/102-multi-repo/)_
+- [x] **Track: v1.0.2 Submodule Awareness** _Link:
+      [./tracks/102-submodule-aware/](./tracks/102-submodule-aware/)_
+
+- [ ] **Track: v1.0.2 Group-Git Orchestration** _Link:
+      [./tracks/archive/102-ggit/](./tracks/102-ggit/)_
+
+- [ ] **Track: v1.0.2 Custom Workflows** _Link:
+      [./tracks/archive/102-workflows/](./tracks/102-workflows/)_
+
+- [ ] **Track: v1.0.2 Governance & AI Navigation** _Link:
+      [./tracks/archive/102-governance/](./tracks/102-governance/)_
+
+---
+
 - [x] **Track: Rust Context & Architecture Guide**
 
       _Link: [./tracks/archive/rust-guide_20260205/](./tracks/archive/rust-guide_20260205/)_

@@ -1,14 +1,33 @@
 #!/bin/bash
+# scripts/git-hooks/pre-push
 set -e
 
-echo "🔍 Verifying documentation integrity..."
+# 1. Get current binary version
+CURRENT_VERSION=$(grep "^version =" bin/toad/Cargo.toml | head -n 1 | cut -d '"' -f 2)
+DOCS_FILE="docs/guides/CLI.md"
+
+# 2. Extract version from existing documentation
+if [ -f "$DOCS_FILE" ]; then
+    # Parse version from: > **Version:** `v1.0.1`
+    LAST_VERSION=$(grep "> \*\*Version:\*\*" "$DOCS_FILE" | head -n 1 | sed 's/.*`v\(.*\)`.*/\1/')
+else
+    LAST_VERSION=""
+fi
+
+# 3. Compare and skip if no version change
+if [ "$CURRENT_VERSION" == "$LAST_VERSION" ]; then
+    echo "⏭️  CLI Documentation is already synced with v$CURRENT_VERSION. Skipping."
+    exit 0
+fi
+
+echo "🔍 Version change detected (v$LAST_VERSION -> v$CURRENT_VERSION). Regenerating docs..."
 
 # Regenerate CLI docs
 cargo run -p toad -- docs > /dev/null 2>&1
 
-# Check for diffs in docs/
+# Check for diffs in docs/ (including the version update we just made)
 if ! git diff --exit-code docs/; then
-    echo "❌ Documentation is out of sync with the binary!"
+    echo "❌ Documentation is out of sync with the current version!"
     echo "Please commit the changes in the 'docs/' directory before pushing."
     exit 1
 fi

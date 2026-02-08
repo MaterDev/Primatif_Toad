@@ -3,20 +3,29 @@
 ## Vision
 
 **Primatif Toad** is a DevOps Overlay and Developer CLI designed to manage a
-modular ecosystem of independent projects. It acts as a clean administrative
-layer for orchestrating workspaces, discovering patterns, and providing unified
-project management without polluting individual project histories.
+modular ecosystem of independent projects. It follows an **Open Core** model,
+maintaining a legitimate open-source foundation (MIT CLI and core types) while
+protecting its advanced intelligence layer under a source-available license
+(BUSL-1.1).
 
 ## Core Goals
 
-1. **Workspace Orchestration:** Manage the `projects/` directory as an external
+1. **Named Project Contexts:** Manage multiple independent workspace roots
+   (e.g., development workspaces, client projects) with explicit context
+   switching and isolated scan caches.
+2. **Workspace Orchestration:** Manage the `projects/` directory as an external
    collection of independent repositories using a "whitelist-only" strategy.
-2. **Discovery & Scaffolding:** Automate project pattern detection and component
+3. **Open Core Multi-Repo:** Extract core logic into independent, whitelisted
+   repositories linked via Git submodules to ensure licensing isolation (MIT vs.
+   BUSL-1.1) and library stability.
+4. **Multi-Repo Git Orchestration:** Provide first-class group-git operations
+   (`toad ggit`) to manage distributed submodule ecosystems.
+5. **Discovery & Scaffolding:** Automate project pattern detection and component
    generation via specialized Rust crates.
-3. **Unified Tooling:** Centralize quality gates and management scripts for a
+6. **Unified Tooling:** Centralize quality gates and management scripts for a
    diverse set of local codebases.
-4. **AI-First Design:** Maintain high-quality context metadata ("Shadows") to
-   enable AI agents to assist across the entire ecosystem.
+7. **AI-First Design:** Maintain high-quality context metadata ("Shadows") and
+   architectural maps to enable AI agents to assist across the ecosystem.
 
 ## Core Roles
 

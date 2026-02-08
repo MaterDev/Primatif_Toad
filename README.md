@@ -7,7 +7,7 @@
 The modular meta-engineering platform.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version: v1.0.1](https://img.shields.io/badge/version-v1.0.1-green.svg)](Cargo.toml)
+[![Version: v1.0.2](https://img.shields.io/badge/version-v1.0.2-green.svg)](Cargo.toml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
 
 ---

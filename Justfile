@@ -14,13 +14,21 @@ install:
 
 # --- Quality Assurance (QA) ---
 
-# Run full QA suite (Sync -> Format -> Lint -> Test -> Build)
-qa: sync-version fmt lint test build
+# Run full QA suite (Sync -> Docs -> Check Licenses -> Format -> Lint -> Test -> Build)
+qa: sync-version docs check-licenses fmt lint test build
     @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
 
 # Sync README version with Cargo.toml
 sync-version:
     ./scripts/sync_version.sh
+
+# Generate CLI documentation
+docs:
+    cargo run -p toad -- docs
+
+# Verify MIT/BUSL-1.1 license boundaries
+check-licenses:
+    ./scripts/check_license_boundary.sh
 
 # Setup Git hooks
 setup-hooks:

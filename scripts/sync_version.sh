@@ -1,5 +1,5 @@
 #!/bin/bash
-# Sync README version badge with Cargo.toml version
+# Sync versions across all crates and README
 
 # Source of truth: bin/toad/Cargo.toml
 VERSION=$(grep "^version =" bin/toad/Cargo.toml | head -n 1 | cut -d '"' -f 2)
@@ -9,11 +9,20 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-echo "🏷️  Syncing README version to v$VERSION..."
+echo "🏷️  Syncing ecosystem to v$VERSION..."
 
-# Update the badge URL in README.md
-# Format: [![Version: vX.Y.Z](https://img.shields.io/badge/version-vX.Y.Z-green.svg)](Cargo.toml)
+# 1. Update individual crate Cargo.toml files
+for toml in crates/*/Cargo.toml; do
+    if [ -f "$toml" ]; then
+        # Update [package] version
+        sed -i '' "s/^version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"$VERSION\"/" "$toml"
+        # Update any dependency starting with 'toad-' or matching 'discovery'/'scaffold'
+        sed -i '' "s/\(toad-[a-z]*\|discovery\|scaffold\)[[:space:]]*=[[:space:]]*{[[:space:]]*version[[:space:]]*=[[:space:]]*\"[0-9]*\.[0-9]*\.[0-9]*\"/\1 = { version = \"$VERSION\"/g" "$toml"
+    fi
+done
+
+# 2. Update Hub README version badges
 sed -i '' "s/version-v[0-9]*\.[0-9]*\.[0-9]*/version-v$VERSION/g" README.md
 sed -i '' "s/Version: v[0-9]*\.[0-9]*\.[0-9]*/Version: v$VERSION/g" README.md
 
-echo "✅ README.md updated."
+echo "✅ Sync complete."

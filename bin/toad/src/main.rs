@@ -1,17 +1,17 @@
 use anyhow::{bail, Result};
 use clap::{CommandFactory, Parser, Subcommand};
 use colored::*;
-use discovery::scan_all_projects;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
-use scaffold::{create_project, open_in_editor, ProjectConfig};
 use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 use toad_core::{TagRegistry, VcsStatus, Workspace};
+use toad_discovery::scan_all_projects;
 use toad_ops::stats::{calculate_project_stats, format_size};
+use toad_scaffold::{create_project, open_in_editor, ProjectConfig};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -137,8 +137,11 @@ enum Commands {
         #[arg(long, short = 'y')]
         yes: bool,
     },
-    /// Generate a project manifest for AI context (Shadow)
-    Manifest,
+    /// Manage and synchronize AI agent skills
+    Skill {
+        #[command(subcommand)]
+        subcommand: SkillCommand,
+    },
     /// Synchronize the project registry cache
     Sync,
     /// Manage language/stack strategies
@@ -169,10 +172,241 @@ enum Commands {
     },
     /// Generate programmatic CLI documentation (Markdown)
     Docs,
+    /// Manage project contexts (register, switch, list)
+    Project {
+        #[command(subcommand)]
+        subcommand: ProjectCommand,
+    },
+    /// Multi-repo Git orchestration
+    Ggit {
+        #[command(subcommand)]
+        subcommand: GgitCommand,
+    },
+    /// Custom workflows and script orchestration
+    Cw {
+        #[command(subcommand)]
+        subcommand: CwCommand,
+    },
     /// List all available commands
     List,
     /// Display version information and the Toad banner
     Version,
+}
+
+#[derive(Subcommand)]
+enum SkillCommand {
+    /// Synchronize all skills (Blueprint, CLI, Manifest) to AI vendors
+    Sync,
+    /// List distributed skills and registered vendors
+    List,
+}
+
+#[derive(Subcommand)]
+enum CwCommand {
+    /// Execute a custom workflow script
+    Run {
+        /// Name of the workflow
+        name: String,
+        /// Arguments to pass to the script
+        #[arg(trailing_var_arg = true)]
+        args: Vec<String>,
+    },
+    /// Register a new custom workflow
+    Register {
+        /// Name of the workflow
+        name: String,
+        /// Path to the script
+        script: String,
+        /// Optional description
+        #[arg(long, short = 'd')]
+        description: Option<String>,
+    },
+    /// List all registered custom workflows
+    List,
+    /// Show detailed info for a custom workflow
+    Info {
+        /// Name of the workflow
+        name: String,
+    },
+    /// Remove a registered custom workflow
+    Delete {
+        /// Name of the workflow
+        name: String,
+    },
+}
+
+#[derive(Subcommand)]
+enum GgitCommand {
+    /// Show consolidated Git status across repositories
+    Status {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+    },
+    /// Commit changes across repositories
+    Commit {
+        /// Commit message
+        #[arg(long, short = 'm')]
+        message: String,
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Automatically commit the Hub root if submodules are changed (Cascade)
+        #[arg(long, short = 'c')]
+        cascade: bool,
+        /// Halt the entire batch if a single repo fails
+        #[arg(long, short = 'f')]
+        fail_fast: bool,
+    },
+    /// Push changes across repositories
+    Push {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Halt the entire batch if a single repo fails
+        #[arg(long, short = 'f')]
+        fail_fast: bool,
+    },
+    /// Pull changes across repositories
+    Pull {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Halt the entire batch if a single repo fails
+        #[arg(long, short = 'f')]
+        fail_fast: bool,
+    },
+    /// Synchronize and align repositories (safe multi-repo update)
+    Sync {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Skip pre-flight safety checks
+        #[arg(long, short = 'f')]
+        force: bool,
+    },
+    /// List all branches across repositories
+    Branches {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Show remote branches
+        #[arg(long, short = 'r')]
+        all: bool,
+    },
+    /// Force-align submodules to Hub root expectations
+    Align {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+    },
+}
+
+#[derive(Subcommand)]
+enum ProjectCommand {
+    /// Register a new project context
+    Register {
+        /// Name of the context
+        name: String,
+        /// Absolute path to the workspace root
+        path: String,
+        /// Optional description
+        #[arg(long, short = 'd')]
+        description: Option<String>,
+        /// Explicitly set the context type (hub, pond, generic)
+        #[arg(long, short = 't', value_enum)]
+        context_type: Option<ContextTypeChoice>,
+        /// AI Vendors to sync memory to (comma-separated: windsurf,cursor,gemini)
+        #[arg(long, short = 'a')]
+        ai: Option<String>,
+    },
+    /// Switch the active project context
+    Switch {
+        /// Name of the context
+        name: String,
+    },
+    /// Show the currently active context
+    Current,
+    /// List all registered contexts
+    List,
+    /// Update an existing context
+    Update {
+        /// Name of the context
+        name: String,
+        /// New path for the context
+        #[arg(long, short = 'p')]
+        path: Option<String>,
+        /// New description
+        #[arg(long, short = 'd')]
+        description: Option<String>,
+        /// New context type
+        #[arg(long, short = 't', value_enum)]
+        context_type: Option<ContextTypeChoice>,
+        /// Update AI Vendors
+        #[arg(long, short = 'a')]
+        ai: Option<String>,
+    },
+    /// Remove a registered context
+    Delete {
+        /// Name of the context
+        name: String,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
+    },
+    /// Show detailed info for a context
+    Info {
+        /// Name of the context
+        name: String,
+    },
+}
+
+#[derive(clap::ValueEnum, Clone, Copy, Debug)]
+enum ContextTypeChoice {
+    Hub,
+    Pond,
+    Generic,
+}
+
+impl From<ContextTypeChoice> for toad_core::ContextType {
+    fn from(choice: ContextTypeChoice) -> Self {
+        match choice {
+            ContextTypeChoice::Hub => toad_core::ContextType::Hub,
+            ContextTypeChoice::Pond => toad_core::ContextType::Pond,
+            ContextTypeChoice::Generic => toad_core::ContextType::Generic,
+        }
+    }
+}
+
+impl From<toad_core::ContextType> for ContextTypeChoice {
+    fn from(t: toad_core::ContextType) -> Self {
+        match t {
+            toad_core::ContextType::Hub => ContextTypeChoice::Hub,
+            toad_core::ContextType::Pond => ContextTypeChoice::Pond,
+            toad_core::ContextType::Generic => ContextTypeChoice::Generic,
+        }
+    }
 }
 
 #[derive(Subcommand)]
@@ -238,7 +472,7 @@ fn main() -> Result<()> {
         Ok(ws) => ws.clone(),
         Err(e) => {
             if is_bootstrap {
-                Workspace::with_root(PathBuf::from("."))
+                Workspace::with_root(PathBuf::from("."), None, None)
             } else {
                 println!("{} {}", "ERROR:".red().bold(), e);
                 return Ok(());
@@ -261,7 +495,7 @@ fn main() -> Result<()> {
                 if let Ok(current_fp) = workspace.get_fingerprint() {
                     if current_fp > stored_fp {
                         println!(
-                            "{} Context is stale. Run 'toad manifest' to re-sync intuition.",
+                            "{} Context is stale. Run 'toad skill sync' to re-sync intuition.",
                             "WARNING:".yellow().bold()
                         );
                     }
@@ -301,7 +535,9 @@ fn main() -> Result<()> {
         Commands::Reveal { query, tag } => {
             println!("Searching for projects matching '{}'...", query);
 
-            let registry = toad_core::ProjectRegistry::load().unwrap_or_default();
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
             let current_fp = workspace.get_fingerprint().unwrap_or(0);
 
             let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
@@ -314,7 +550,7 @@ fn main() -> Result<()> {
                     projects: p.clone(),
                     last_sync: std::time::SystemTime::now(),
                 };
-                let _ = new_registry.save();
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
                 p
             };
 
@@ -380,10 +616,56 @@ fn main() -> Result<()> {
                 total_matching += 1;
 
                 match project.vcs_status {
-                    VcsStatus::Dirty => dirty.push(project.name),
-                    VcsStatus::Untracked => untracked.push(project.name),
+                    VcsStatus::Dirty => dirty.push(project.name.clone()),
+                    VcsStatus::Untracked => untracked.push(project.name.clone()),
                     VcsStatus::Clean => clean_count += 1,
                     VcsStatus::None => no_repo_count += 1,
+                }
+
+                // Submodule Display logic during scan
+                println!(
+                    "{} {} ({}) {}",
+                    "»".blue(),
+                    project.name.bold(),
+                    project.stack.dimmed(),
+                    project.vcs_status
+                );
+
+                for sub in project.submodules {
+                    total_matching += 1;
+                    match sub.vcs_status {
+                        VcsStatus::Dirty => dirty.push(format!("{} -> {}", project.name, sub.name)),
+                        VcsStatus::Untracked => {
+                            untracked.push(format!("{} -> {}", project.name, sub.name))
+                        }
+                        VcsStatus::Clean => clean_count += 1,
+                        VcsStatus::None => no_repo_count += 1,
+                    }
+
+                    let status_indicator = if sub.initialized {
+                        format!("{}", sub.vcs_status)
+                    } else {
+                        "⭕ Uninit".to_string()
+                    };
+
+                    let alignment = if sub.initialized {
+                        if sub.expected_commit == sub.actual_commit {
+                            " (aligned)".dimmed()
+                        } else {
+                            " (drifted)".red().bold()
+                        }
+                    } else {
+                        "".normal()
+                    };
+
+                    println!(
+                        "  {} {} ({}) {} {}",
+                        "└─".dimmed(),
+                        sub.name.cyan(),
+                        sub.stack.dimmed(),
+                        status_indicator,
+                        alignment
+                    );
                 }
             }
 
@@ -393,6 +675,7 @@ fn main() -> Result<()> {
             }
 
             // --- UX Optimization: Summary View ---
+            println!("\n{}", "--- SUMMARY ---".green().bold());
             if clean_count > 0 {
                 println!(
                     "{} {:02}/{} projects are {}",
@@ -441,7 +724,25 @@ fn main() -> Result<()> {
         }
         Commands::Stats { query, tag, all } => {
             println!("{}", "--- ECOSYSTEM ANALYTICS ---".green().bold());
-            let projects = scan_all_projects(&workspace)?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let matching: Vec<_> = projects
                 .into_iter()
                 .filter(|p| {
@@ -554,6 +855,13 @@ fn main() -> Result<()> {
             }
         }
         Commands::Home { path } => {
+            let mut config =
+                toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| toad_core::GlobalConfig {
+                    home_pointer: PathBuf::from("."),
+                    active_context: None,
+                    project_contexts: std::collections::HashMap::new(),
+                });
+
             if let Some(new_path) = path {
                 let p = PathBuf::from(new_path);
                 if !p.exists() {
@@ -577,21 +885,58 @@ fn main() -> Result<()> {
                     fs::write(abs_path.join(".toad-root"), marker_content)?;
                 }
 
-                let config = toad_core::GlobalConfig {
-                    home_pointer: abs_path.clone(),
+                // Register as context
+                let name = if config.project_contexts.is_empty() {
+                    "default".to_string()
+                } else {
+                    abs_path
+                        .file_name()
+                        .and_then(|n| n.to_str())
+                        .unwrap_or("new-home")
+                        .to_string()
                 };
-                config.save()?;
+
+                config.home_pointer = abs_path.clone();
+                config.project_contexts.insert(
+                    name.clone(),
+                    toad_core::ProjectContext {
+                        path: abs_path.clone(),
+                        description: Some("Registered via 'toad home'".to_string()),
+                        context_type: if abs_path.join(".gitmodules").exists() {
+                            toad_core::ContextType::Hub
+                        } else {
+                            toad_core::ContextType::Generic
+                        },
+                        ai_vendors: Vec::new(),
+                        registered_at: std::time::SystemTime::now(),
+                    },
+                );
+                config.active_context = Some(name.clone());
+
+                // Create per-context storage
+                let ctx_shadows =
+                    toad_core::GlobalConfig::context_dir(&name, None)?.join("shadows");
+                fs::create_dir_all(&ctx_shadows)?;
+
+                config.save(None)?;
                 println!(
-                    "{} Anchor updated to: {:?}",
+                    "{} Anchor updated and registered as context '{}' at: {:?}",
                     "SUCCESS:".green().bold(),
+                    name,
                     abs_path
                 );
             } else {
                 match &discovered {
                     Ok(ws) => {
+                        let context_info = if let Some(name) = &ws.active_context {
+                            format!(" (context: {})", name.bold())
+                        } else {
+                            String::new()
+                        };
                         println!(
-                            "{} Current Toad Home: {:?}",
+                            "{} Current Toad Home{}: {:?}",
                             "ACTIVE:".green().bold(),
+                            context_info,
                             ws.root
                         );
                     }
@@ -611,7 +956,29 @@ fn main() -> Result<()> {
             fail_fast,
         } => {
             println!("{}", "--- BATCH OPERATION PREFLIGHT ---".blue().bold());
-            let projects = scan_all_projects(&workspace)?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                println!(
+                    "{} Registry is stale/missing. Performing one-time scan...",
+                    "INFO:".blue()
+                );
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let targets: Vec<_> = projects
                 .into_iter()
                 .filter(|p| {
@@ -801,8 +1168,26 @@ fn main() -> Result<()> {
             harvest,
             yes,
         } => {
-            let mut registry = TagRegistry::load(&workspace.tags_path())?;
-            let projects = scan_all_projects(&workspace)?;
+            let mut tag_reg = TagRegistry::load(&workspace.tags_path())?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let mut targets = Vec::new();
 
             // 1. Logic for --harvest
@@ -810,7 +1195,7 @@ fn main() -> Result<()> {
                 println!("{} Harvesting stack tags...", "INFO:".blue().bold());
                 for p in projects {
                     let stack_tag = p.stack.to_lowercase();
-                    registry.add_tag(&p.name, &stack_tag);
+                    tag_reg.add_tag(&p.name, &stack_tag);
                     targets.push(p.name);
                 }
             }
@@ -869,7 +1254,7 @@ fn main() -> Result<()> {
                     }
 
                     for p in matching {
-                        registry.add_tag(&p.name, t_name);
+                        tag_reg.add_tag(&p.name, t_name);
                         targets.push(p.name);
                     }
                 } else {
@@ -879,7 +1264,7 @@ fn main() -> Result<()> {
             // 3. Logic for specific project
             else if let Some(p_name) = project {
                 if let Some(t_name) = tag {
-                    registry.add_tag(p_name, t_name);
+                    tag_reg.add_tag(p_name, t_name);
                     targets.push(p_name.clone());
                 } else {
                     bail!("Must provide a tag name.");
@@ -888,7 +1273,7 @@ fn main() -> Result<()> {
                 bail!("Must provide a project name or use filters (--query, --tag, --harvest).");
             }
 
-            if let Err(e) = registry.save(&workspace.tags_path()) {
+            if let Err(e) = tag_reg.save(&workspace.tags_path()) {
                 println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
                 return Err(e);
             }
@@ -906,8 +1291,26 @@ fn main() -> Result<()> {
             filter_tag,
             yes,
         } => {
-            let mut registry = TagRegistry::load(&workspace.tags_path())?;
-            let projects = scan_all_projects(&workspace)?;
+            let mut tag_reg = TagRegistry::load(&workspace.tags_path())?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let mut targets = Vec::new();
 
             // 1. Logic for filters (MUST come before specific project logic)
@@ -965,7 +1368,7 @@ fn main() -> Result<()> {
                     }
 
                     for p in matching {
-                        registry.remove_tag(&p.name, t_name);
+                        tag_reg.remove_tag(&p.name, t_name);
                         targets.push(p.name);
                     }
                 } else {
@@ -975,7 +1378,7 @@ fn main() -> Result<()> {
             // 2. Logic for specific project
             else if let Some(p_name) = project {
                 if let Some(t_name) = tag {
-                    registry.remove_tag(p_name, t_name);
+                    tag_reg.remove_tag(p_name, t_name);
                     targets.push(p_name.clone());
                 } else {
                     bail!("Must provide a tag name to remove.");
@@ -984,7 +1387,7 @@ fn main() -> Result<()> {
                 bail!("Must provide a project name or use filters (--query, --tag).");
             }
 
-            if let Err(e) = registry.save(&workspace.tags_path()) {
+            if let Err(e) = tag_reg.save(&workspace.tags_path()) {
                 println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
                 return Err(e);
             }
@@ -995,23 +1398,108 @@ fn main() -> Result<()> {
                 targets.len()
             );
         }
-        Commands::Manifest => {
-            println!("Generating project manifest (Shadow Context)...");
-            let fingerprint = workspace.get_fingerprint()?;
-            let projects = scan_all_projects(&workspace)?;
+        Commands::Skill { subcommand } => {
+            match subcommand {
+                SkillCommand::Sync => {
+                    println!("{}", "--- SYNCHRONIZING AI SKILLS ---".green().bold());
+                    let fingerprint = workspace.get_fingerprint()?;
+                    let projects = scan_all_projects(&workspace)?;
 
-            let output = toad_manifest::generate_markdown(&projects, fingerprint);
+                    // 1. Generate Manifest (Internal Shadow)
+                    println!("Updating Semantic Manifest (Shadow)...");
+                    let manifest_md = toad_manifest::generate_markdown(&projects, fingerprint);
+                    workspace.ensure_shadows()?;
+                    fs::write(workspace.manifest_path(), manifest_md)?;
 
-            workspace.ensure_shadows()?;
-            let manifest_path = workspace.manifest_path();
+                    // 2. Generate Blueprint Skill
+                    println!("Generating Agnostic Architectural Blueprint...");
+                    let blueprint = toad_manifest::generate_blueprint(&projects);
 
-            fs::write(&manifest_path, output)?;
+                    // 3. Generate CLI Reference Skill
+                    println!("Generating Toad CLI Reference Skill...");
+                    let mut cmd = Cli::command();
+                    let help = cmd.render_help().to_string();
+                    let cli_skill = toad_manifest::generate_cli_skill(&help);
 
-            println!(
-                "{} Manifest updated at: {:?}",
-                "SUCCESS:".green().bold(),
-                manifest_path
-            );
+                    // Distribution
+                    let mut distributed = false;
+                    if let Some(name) = &workspace.active_context {
+                        if let Ok(Some(config)) = toad_core::GlobalConfig::load(None) {
+                            if let Some(ctx) = config.project_contexts.get(name) {
+                                if !ctx.ai_vendors.is_empty() {
+                                    println!(
+                                        "Distributing skills to AI vendors: {}...",
+                                        ctx.ai_vendors.join(", ")
+                                    );
+                                    let skills = vec![
+                                        ("toad-blueprint".to_string(), blueprint.clone()),
+                                        ("toad-cli".to_string(), cli_skill.clone()),
+                                    ];
+                                    let synced = toad_ops::workflow::distribute_skills(
+                                        &workspace.root,
+                                        &ctx.ai_vendors,
+                                        skills,
+                                    )?;
+                                    for path in synced {
+                                        println!("  {} Sync: {:?}", "»".green(), path);
+                                    }
+                                    distributed = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if !distributed {
+                        // Fallback to agnostic blueprint and cli skill at root
+                        let blueprint_path = workspace.root.join("toad-blueprint.md");
+                        fs::write(&blueprint_path, &blueprint)?;
+                        println!(
+                            "{} Agnostic blueprint updated at root: {:?}",
+                            "SUCCESS:".green().bold(),
+                            blueprint_path
+                        );
+
+                        let cli_path = workspace.root.join("toad-cli.md");
+                        fs::write(&cli_path, &cli_skill)?;
+                        println!(
+                            "{} CLI reference skill updated at root: {:?}",
+                            "SUCCESS:".green().bold(),
+                            cli_path
+                        );
+                    }
+                    println!(
+                        "\n{} AI Agent memory is now synchronized.",
+                        "SUCCESS:".green().bold()
+                    );
+                }
+                SkillCommand::List => {
+                    println!(
+                        "{}",
+                        "--- REGISTERED AI VENDORS & SKILLS ---".green().bold()
+                    );
+                    if let Some(name) = &workspace.active_context {
+                        if let Ok(Some(config)) = toad_core::GlobalConfig::load(None) {
+                            if let Some(ctx) = config.project_contexts.get(name) {
+                                if ctx.ai_vendors.is_empty() {
+                                    println!("No AI vendors registered for context '{}'.", name);
+                                } else {
+                                    println!("{:<15} VENDOR", "SLOT");
+                                    println!("{:-<15} {:-<20}", "", "");
+                                    for vendor in &ctx.ai_vendors {
+                                        println!("{:<15} {}", "Skills Slot", vendor.bold());
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        println!("No active context found.");
+                    }
+
+                    println!("\n--- ACTIVE TOAD SKILLS ---");
+                    println!("- toad-blueprint: Architectural & dependency map.");
+                    println!("- toad-cli: High-density command reference.");
+                }
+            }
         }
         Commands::Sync => {
             println!("Scanning projects...");
@@ -1032,7 +1520,7 @@ fn main() -> Result<()> {
                 projects,
                 last_sync: std::time::SystemTime::now(),
             };
-            registry.save()?;
+            registry.save(workspace.active_context.as_deref(), None)?;
 
             pb.finish_and_clear();
             println!(
@@ -1102,7 +1590,7 @@ fn main() -> Result<()> {
                     };
 
                     let custom_dir =
-                        toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
+                        toad_core::GlobalConfig::config_dir(None)?.join("strategies/custom");
                     fs::create_dir_all(&custom_dir)?;
 
                     let mut safe_name = name
@@ -1125,7 +1613,7 @@ fn main() -> Result<()> {
                 }
                 StrategyCommands::Remove { name } => {
                     let custom_dir =
-                        toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
+                        toad_core::GlobalConfig::config_dir(None)?.join("strategies/custom");
                     let mut safe_name = name
                         .to_lowercase()
                         .chars()
@@ -1152,7 +1640,25 @@ fn main() -> Result<()> {
             dry_run,
         } => {
             println!("{}", "--- 🌊 POND HYGIENE PRE-FLIGHT ---".blue().bold());
-            let projects = scan_all_projects(&workspace)?;
+
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                let p = scan_all_projects(&workspace)?;
+                let new_registry = toad_core::ProjectRegistry {
+                    fingerprint: current_fp,
+                    projects: p.clone(),
+                    last_sync: std::time::SystemTime::now(),
+                };
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
+                p
+            };
+
             let targets: Vec<_> = projects
                 .into_iter()
                 .filter(|p| {
@@ -1303,6 +1809,7 @@ fn main() -> Result<()> {
 
             let mut output = String::new();
             output.push_str("# Toad CLI Reference\n\n");
+            output.push_str(&format!("> **Version:** `v{}`  \n", VERSION));
             output.push_str("> **Generated by:** `toad docs`  \n");
             output.push_str("> **Last Updated:** 2026-02-06  \n\n");
             output.push_str("```text\n");
@@ -1319,6 +1826,938 @@ fn main() -> Result<()> {
                 "SUCCESS:".green().bold(),
                 docs_path
             );
+        }
+        Commands::Project { subcommand } => {
+            let mut config =
+                toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| toad_core::GlobalConfig {
+                    home_pointer: PathBuf::from("."),
+                    active_context: None,
+                    project_contexts: std::collections::HashMap::new(),
+                });
+
+            match subcommand {
+                ProjectCommand::Register {
+                    name,
+                    path,
+                    description,
+                    context_type,
+                    ai,
+                } => {
+                    let abs_path = fs::canonicalize(PathBuf::from(path))?;
+                    if !abs_path.exists() {
+                        bail!("Path does not exist: {:?}", abs_path);
+                    }
+
+                    if config.project_contexts.contains_key(name) {
+                        bail!("Context '{}' already exists.", name);
+                    }
+
+                    let detected_type = if let Some(t) = context_type {
+                        toad_core::ContextType::from(*t)
+                    } else if abs_path.join(".gitmodules").exists() {
+                        toad_core::ContextType::Hub
+                    } else if abs_path.join("projects").exists() {
+                        toad_core::ContextType::Pond
+                    } else {
+                        toad_core::ContextType::Generic
+                    };
+
+                    let ai_vendors = if let Some(a) = ai {
+                        a.split(',').map(|s| s.trim().to_string()).collect()
+                    } else {
+                        Vec::new()
+                    };
+
+                    let ctx = toad_core::ProjectContext {
+                        path: abs_path.clone(),
+                        description: description.clone(),
+                        context_type: detected_type,
+                        ai_vendors,
+                        registered_at: std::time::SystemTime::now(),
+                    };
+
+                    config.project_contexts.insert(name.clone(), ctx);
+
+                    // Create per-context storage
+                    let ctx_shadows =
+                        toad_core::GlobalConfig::context_dir(name, None)?.join("shadows");
+                    fs::create_dir_all(&ctx_shadows)?;
+
+                    config.save(None)?;
+                    println!(
+                        "{} Context '{}' ({}) registered at {:?}",
+                        "SUCCESS:".green().bold(),
+                        name,
+                        detected_type,
+                        abs_path
+                    );
+                }
+                ProjectCommand::Switch { name } => {
+                    if !config.project_contexts.contains_key(name) {
+                        bail!("Context '{}' not found.", name);
+                    }
+                    config.active_context = Some(name.clone());
+                    config.save(None)?;
+                    println!(
+                        "{} Switched to context '{}'",
+                        "SUCCESS:".green().bold(),
+                        name
+                    );
+                }
+                ProjectCommand::Current => {
+                    if let Some(name) = &config.active_context {
+                        if let Some(ctx) = config.project_contexts.get(name) {
+                            println!(
+                                "{} Active context: {} ({})",
+                                "ACTIVE:".green().bold(),
+                                name.bold(),
+                                ctx.context_type
+                            );
+                            println!("  Path:        {:?}", ctx.path);
+                            if let Some(desc) = &ctx.description {
+                                println!("  Description: {}", desc);
+                            }
+                            if !ctx.ai_vendors.is_empty() {
+                                println!("  AI Vendors:  {}", ctx.ai_vendors.join(", "));
+                            }
+                        }
+                    } else {
+                        println!(
+                            "{} No active context. Using legacy home: {:?}",
+                            "LEGACY:".yellow().bold(),
+                            config.home_pointer
+                        );
+                    }
+                }
+                ProjectCommand::List => {
+                    println!("{}", "--- REGISTERED PROJECT CONTEXTS ---".green().bold());
+                    if config.project_contexts.is_empty() {
+                        println!("No contexts registered.");
+                    } else {
+                        // Header
+                        println!(
+                            "{:<15} {:<10} {:<15} {:<40} ACTIVE",
+                            "NAME", "TYPE", "VENDORS", "PATH"
+                        );
+                        println!("{:-<15} {:-<10} {:-<15} {:-<40} {:-<6}", "", "", "", "", "");
+
+                        let mut names: Vec<_> = config.project_contexts.keys().collect();
+                        names.sort();
+
+                        for name in names {
+                            let ctx = config.project_contexts.get(name).unwrap();
+                            let active = if config.active_context.as_ref() == Some(name) {
+                                "✅"
+                            } else {
+                                ""
+                            };
+                            let vendors = if ctx.ai_vendors.is_empty() {
+                                "-".to_string()
+                            } else {
+                                ctx.ai_vendors.join(",")
+                            };
+                            println!(
+                                "{:<15} {:<10} {:<15} {:<40?} {:^6}",
+                                name.bold(),
+                                ctx.context_type.to_string(),
+                                vendors,
+                                ctx.path,
+                                active
+                            );
+                        }
+                    }
+                }
+                ProjectCommand::Update {
+                    name,
+                    path,
+                    description,
+                    context_type,
+                    ai,
+                } => {
+                    let ctx = config
+                        .project_contexts
+                        .get_mut(name)
+                        .ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
+                    if let Some(p) = path {
+                        let abs_path = fs::canonicalize(PathBuf::from(p))?;
+                        ctx.path = abs_path;
+                    }
+                    if let Some(d) = description {
+                        ctx.description = Some(d.clone());
+                    }
+                    if let Some(t) = context_type {
+                        ctx.context_type = toad_core::ContextType::from(*t);
+                    }
+                    if let Some(a) = ai {
+                        ctx.ai_vendors = a.split(',').map(|s| s.trim().to_string()).collect();
+                    }
+                    config.save(None)?;
+                    println!("{} Context '{}' updated.", "SUCCESS:".green().bold(), name);
+                }
+                ProjectCommand::Delete { name, yes } => {
+                    if config.active_context.as_ref() == Some(name) {
+                        println!(
+                            "{} Cannot delete the active context. Switch to another context first.",
+                            "ERROR:".red().bold()
+                        );
+                        return Ok(());
+                    }
+
+                    if !config.project_contexts.contains_key(name) {
+                        bail!("Context '{}' not found.", name);
+                    }
+
+                    if !*yes {
+                        print!(
+                            "Are you sure you want to delete context '{}' and all its cached data? [y/N]: ",
+                            name
+                        );
+                        io::stdout().flush()?;
+                        let mut input = String::new();
+                        io::stdin().read_line(&mut input)?;
+                        if !input.trim().to_lowercase().starts_with('y') {
+                            println!("Aborted.");
+                            return Ok(());
+                        }
+                    }
+
+                    config.project_contexts.remove(name);
+
+                    // Remove per-context storage
+                    let ctx_dir = toad_core::GlobalConfig::context_dir(name, None)?;
+                    if ctx_dir.exists() {
+                        fs::remove_dir_all(&ctx_dir)?;
+                    }
+
+                    config.save(None)?;
+                    println!("{} Context '{}' removed.", "SUCCESS:".green().bold(), name);
+                }
+                ProjectCommand::Info { name } => {
+                    let ctx = config
+                        .project_contexts
+                        .get(name)
+                        .ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
+                    println!("{}: {}", "Name".bold(), name);
+                    println!("{}: {}", "Type".bold(), ctx.context_type);
+                    println!("{}: {:?}", "Path".bold(), ctx.path);
+                    println!(
+                        "{}: {}",
+                        "Description".bold(),
+                        ctx.description.as_deref().unwrap_or("-")
+                    );
+                    println!("{}: {:?}", "Registered".bold(), ctx.registered_at);
+                    let active = if config.active_context.as_ref() == Some(name) {
+                        "Yes"
+                    } else {
+                        "No"
+                    };
+                    println!("{}: {}", "Active".bold(), active);
+                }
+            }
+        }
+        Commands::Ggit { subcommand } => {
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                scan_all_projects(&workspace)?
+            };
+
+            match subcommand {
+                GgitCommand::Status { query, tag } => {
+                    println!("{}", "--- MULTI-REPO GIT STATUS ---".green().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    // For Hub contexts, we also want to show submodule status as peers
+                    let mut all_repos = Vec::new();
+                    for p in targets {
+                        // The primary project
+                        all_repos.push((p.name.clone(), p.path.clone(), p.vcs_status.clone()));
+
+                        // Its submodules
+                        for sub in p.submodules {
+                            all_repos.push((
+                                format!("{} > {}", p.name, sub.name),
+                                workspace.root.join(&sub.path),
+                                sub.vcs_status.clone(),
+                            ));
+                        }
+                    }
+
+                    // Header
+                    println!("{:<40} {:<15} BRANCH", "REPOSITORY", "STATUS");
+                    println!("{:-<40} {:-<15} {:-<20}", "", "", "");
+
+                    for (name, path, status) in all_repos {
+                        let branch = toad_git::branch::current_branch(&path).unwrap_or_default();
+                        println!("{:<40} {:<15} {}", name.bold(), status, branch.cyan());
+                    }
+                }
+                GgitCommand::Commit {
+                    message,
+                    query,
+                    tag,
+                    cascade,
+                    fail_fast,
+                } => {
+                    println!("{}", "--- MULTI-REPO GIT COMMIT ---".blue().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    let mut submodule_failed = false;
+                    let mut submodule_changed = false;
+
+                    for p in &targets {
+                        let mut project_sub_failed = false;
+                        // 1. Commit submodules first
+                        for sub in &p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            if toad_git::commit::is_dirty(&sub_path)? {
+                                println!("Committing submodule: {}", sub.name.cyan());
+                                let res = toad_git::commit::commit(&sub_path, message, &sub.name)?;
+                                if !res.success {
+                                    submodule_failed = true;
+                                    project_sub_failed = true;
+                                } else {
+                                    submodule_changed = true;
+                                }
+                                results.push(res);
+
+                                if *fail_fast && submodule_failed {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if *fail_fast && submodule_failed {
+                            break;
+                        }
+
+                        // 2. Commit the project itself (Block if its own submodules failed)
+                        if project_sub_failed {
+                            println!(
+                                "{} Skipping project {} because its submodules failed.",
+                                "WARN:".yellow(),
+                                p.name.cyan()
+                            );
+                            continue;
+                        }
+
+                        if toad_git::commit::is_dirty(&p.path)? {
+                            println!("Committing project: {}", p.name.cyan());
+                            let res = toad_git::commit::commit(&p.path, message, &p.name)?;
+                            if !res.success && *fail_fast {
+                                results.push(res);
+                                break;
+                            }
+                            results.push(res);
+                        }
+                    }
+
+                    // 3. Cascade to Hub Root if requested (Block if ANY submodule failed)
+                    if *cascade && submodule_changed {
+                        if submodule_failed {
+                            println!(
+                                "{} Aborting Hub Root cascade because one or more submodules failed.",
+                                "ERROR:".red().bold()
+                            );
+                        } else {
+                            let root_path = &workspace.root;
+                            if toad_git::commit::is_dirty(root_path)? {
+                                println!("Cascading commit to Hub Root...");
+                                let res = toad_git::commit::commit(root_path, message, "Hub Root")?;
+                                results.push(res);
+                            }
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- COMMIT SUMMARY ---");
+                    let mut any_fail = false;
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            any_fail = true;
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
+                        if !res.success {
+                            println!("  Error: {}", res.stderr.dimmed());
+                        }
+                    }
+
+                    if any_fail {
+                        std::process::exit(1);
+                    }
+                }
+                GgitCommand::Push {
+                    query,
+                    tag,
+                    fail_fast,
+                } => {
+                    println!("{}", "--- MULTI-REPO GIT PUSH ---".blue().bold());
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    let mut any_sub_failed = false;
+
+                    for p in targets {
+                        let mut project_sub_failed = false;
+                        // Push submodules first
+                        for sub in p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            println!("Pushing submodule: {}", sub.name.cyan());
+                            let res = toad_git::remote::push(&sub_path, &sub.name, None, None)?;
+                            if !res.success {
+                                any_sub_failed = true;
+                                project_sub_failed = true;
+                            }
+                            results.push(res);
+
+                            if *fail_fast && any_sub_failed {
+                                break;
+                            }
+                        }
+
+                        if *fail_fast && any_sub_failed {
+                            break;
+                        }
+
+                        // Push project (Block if its own submodules failed)
+                        if project_sub_failed {
+                            println!(
+                                "{} Skipping push for project {} because its submodules failed.",
+                                "WARN:".yellow(),
+                                p.name.cyan()
+                            );
+                            continue;
+                        }
+
+                        println!("Pushing project: {}", p.name.cyan());
+                        let res = toad_git::remote::push(&p.path, &p.name, None, None)?;
+                        if !res.success && *fail_fast {
+                            results.push(res);
+                            break;
+                        }
+                        results.push(res);
+                    }
+
+                    // Summary
+                    println!("\n--- PUSH SUMMARY ---");
+                    let mut any_fail = false;
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            any_fail = true;
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
+                    }
+
+                    if any_fail {
+                        std::process::exit(1);
+                    }
+                }
+                GgitCommand::Pull {
+                    query,
+                    tag,
+                    fail_fast,
+                } => {
+                    println!("{}", "--- MULTI-REPO GIT PULL ---".blue().bold());
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    let mut any_failed = false;
+
+                    for p in targets {
+                        // Pull project first
+                        println!("Pulling project: {}", p.name.cyan());
+                        let res = toad_git::remote::pull(&p.path, &p.name)?;
+                        let project_failed = !res.success;
+                        if project_failed {
+                            any_failed = true;
+                        }
+                        results.push(res);
+
+                        if project_failed {
+                            if *fail_fast {
+                                break;
+                            }
+                            println!(
+                                "{} Skipping submodules for project {} because project pull failed.",
+                                "WARN:".yellow(),
+                                p.name.cyan()
+                            );
+                            continue;
+                        }
+
+                        // Pull submodules
+                        for sub in p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            println!("Pulling submodule: {}", sub.name.cyan());
+                            let res = toad_git::remote::pull(&sub_path, &sub.name)?;
+                            if !res.success {
+                                any_failed = true;
+                            }
+                            results.push(res);
+
+                            if *fail_fast && any_failed {
+                                break;
+                            }
+                        }
+
+                        if *fail_fast && any_failed {
+                            break;
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- PULL SUMMARY ---");
+                    let mut any_fail = false;
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            any_fail = true;
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
+                    }
+
+                    if any_fail {
+                        std::process::exit(1);
+                    }
+                }
+                GgitCommand::Sync { query, tag, force } => {
+                    println!("{}", "--- ECOSYSTEM SYNC & ALIGN ---".blue().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut preflight_results = Vec::new();
+                    let mut any_issues = false;
+
+                    // 1. Pre-flight Check
+                    println!("Running safety checks...");
+                    for p in &targets {
+                        // Project check
+                        let res = toad_git::sync::preflight_check(&p.path, &p.name, None, None)?;
+                        if !res.issues.is_empty() {
+                            any_issues = true;
+                        }
+                        preflight_results.push(res);
+
+                        // Submodule checks
+                        for sub in &p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            let sub_res = toad_git::sync::preflight_check(
+                                &sub_path,
+                                &format!("{} > {}", p.name, sub.name),
+                                Some(&p.path),
+                                Some(&sub.path),
+                            )?;
+                            if !sub_res.issues.is_empty() {
+                                any_issues = true;
+                            }
+                            preflight_results.push(sub_res);
+                        }
+                    }
+
+                    if any_issues && !*force {
+                        println!("\n{} Safety checks failed:", "ERROR:".red().bold());
+                        for res in preflight_results {
+                            if !res.issues.is_empty() {
+                                println!("  » {}:", res.project_name.cyan());
+                                for issue in res.issues {
+                                    println!("    - {}", issue.yellow());
+                                }
+                            }
+                        }
+                        println!(
+                            "\nUse {} to skip safety checks (Dangerous).",
+                            "--force".bold()
+                        );
+                        std::process::exit(1);
+                    }
+
+                    // 2. Perform Sync
+                    println!("\nSynchronizing repositories...");
+                    let mut results = Vec::new();
+                    for p in targets {
+                        // Pull project
+                        println!("Updating project: {}", p.name.cyan());
+                        let res = toad_git::remote::pull(&p.path, &p.name)?;
+                        results.push(res);
+
+                        // Sync submodules
+                        if !p.submodules.is_empty() {
+                            println!("Aligning submodules for {}...", p.name.cyan());
+                            // git submodule update --init --recursive
+                            let sub_res = toad_git::run_git(
+                                &p.path,
+                                &["submodule", "update", "--init", "--recursive"],
+                                &format!("{} (submodules)", p.name),
+                            )?;
+                            results.push(sub_res);
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- SYNC SUMMARY ---");
+                    let mut any_fail = false;
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            any_fail = true;
+                            "FAIL".red()
+                        };
+                        println!("{:<40} {}", res.project_name.bold(), status);
+                        if !res.success {
+                            println!("  Error: {}", res.stderr.dimmed());
+                        }
+                    }
+
+                    if any_fail {
+                        std::process::exit(1);
+                    }
+                }
+                GgitCommand::Branches { query, tag, all } => {
+                    println!("{}", "--- MULTI-REPO BRANCH LIST ---".green().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    for p in targets {
+                        println!("\n{} {}", "»".blue(), p.name.bold());
+
+                        // Local branches
+                        let local = toad_git::branches::list_local_branches(&p.path)?;
+                        for b in local {
+                            let current_marker = if b.is_current { "*" } else { " " };
+                            let color_name = if b.is_current {
+                                b.name.green().bold()
+                            } else {
+                                b.name.normal()
+                            };
+                            println!("  {} {}", current_marker.green(), color_name);
+                        }
+
+                        // Remote branches if requested
+                        if *all {
+                            let remote = toad_git::branches::list_remote_branches(&p.path)?;
+                            for b in remote {
+                                println!("    {} {}", "remote:".dimmed(), b.name.red());
+                            }
+                        }
+
+                        // Submodules
+                        for sub in p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            let sub_branch =
+                                toad_git::branch::current_branch(&sub_path).unwrap_or_default();
+                            println!(
+                                "  {} {} ({})",
+                                "└─".dimmed(),
+                                sub.name.cyan(),
+                                sub_branch.dimmed()
+                            );
+                        }
+                    }
+                }
+                GgitCommand::Align { query, tag } => {
+                    println!("{}", "--- SUBMODULE ALIGNMENT ---".blue().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    for p in targets {
+                        if p.submodules.is_empty() {
+                            continue;
+                        }
+
+                        println!("Aligning submodules for {}...", p.name.cyan());
+                        for sub in p.submodules {
+                            let res =
+                                toad_git::align::align_submodule(&p.path, &sub.path, &sub.name)?;
+                            results.push(res);
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- ALIGNMENT SUMMARY ---");
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
+                    }
+                }
+            }
+        }
+        Commands::Cw { subcommand } => {
+            let mut registry = toad_core::WorkflowRegistry::load(None)?;
+
+            match subcommand {
+                CwCommand::Register {
+                    name,
+                    script,
+                    description,
+                } => {
+                    let script_path = fs::canonicalize(PathBuf::from(script))?;
+                    toad_ops::workflow::register_workflow(
+                        &mut registry,
+                        name.clone(),
+                        script_path.clone(),
+                        description.clone(),
+                    )?;
+                    registry.save(None)?;
+                    println!(
+                        "{} Workflow '{}' registered at {:?}",
+                        "SUCCESS:".green().bold(),
+                        name,
+                        script_path
+                    );
+                }
+                CwCommand::Run { name, args } => {
+                    let workflow = registry
+                        .workflows
+                        .get(&name.to_lowercase())
+                        .ok_or_else(|| anyhow::anyhow!("Workflow '{}' not found.", name))?;
+
+                    println!(
+                        "{} Executing workflow: {}...",
+                        "INFO:".blue().bold(),
+                        name.cyan()
+                    );
+                    let exit_code = toad_ops::workflow::run_workflow(workflow, args)?;
+                    std::process::exit(exit_code);
+                }
+                CwCommand::List => {
+                    println!("{}", "--- REGISTERED CUSTOM WORKFLOWS ---".green().bold());
+                    if registry.workflows.is_empty() {
+                        println!("No workflows registered.");
+                    } else {
+                        println!("{:<15} {:<40} DESCRIPTION", "NAME", "SCRIPT");
+                        println!("{:-<15} {:-<40} {:-<30}", "", "", "");
+
+                        let mut names: Vec<_> = registry.workflows.keys().collect();
+                        names.sort();
+
+                        for name in names {
+                            let wf = registry.workflows.get(name).unwrap();
+                            let desc = wf.description.as_deref().unwrap_or("-");
+                            println!("{:<15} {:<40?} {}", name.bold(), wf.script_path, desc);
+                        }
+                    }
+                }
+                CwCommand::Info { name } => {
+                    let wf = registry
+                        .workflows
+                        .get(&name.to_lowercase())
+                        .ok_or_else(|| anyhow::anyhow!("Workflow '{}' not found.", name))?;
+
+                    println!("{}: {}", "Name".bold(), wf.name);
+                    println!("{}: {:?}", "Script".bold(), wf.script_path);
+                    println!(
+                        "{}: {}",
+                        "Description".bold(),
+                        wf.description.as_deref().unwrap_or("-")
+                    );
+                    println!("{}: {:?}", "Registered".bold(), wf.registered_at);
+                }
+                CwCommand::Delete { name } => {
+                    if registry.workflows.remove(&name.to_lowercase()).is_some() {
+                        registry.save(None)?;
+                        println!("{} Workflow '{}' removed.", "SUCCESS:".green().bold(), name);
+                    } else {
+                        bail!("Workflow '{}' not found.", name);
+                    }
+                }
+            }
         }
         Commands::List => {
             let mut cmd = Cli::command();

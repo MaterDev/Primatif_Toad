@@ -39,3 +39,31 @@ agents.
 - **Concise:** Favor high information density over conversational filler.
 - **Action-Oriented:** Documentation and CLI output should focus on "What's
   next?" and "How do I fix this?".
+
+## 5. Licensing & Architecture Boundaries
+
+Toad follows a strict **Open Core** boundary to protect its intelligence while
+enabling an open-source ecosystem.
+
+- **Dependency Rule:** MIT crates (`toad-core`, `scaffold`) must never depend on
+  BUSL-1.1 crates (`discovery`, `toad-git`, `toad-manifest`, `toad-ops`).
+- **Git Monopoly:** No crate outside of `toad-git` may execute `git` commands or
+  reason about Git internals.
+- **SDK Stability:** `toad-core` is the platform SDK. New types added here must
+  be treated as stable API contracts for third-party plugin developers.
+- **Decision Framework:**
+  - Data Model / Trait / Contract? → **`toad-core` (MIT)**.
+  - Intelligence / Analysis / Logic? → **BUSL-1.1 crate**.
+  - CLI Glue / Formatting? → **`bin/toad` (MIT)**.
+
+## 6. Project Contexts & Workspace Switching
+
+Toad supports multiple workspace roots via **Named Project Contexts**.
+
+- **Active Context:** All commands operate against the active context resolved
+  via `toad project current`.
+- **Legacy Migration:** `toad home` is deprecated. Use `toad project switch` for
+  all context changes.
+- **AI Awareness:** Always verify the active context path before performing
+  scans or creating files. Use `CROSS_REPO_MAP.md` to understand the
+  architectural links within the active context.
