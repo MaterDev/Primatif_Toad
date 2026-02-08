@@ -15,7 +15,10 @@
 The project is structured as a modular Rust workspace to separate the
 "Orchestrator" from specific "Capabilities."
 
-### Component Hierarchy
+### Component Hierarchy (The Toad Tiers)
+
+The project follows a multi-repo "Open Core" architecture linked via Git 
+submodules in the `crates/` directory:
 
 1. **`bin/toad` (The Orchestrator) [MIT]:** A thin CLI wrapper that parses
    commands and delegates to the internal crates.
@@ -29,7 +32,7 @@ The project is structured as a modular Rust workspace to separate the
    to detect tech stacks and submodule structures.
 6. **`crates/toad-manifest` (The Chronicler) [BUSL-1.1]:** Handles report
    generation, AI context maps, and cross-repo dependency maps.
-7. **`crates/scaffold` (The Builder) [MIT]:** Logic for bootstrapping new
+7. **`crates/toad-scaffold` (The Builder) [MIT]:** Logic for bootstrapping new
    project templates (filesystem only).
 
 ## 📐 Design Principles
