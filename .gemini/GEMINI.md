@@ -1,6 +1,7 @@
 # Gemini Context: Primatif_Toad
 
 ## Identity & Purpose
+
 - **Role:** This is **Primatif_Toad** (CLI: `toad`), the **Toad Control** system for local development.
 - **Goal:** Provide a portable, Mac-agnostic control plane to manage, audit, and manipulate software projects in the `projects/` directory.
 - **Protocol:** This project uses the **Conductor** extension for solo-dev orchestration.
@@ -8,17 +9,19 @@
 ---
 
 ## 🧠 System Brain (Conductor)
+
 At the start of every session, you MUST read the **Conductor Index** to understand the current state, active tracks, and next steps.
 
-1.  **Index:** `conductor/index.md` (Root of all knowledge)
-2.  **Vision:** `conductor/product.md` (What we are building)
-3.  **Architecture:** `conductor/tech-stack.md` (How we build it)
-4.  **Workflow:** `conductor/workflow.md` (How we work & QA gates)
-5.  **Tracks:** `conductor/tracks.md` (What's in progress)
+1. **Index:** `conductor/index.md` (Root of all knowledge)
+2. **Vision:** `conductor/product.md` (What we are building)
+3. **Architecture:** `conductor/tech-stack.md` (How we build it)
+4. **Workflow:** `conductor/workflow.md` (How we work & QA gates)
+5. **Tracks:** `conductor/tracks.md` (What's in progress)
 
 ---
 
 ## 🛠️ Operational Protocol (Universal File Resolution)
+
 You must adhere to the **Universal File Resolution Protocol** (defined in `conductor/USER_GUIDE.md`) to manage tracks and state.
 
 - **Solo-Dev Flow:** You are the **AI Project Manager**. Your job is to track atomic progress in `plan.md` files so the user doesn't have to manage the complexity.
@@ -29,6 +32,7 @@ You must adhere to the **Universal File Resolution Protocol** (defined in `condu
 ---
 
 ## ⚖️ Licensing Architecture (Open Core)
+
 Toad follows an **Open Core** model. Every code change MUST land in the correct license boundary.
 
 - **MIT Layer (Open Contracts):** `toad-core`, `scaffold`, `bin/toad`.
@@ -41,15 +45,18 @@ Toad follows an **Open Core** model. Every code change MUST land in the correct 
 ---
 
 ## 🌊 Multi-Repo & Submodule Conventions
+
 Toad is a distributed ecosystem of Git submodules managed by a central Hub.
 
 - **Git Orchestration:** Always use `toad ggit` for multi-repo operations (status, branch, commit, push, pull). Avoid raw `git` commands in the Hub root.
+- **Responsibility:** You are responsible for committing and pushing changes across submodules, managing their versions, and ensuring dependency integrity within the Hub and across crates. Use the `toad` CLI (e.g., `ggit`) whenever possible.
 - **SOTW (State of the World):** Never run `toad ggit sync --force` unless explicitly authorized. Always run `toad ggit preflight` before syncing to ensure all submodules are pushed and clean.
 - **Naming:** Follow the `{type}/{scope}` convention for all cross-repo branches (e.g., `feat/new-scanner`).
 
 ---
 
 ## 🗺️ Project Contexts & Navigation
+
 Toad supports multiple workspace roots via **Named Project Contexts**.
 
 - **Switching:** Use `toad project switch <name>` to change targets. `toad home` is legacy.
@@ -57,6 +64,7 @@ Toad supports multiple workspace roots via **Named Project Contexts**.
 - **AI Navigator:** For complex architecture links, always refer to `CROSS_REPO_MAP.md` at the root. This is the source of truth for dependency graphs and type flow.
 
 ## System Structure
+
 - `bin/toad`: **The Interface.** Main CLI application (`toad`). (MIT)
 - `crates/`: **The Capabilities.** Git submodules with individual licenses.
 - `projects/`: **The Target.** Managed repositories (ignored by Git).
