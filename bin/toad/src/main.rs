@@ -288,6 +288,23 @@ enum GgitCommand {
         #[arg(long, short = 'f')]
         fail_fast: bool,
     },
+    /// Switch branches across repositories
+    Checkout {
+        /// Branch name
+        branch: String,
+        /// Create the branch if it doesn't exist
+        #[arg(long, short = 'b')]
+        create: bool,
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Halt the entire batch if a single repo fails
+        #[arg(long, short = 'f')]
+        fail_fast: bool,
+    },
     /// Synchronize and align repositories (safe multi-repo update)
     Sync {
         /// Optional query to filter projects
@@ -2421,6 +2438,94 @@ fn main() -> Result<()> {
 
                     // Summary
                     println!("\n--- PULL SUMMARY ---");
+                    let mut any_fail = false;
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            any_fail = true;
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
+                    }
+
+                    if any_fail {
+                        std::process::exit(1);
+                    }
+                }
+                GgitCommand::Checkout {
+                    branch,
+                    create,
+                    query,
+                    tag,
+                    fail_fast,
+                } => {
+                    println!("{}", "--- MULTI-REPO GIT CHECKOUT ---".blue().bold());
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    let mut any_failed = false;
+
+                    for p in targets {
+                        // 1. Checkout project
+                        println!("Checking out {} in project: {}...", branch.cyan(), p.name.cyan());
+                        let res = toad_git::branch::checkout(&p.path, &branch, &p.name, *create)?;
+                        if !res.success {
+                            any_failed = true;
+                        }
+                        results.push(res);
+
+                        if *fail_fast && any_failed {
+                            break;
+                        }
+
+                        // 2. Checkout submodules
+                        for sub in p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            println!("Checking out {} in submodule: {}...", branch.cyan(), sub.name.cyan());
+                            let sub_res = toad_git::branch::checkout(&sub_path, &branch, &sub.name, *create)?;
+                            if !sub_res.success {
+                                any_failed = true;
+                            }
+                            results.push(sub_res);
+
+                            if *fail_fast && any_failed {
+                                break;
+                            }
+                        }
+
+                        if *fail_fast && any_failed {
+                            break;
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- CHECKOUT SUMMARY ---");
                     let mut any_fail = false;
                     for res in results {
                         let status = if res.success {
