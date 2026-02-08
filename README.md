@@ -30,17 +30,18 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 ## 🐸 Quick Start
 
 ```bash
-# Clone (with submodules)
-git clone --recurse-submodules https://github.com/Primatif/Primatif_Toad.git
+# 1. Clone the Hub
+git clone https://github.com/Primatif/Primatif_Toad.git
+cd Primatif_Toad
 
-# Install
-just install
+# 2. Fully automate your setup (Initializes submodules, installs tools, and builds)
+just setup
 
-# Anchor your workspace
+# 3. Anchor your system
 toad home .
 
-# Analyze your ecosystem
-toad stats
+# 4. Analyze your ecosystem
+toad status
 ```
 
 ## What's New in v1.0.2 "Open Core"
@@ -232,6 +233,39 @@ just qa
 
 This executes version sync, docs generation, license boundary checks,
 formatting, clippy, unit tests, and a full build.
+
+---
+
+## 🛠️ Contributor Guide: Multi-Repo Workflow
+
+Toad is a distributed ecosystem. To contribute, you must understand how we
+manage submodules.
+
+### 1. The Hub & The Crates
+
+- **The Hub (`Primatif_Toad`):** This repository. It manages the CLI binary and
+  links all submodules.
+- **The Crates (`crates/*`):** Specialized repositories. Each has its own
+  lifecycle and license.
+
+### 2. Managing Changes
+
+**NEVER** use raw `git commit` in the root directory if you've changed code in
+`crates/`. Instead, use Toad's own orchestration:
+
+```bash
+# 1. See what's dirty across the whole ecosystem
+toad ggit status
+
+# 2. Commit across submodules AND the Hub in one command
+toad ggit commit -m "feat: your change" --cascade
+
+# 3. Push everything safely
+toad ggit push
+```
+
+The `--cascade` flag is critical: it commits your changes in the submodules
+first, then automatically updates the Hub's pointers to those new commits.
 
 ---
 

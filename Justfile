@@ -8,6 +8,17 @@
 cli *args:
     cargo run -p toad -- {{args}}
 
+# --- Bootstrap & Environment ---
+
+# Fully initialize the development environment (Submodules + Tools + Hooks)
+setup: init setup-tools setup-hooks build
+    @echo "\n🐸 Welcome to the Toad Pond! Your development environment is ready."
+
+# Initialize and update all submodules
+init:
+    git submodule update --init --recursive
+    @echo "✅ Submodules initialized."
+
 # Install the Toad CLI to your system (Production)
 install:
     ./scripts/install_toad.sh
