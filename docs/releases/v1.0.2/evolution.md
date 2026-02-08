@@ -1249,8 +1249,11 @@ scripts as first-class `toad` subcommands.
   the execution model simple, portable, and auditable.
 - **Namespace protection.** Users cannot register a workflow name that
   collides with a built-in `toad` command (`status`, `do`, `ggit`, `create`,
-  `home`, `stats`, `clean`, `tag`, `untag`, `cw`, etc.). The reserved
-  namespace list is maintained internally and grows as Toad adds commands.
+  `home`, `stats`, `clean`, `tag`, `untag`, `cw`, `project`, etc.). The
+  reserved namespace list is maintained **centrally in `toad-ops`** and
+  derived programmatically from `bin/toad`'s command definitions — so any
+  future command added to the binary automatically blocks its name in the
+  workflow registry. No manual list maintenance required.
 - **Updatable.** Registered workflows can be updated (new script path, new
   description) without re-registering.
 - **Global scope.** Workflows are registered per-user in `~/.toad/`, not
@@ -1343,9 +1346,19 @@ directory (`~/.toad/`), alongside the existing `GlobalConfig`:
 }
 ```
 
-The `reserved_namespaces` list is **seeded by Toad on first use** and
-**updated automatically** when Toad adds new built-in commands. Users cannot
-modify this list directly.
+The `reserved_namespaces` list in the JSON is a **cache**. The authoritative
+list is maintained centrally in `toad-ops` via a
+`reserved_command_names() -> Vec<&str>` function that returns all built-in
+command names. This function is the single source of truth:
+
+- When `toad cw register` runs, it calls `reserved_command_names()` to
+  validate — not the cached JSON list.
+- When `toad` starts, it syncs the JSON cache from the function so that
+  external tools reading the JSON see the current list.
+- When a new command is added to `bin/toad`, the developer adds its name to
+  the `reserved_command_names()` function in `toad-ops`. This is enforced
+  by a unit test that compares the function's output against the actual
+  `Commands` enum variants in `bin/toad`.
 
 ### Data Models (`toad-core`, MIT)
 
@@ -1363,6 +1376,7 @@ pub struct CustomWorkflow {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorkflowRegistry {
     pub workflows: HashMap<String, CustomWorkflow>,
+    /// Cache of reserved names — authoritative list is in toad-ops
     pub reserved_namespaces: Vec<String>,
 }
 ```

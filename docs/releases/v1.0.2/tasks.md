@@ -244,6 +244,11 @@ For each crate, repeat this process:
   ```
 
 - [ ] Verify `.gitmodules` file is generated correctly
+- [ ] **Version pinning:** Verify that each submodule entry in the commit
+      explicitly references the SHA from the newly pushed `main` branch of
+      each crate repo. Run `git submodule status` and confirm every
+      submodule points to a valid, reachable commit on its remote `main`.
+      This ensures `git clone --recurse-submodules` gets a known-good state.
 - [ ] Commit: `feat(licensing): convert crates to git submodules`
 
 ### P2-5: Verify Workspace Integrity
@@ -851,8 +856,12 @@ For each crate, repeat this process:
 - [ ] Add `conductor/` to the context folders if not already present
 - [ ] Ensure `docs/releases/` is accessible to Gemini for release planning
       context
-- [ ] Add `CROSS_REPO_MAP.md` to the context files so Gemini reads it
-      automatically
+- [ ] **Critical:** Add `CROSS_REPO_MAP.md` to the context files so Gemini
+      reads it automatically on every new chat session. This is the primary
+      mechanism ensuring AI agents start with a complete understanding of
+      the inter-repo dependency graph, type flow, and license boundaries.
+      Without this, every new session begins with the agent blind to the
+      multi-repo architecture.
 
 ### P6-6: Cross-Repo Context Map (`toad-manifest`, BSL-1.1)
 
@@ -916,13 +925,26 @@ For each crate, repeat this process:
   - `reserved_namespaces: Vec<String>`
 - [ ] Add `load` and `save` methods for `WorkflowRegistry` targeting
       `~/.toad/custom_workflows.json`
-- [ ] Seed `reserved_namespaces` with all current built-in command names
-      (`status`, `do`, `ggit`, `create`, `home`, `stats`, `clean`, `tag`,
-      `untag`, `cw`, `help`, `version`)
 - [ ] Add unit tests for serialization/deserialization and namespace
       collision detection
 
-### P7-2: Workflow Execution Logic (`toad-ops`, BSL-1.1)
+### P7-2: Reserved Namespace Authority (`toad-ops`, BSL-1.1)
+
+- Ref: `§ Custom Workflows > Design Principles > Namespace protection`
+- [ ] Add `reserved_command_names() -> Vec<&'static str>` function to
+      `toad-ops` that returns all built-in `toad` command names (`status`,
+      `do`, `ggit`, `create`, `home`, `stats`, `clean`, `tag`, `untag`,
+      `cw`, `project`, `help`, `version`)
+- [ ] This function is the **single source of truth** for namespace
+      protection — `toad cw register` calls this, not the JSON cache
+- [ ] On startup, sync the JSON `reserved_namespaces` cache from this
+      function so external tools reading the JSON see the current list
+- [ ] Add a unit test that compares `reserved_command_names()` output
+      against the actual `Commands` enum variants in `bin/toad` — this
+      test fails if a new command is added to the binary without updating
+      the function
+
+### P7-3: Workflow Execution Logic (`toad-ops`, BSL-1.1)
 
 - Ref: `§ Custom Workflows > Execution Model`
 - [ ] Add `custom_workflow.rs` module to `toad-ops`:
@@ -950,7 +972,7 @@ For each crate, repeat this process:
 - [ ] Add unit tests for register, update, delete, list, info, and
       validation edge cases (namespace collision, missing script, etc.)
 
-### P7-3: CLI — `toad cw` Subcommand (`bin/toad`, MIT)
+### P7-4: CLI — `toad cw` Subcommand (`bin/toad`, MIT)
 
 - Ref: `§ Custom Workflows > Command Surface`
 - [ ] Add `Cw` variant to the CLI `Commands` enum in `main.rs`
@@ -974,7 +996,7 @@ For each crate, repeat this process:
 - [ ] Add `--help` documentation for all `toad cw` subcommands
 - [ ] Exit with the script's exit code when running a workflow
 
-### P7-4: Integration Testing
+### P7-5: Integration Testing
 
 - [ ] Test register → list → run → info → delete lifecycle
 - [ ] Test namespace collision: `toad cw register status ...` should fail
