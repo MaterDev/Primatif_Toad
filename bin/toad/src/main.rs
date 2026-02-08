@@ -2255,7 +2255,124 @@ fn main() -> Result<()> {
                         std::process::exit(1);
                     }
                 }
-                _ => bail!("Command not yet implemented."),
+                GgitCommand::Sync { query, tag, force } => {
+                    println!("{}", "--- ECOSYSTEM SYNC & ALIGN ---".blue().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut preflight_results = Vec::new();
+                    let mut any_issues = false;
+
+                    // 1. Pre-flight Check
+                    println!("Running safety checks...");
+                    for p in &targets {
+                        // Project check
+                        let res = toad_git::sync::preflight_check(&p.path, &p.name, None, None)?;
+                        if !res.issues.is_empty() {
+                            any_issues = true;
+                        }
+                        preflight_results.push(res);
+
+                        // Submodule checks
+                        for sub in &p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            let sub_res = toad_git::sync::preflight_check(
+                                &sub_path,
+                                &format!("{} > {}", p.name, sub.name),
+                                Some(&p.path),
+                                Some(&sub.path),
+                            )?;
+                            if !sub_res.issues.is_empty() {
+                                any_issues = true;
+                            }
+                            preflight_results.push(sub_res);
+                        }
+                    }
+
+                    if any_issues && !*force {
+                        println!("\n{} Safety checks failed:", "ERROR:".red().bold());
+                        for res in preflight_results {
+                            if !res.issues.is_empty() {
+                                println!("  » {}:", res.project_name.cyan());
+                                for issue in res.issues {
+                                    println!("    - {}", issue.yellow());
+                                }
+                            }
+                        }
+                        println!(
+                            "\nUse {} to skip safety checks (Dangerous).",
+                            "--force".bold()
+                        );
+                        std::process::exit(1);
+                    }
+
+                    // 2. Perform Sync
+                    println!("\nSynchronizing repositories...");
+                    let mut results = Vec::new();
+                    for p in targets {
+                        // Pull project
+                        println!("Updating project: {}", p.name.cyan());
+                        let res = toad_git::remote::pull(&p.path, &p.name)?;
+                        results.push(res);
+
+                        // Sync submodules
+                        if !p.submodules.is_empty() {
+                            println!("Aligning submodules for {}...", p.name.cyan());
+                            // git submodule update --init --recursive
+                            let sub_res = toad_git::run_git(
+                                &p.path,
+                                &["submodule", "update", "--init", "--recursive"],
+                                &format!("{} (submodules)", p.name),
+                            )?;
+                            results.push(sub_res);
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- SYNC SUMMARY ---");
+                    let mut any_fail = false;
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            any_fail = true;
+                            "FAIL".red()
+                        };
+                        println!("{:<40} {}", res.project_name.bold(), status);
+                        if !res.success {
+                            println!("  Error: {}", res.stderr.dimmed());
+                        }
+                    }
+
+                    if any_fail {
+                        std::process::exit(1);
+                    }
+                }
             }
         }
         Commands::List => {
