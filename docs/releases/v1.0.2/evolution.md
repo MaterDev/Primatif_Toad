@@ -545,6 +545,158 @@ predefined modes. Named project contexts are strictly better:
   machines, different workflows
 - **Discoverable** — `toad project list` shows all contexts at a glance
 
+### Storage Reorganization: `~/.toad/` Directory Layout
+
+The current `~/.toad/` directory assumes a single workspace:
+
+```text
+~/.toad/                          # CURRENT (single workspace)
+├── config.json                   # { home_pointer: "/Users/jake/Code" }
+├── registry.json                 # ProjectRegistry — fingerprint, projects, last_sync
+└── strategies/
+    ├── builtin/                  # Stack detection strategies (TOML)
+    └── custom/                   # User-defined strategy overrides
+
+<workspace_root>/                 # CURRENT (shadows at workspace root)
+├── projects/                     # Actual project directories
+└── shadows/
+    ├── MANIFEST.md               # Generated manifest
+    └── tags.json                 # Tag registry
+```
+
+**The problem:** Both `registry.json` and `shadows/` are workspace-specific
+but stored in ways that break with multiple contexts:
+
+- `registry.json` sits at `~/.toad/` — a single global file for one
+  workspace's scan cache. Switching contexts makes it stale.
+- `shadows/` sits at the workspace root — this pollutes the user's project
+  directory with Toad-internal files (`MANIFEST.md`, `tags.json`). Users
+  shouldn't have to `.gitignore` Toad artifacts in their own repos. More
+  importantly, each registered context needs its own manifest, tags, and
+  scan cache since they describe completely different sets of projects.
+
+**The solution:** All per-context artifacts live under
+`~/.toad/contexts/<name>/`. This includes the registry, shadows, and any
+future per-context state. Global artifacts (config, strategies, custom
+workflows) stay at the `~/.toad/` root. Nothing is written to the user's
+workspace directory.
+
+```text
+~/.toad/                          # NEW (multi-context)
+├── config.json                   # GlobalConfig with project_contexts + active_context
+├── custom_workflows.json         # toad cw registry (global, not context-specific)
+├── strategies/
+│   ├── builtin/                  # Stack detection strategies (global)
+│   └── custom/                   # User strategy overrides (global)
+└── contexts/
+    ├── my-code/
+    │   ├── registry.json         # ProjectRegistry for ~/Code
+    │   └── shadows/
+    │       ├── MANIFEST.md       # Generated manifest for ~/Code projects
+    │       └── tags.json         # Tags for ~/Code projects
+    ├── toad-dev/
+    │   ├── registry.json         # ProjectRegistry for ~/Primatif_Toad
+    │   └── shadows/
+    │       ├── MANIFEST.md       # Generated manifest for Toad crate submodules
+    │       └── tags.json         # Tags for Toad crate submodules
+    └── client/
+        ├── registry.json         # ProjectRegistry for ~/ClientWork
+        └── shadows/
+            ├── MANIFEST.md
+            └── tags.json
+```
+
+**What goes where:**
+
+| Artifact | Scope | Location |
+|---|---|---|
+| `config.json` | Global | `~/.toad/config.json` |
+| `custom_workflows.json` | Global | `~/.toad/custom_workflows.json` |
+| `strategies/` | Global | `~/.toad/strategies/` |
+| `registry.json` | Per-context | `~/.toad/contexts/<name>/registry.json` |
+| `shadows/MANIFEST.md` | Per-context | `~/.toad/contexts/<name>/shadows/MANIFEST.md` |
+| `shadows/tags.json` | Per-context | `~/.toad/contexts/<name>/shadows/tags.json` |
+
+**Why everything per-context lives under `~/.toad/contexts/`:**
+
+- Each context has different projects → different manifests, tags, and scan
+  caches. Mixing them would produce incorrect results.
+- Keeping shadows out of the workspace root means Toad doesn't pollute the
+  user's project directories. No `.gitignore` entries needed for Toad files.
+- All Toad state is centralized in `~/.toad/` — easy to back up, easy to
+  inspect, easy to clean up.
+- When a context is deleted, removing `~/.toad/contexts/<name>/` cleanly
+  removes all associated state in one operation.
+
+**Code changes required:**
+
+1. `ProjectRegistry::registry_path()` currently returns
+   `~/.toad/registry.json`. It must change to accept a context name and return
+   `~/.toad/contexts/<name>/registry.json`.
+
+2. `ProjectRegistry::load()` and `save()` must accept the active context name
+   (or the `GlobalConfig` itself) to resolve the correct path.
+
+3. `Workspace::with_root()` currently sets `shadows_dir` to
+   `<root>/shadows/`. This must change: `shadows_dir` should resolve to
+   `~/.toad/contexts/<name>/shadows/` based on the active context. The
+   `Workspace` struct needs access to the context name (or the resolved
+   context directory) during construction.
+
+4. `Workspace::manifest_path()` and `Workspace::tags_path()` derive from
+   `shadows_dir` — no changes needed once `shadows_dir` points to the
+   correct location.
+
+5. `Workspace::ensure_shadows()` creates the shadows directory — still works,
+   just creates it under `~/.toad/contexts/<name>/shadows/` instead.
+
+6. `toad project register` must create the `~/.toad/contexts/<name>/`
+   directory (including `shadows/` subdirectory) when registering a new
+   context.
+
+7. `toad project delete` must remove the `~/.toad/contexts/<name>/` directory
+   (after confirmation) when deleting a context. This cleanly removes the
+   registry, shadows, and any future per-context state.
+
+**Backward compatibility migration:**
+
+On first run after upgrade, if `~/.toad/registry.json` exists at the old
+location and `~/.toad/contexts/` does not exist:
+
+1. Create `~/.toad/contexts/default/shadows/`
+2. Move `~/.toad/registry.json` → `~/.toad/contexts/default/registry.json`
+3. If `<home_pointer>/shadows/` exists, move its contents
+   (`MANIFEST.md`, `tags.json`) →
+   `~/.toad/contexts/default/shadows/`
+4. Remove the now-empty `<home_pointer>/shadows/` directory
+5. This happens alongside the `home_pointer` → `default` context migration
+
+After migration, the old `~/.toad/registry.json` no longer exists and the
+old `<workspace_root>/shadows/` directory is gone. All per-context
+reads/writes go through `~/.toad/contexts/<name>/`.
+
+**Installation flow update:**
+
+The `toad home <path>` command currently:
+
+1. Validates the path exists
+2. Creates `.toad-root` marker if missing (with confirmation)
+3. Saves `GlobalConfig { home_pointer: path }`
+
+With project contexts, `toad home <path>` becomes a convenience alias for:
+
+1. `toad project register default <path>` (if no contexts exist yet)
+2. `toad project switch default`
+
+Or, if contexts already exist, `toad home <path>` registers a new context
+with an auto-generated name (e.g., the directory's basename) and switches to
+it. The `toad home` command (no args) continues to show the current workspace
+root — now resolved from the active context.
+
+Long-term, `toad home` may be deprecated in favor of `toad project` commands,
+but it remains as a quick-start shortcut for new users who don't need multiple
+contexts yet.
+
 ### Developer Setup: Toad Working on Itself
 
 When a new contributor clones Primatif_Toad for development, they need to:

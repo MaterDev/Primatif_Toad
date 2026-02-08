@@ -418,7 +418,57 @@ For each crate, repeat this process:
 - [ ] Add unit tests for migration from old to new config format
 - [ ] Add unit tests for serialization/deserialization of extended config
 
-### P4b-2: Workspace Resolution Update (`toad-core`, MIT)
+### P4b-2: Storage Reorganization — Per-Context Artifacts (`toad-core`, MIT)
+
+- Ref: `§ Project Contexts > Storage Reorganization`
+- [ ] Add `context_dir(name: &str) -> Result<PathBuf>` method to `GlobalConfig`
+      that returns `~/.toad/contexts/<name>/`
+- [ ] Add `context_shadows_dir(name: &str) -> Result<PathBuf>` method that
+      returns `~/.toad/contexts/<name>/shadows/`
+- [ ] Update `ProjectRegistry::registry_path()` to accept a context name
+      parameter and return `~/.toad/contexts/<name>/registry.json` instead
+      of `~/.toad/registry.json`
+- [ ] Update `ProjectRegistry::load()` and `save()` to accept the active
+      context name (resolved from `GlobalConfig`) to determine the correct
+      registry path
+- [ ] Update all call sites of `ProjectRegistry::load()` and `save()` in
+      `bin/toad` and other crates to pass the active context name
+- [ ] Update `Workspace::with_root()` — `shadows_dir` must resolve to
+      `~/.toad/contexts/<name>/shadows/` instead of `<root>/shadows/`.
+      The `Workspace` struct needs the active context name (or the resolved
+      context directory) during construction.
+- [ ] `Workspace::manifest_path()` and `Workspace::tags_path()` derive from
+      `shadows_dir` — no changes needed once `shadows_dir` points to the
+      correct per-context location
+- [ ] `Workspace::ensure_shadows()` still works — just creates the directory
+      under `~/.toad/contexts/<name>/shadows/` instead of `<root>/shadows/`
+- [ ] On `toad project register`, create `~/.toad/contexts/<name>/shadows/`
+      directory
+- [ ] On `toad project delete`, remove `~/.toad/contexts/<name>/` directory
+      (after the existing confirmation prompt) — this cleanly removes
+      registry, shadows, and any future per-context state
+- [ ] **Backward compatibility migration:** On first run, if
+      `~/.toad/registry.json` exists at the old location and
+      `~/.toad/contexts/` does not exist:
+  1. Create `~/.toad/contexts/default/shadows/`
+  2. Move `~/.toad/registry.json` → `~/.toad/contexts/default/registry.json`
+  3. If `<home_pointer>/shadows/` exists, move its contents (`MANIFEST.md`,
+     `tags.json`) → `~/.toad/contexts/default/shadows/`
+  4. Remove the now-empty `<home_pointer>/shadows/` directory
+  5. This runs alongside the `home_pointer` → `default` context migration
+      in P4b-1
+- [ ] After migration, the old `~/.toad/registry.json` and
+      `<workspace_root>/shadows/` must no longer exist
+- [ ] Add unit tests for context directory creation (including shadows subdir)
+- [ ] Add unit tests for context directory cleanup on delete
+- [ ] Add unit tests for registry.json migration from old to new location
+- [ ] Add unit tests for shadows migration from workspace root to context dir
+- [ ] Add unit tests verifying `ProjectRegistry::load()` reads from the
+      correct context-scoped path
+- [ ] Add unit tests verifying `Workspace::manifest_path()` and
+      `Workspace::tags_path()` resolve under `~/.toad/contexts/<name>/shadows/`
+
+### P4b-3: Workspace Resolution Update (`toad-core`, MIT)
 
 - Ref: `§ Project Contexts > How It Affects Other Commands`
 - [ ] Update `Workspace::discover()` to resolve via active context:
@@ -431,7 +481,21 @@ For each crate, repeat this process:
 - [ ] Add unit tests verifying context-based resolution, fallback to
       `home_pointer`, and env var override
 
-### P4b-3: CLI — `toad project` Subcommand (`bin/toad`, MIT)
+### P4b-4: Installation Flow Update — `toad home` (`bin/toad`, MIT)
+
+- Ref: `§ Project Contexts > Storage Reorganization > Installation flow update`
+- [ ] Update `toad home <path>` to work with project contexts:
+  - If no contexts exist yet: register path as `default` context, switch to it
+  - If contexts already exist: register a new context using the directory's
+    basename as the name, switch to it
+  - Still creates `.toad-root` marker if missing (with confirmation)
+- [ ] Update `toad home` (no args) to show the current workspace root
+      resolved from the active context (not raw `home_pointer`)
+- [ ] Keep `home_pointer` in sync with the active context's path for
+      backward compatibility with any external tools reading `config.json`
+- [ ] Add unit tests for `toad home` with and without existing contexts
+
+### P4b-5: CLI — `toad project` Subcommand (`bin/toad`, MIT)
 
 - Ref: `§ Project Contexts > Command Surface`
 - [ ] Add `Project` variant to the CLI `Commands` enum in `main.rs`
@@ -454,7 +518,7 @@ For each crate, repeat this process:
 - [ ] Format output with existing Toad visual style (colored, structured)
 - [ ] Add `--help` documentation for all `toad project` subcommands
 
-### P4b-4: Developer Setup Script (Project-Specific)
+### P4b-6: Developer Setup Script (Project-Specific)
 
 - Ref: `§ Project Contexts > Developer Setup: Toad Working on Itself`
 - [ ] Create `scripts/dev_setup.sh`:
@@ -466,7 +530,7 @@ For each crate, repeat this process:
 - [ ] Document in `README.md` or `CONTRIBUTING.md` that new contributors
       should run `scripts/dev_setup.sh`
 
-### P4b-5: History Cleanup Script (Project-Specific, One-Time)
+### P4b-7: History Cleanup Script (Project-Specific, One-Time)
 
 - Ref: `§ Project Contexts > History Cleanup: Post-Split`
 - [ ] Create `scripts/history_cleanup.sh`:
@@ -478,17 +542,31 @@ For each crate, repeat this process:
 - [ ] Document that this runs once during v1.0.2 migration and never again
 - [ ] Test on a throwaway clone before running on the real repo
 
-### P4b-6: Integration Testing
+### P4b-8: Integration Testing
 
 - [ ] Test register → switch → current → list → delete lifecycle
 - [ ] Test backward compatibility: old config with only `home_pointer`
       auto-migrates to `default` context on first load
+- [ ] Test backward compatibility: old `~/.toad/registry.json` migrates to
+      `~/.toad/contexts/default/registry.json` on first load
+- [ ] Test backward compatibility: old `<workspace_root>/shadows/` contents
+      migrate to `~/.toad/contexts/default/shadows/` on first load
 - [ ] Test `toad status` resolves against the active context's path
 - [ ] Test `toad project switch` changes which projects `toad status` shows
+- [ ] Test `toad project switch` causes `ProjectRegistry` to load from the
+      new context's `~/.toad/contexts/<name>/registry.json`
 - [ ] Test `TOAD_ROOT` env var still overrides the active context
 - [ ] Test `toad project delete` rejects deleting the active context
+- [ ] Test `toad project delete` removes `~/.toad/contexts/<name>/` directory
+      (including shadows subdirectory)
+- [ ] Test `toad home <path>` registers and switches context correctly
+- [ ] Test `Workspace::manifest_path()` resolves to
+      `~/.toad/contexts/<name>/shadows/MANIFEST.md` (not workspace root)
+- [ ] Test `Workspace::tags_path()` resolves to
+      `~/.toad/contexts/<name>/shadows/tags.json` (not workspace root)
 - [ ] Dogfood: register `toad-dev` and `my-code` contexts, switch between
-      them, verify all commands target the correct workspace
+      them, verify all commands target the correct workspace and load the
+      correct per-context registry
 
 ---
 
@@ -1083,3 +1161,14 @@ For each crate, repeat this process:
 - [ ] `scripts/dev_setup.sh` works from a fresh clone and registers `toad-dev`
 - [ ] Switching between `toad-dev` and a user context changes which projects
       all commands see
+- [ ] `~/.toad/contexts/<name>/` directory (with `shadows/` subdir) is created
+      on `toad project register`
+- [ ] `~/.toad/contexts/<name>/registry.json` is used (not `~/.toad/registry.json`)
+- [ ] `~/.toad/contexts/<name>/shadows/MANIFEST.md` and `tags.json` are used
+      (not `<workspace_root>/shadows/`)
+- [ ] Old `~/.toad/registry.json` migrates to `~/.toad/contexts/default/registry.json`
+- [ ] Old `<workspace_root>/shadows/` contents migrate to
+      `~/.toad/contexts/default/shadows/`
+- [ ] `toad project delete` removes the context's `~/.toad/contexts/<name>/` dir
+      (including shadows)
+- [ ] `toad home <path>` registers and switches context (backward compat)
