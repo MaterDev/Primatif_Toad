@@ -12,12 +12,12 @@
 | Component | Stack | Role | Dependencies |
 | :--- | :--- | :--- | :--- |
 | **`Primatif_Toad`** | `Rust` | Root | - |
-| &nbsp;&nbsp;└─ `crates/toad-discovery` | `Rust` | Extension | - |
-| &nbsp;&nbsp;└─ `crates/toad-scaffold` | `Rust` | Extension | - |
+| &nbsp;&nbsp;└─ `crates/toad-manifest` | `Rust` | Extension | - |
 | &nbsp;&nbsp;└─ `crates/toad-core` | `Rust` | Extension | - |
 | &nbsp;&nbsp;└─ `crates/toad-git` | `Rust` | Extension | - |
-| &nbsp;&nbsp;└─ `crates/toad-manifest` | `Rust` | Extension | - |
+| &nbsp;&nbsp;└─ `crates/toad-scaffold` | `Rust` | Extension | - |
 | &nbsp;&nbsp;└─ `crates/toad-ops` | `Rust` | Extension | - |
+| &nbsp;&nbsp;└─ `crates/toad-discovery` | `Rust` | Extension | - |
 
 ## 🌊 Logical Flows
 
@@ -28,4 +28,3 @@
 
 - **Quality Gates:** Use the provided task runner (e.g., `Justfile`, `Makefile`, `npm scripts`) to verify changes.
 - **Context Preservation:** Always run `toad manifest` after architectural changes to keep AI memory synchronized.
-
