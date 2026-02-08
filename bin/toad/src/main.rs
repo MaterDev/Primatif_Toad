@@ -1211,9 +1211,17 @@ fn main() -> Result<()> {
             if *harvest {
                 println!("{} Harvesting stack tags...", "INFO:".blue().bold());
                 for p in projects {
+                    // Harvest primary project
                     let stack_tag = p.stack.to_lowercase();
                     tag_reg.add_tag(&p.name, &stack_tag);
-                    targets.push(p.name);
+                    targets.push(p.name.clone());
+
+                    // Harvest submodules
+                    for sub in p.submodules {
+                        let sub_stack_tag = sub.stack.to_lowercase();
+                        tag_reg.add_tag(&sub.name, &sub_stack_tag);
+                        targets.push(sub.name.clone());
+                    }
                 }
             }
             // 2. Logic for filters (MUST come before specific project logic)
