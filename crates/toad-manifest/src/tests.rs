@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 use super::generate_markdown;
 use std::path::PathBuf;
 use toad_core::{ActivityTier, ProjectDetail, VcsStatus};

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 use crate::stats::calculate_project_stats;
 use anyhow::Result;
 use std::fs;

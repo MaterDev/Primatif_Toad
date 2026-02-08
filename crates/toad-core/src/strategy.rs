@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::{GlobalConfig, StackStrategy};
 use anyhow::Result;
 use std::collections::HashMap;

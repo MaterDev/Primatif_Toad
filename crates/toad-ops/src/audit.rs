@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs::OpenOptions;

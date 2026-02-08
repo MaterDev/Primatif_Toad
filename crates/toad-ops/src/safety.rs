@@ -1,24 +1,23 @@
+// SPDX-License-Identifier: BUSL-1.1
 //! Safety guardrails for destructive bulk operations.
 
 /// Checks if a command string contains potentially destructive patterns.
 ///
 /// Returns `true` if the command is considered "dangerous".
 pub fn is_destructive(command: &str) -> bool {
-    let dangerous_patterns = [
-        "rm ",
-        "delete",
-        "reset --hard",
-        "push -f",
-        "force",
-        "prune",
-        "drop ",
-        "truncate",
-    ];
+    // 1. Check generic destructive patterns
+    let dangerous_patterns = ["rm ", "delete", "force", "prune", "drop ", "truncate"];
 
     let cmd_lower = command.to_lowercase();
-    dangerous_patterns
+    if dangerous_patterns
         .iter()
         .any(|pattern| cmd_lower.contains(pattern))
+    {
+        return true;
+    }
+
+    // 2. Delegate Git-specific checks to the pulse layer
+    toad_git::safety::is_destructive_git_command(command)
 }
 
 #[cfg(test)]

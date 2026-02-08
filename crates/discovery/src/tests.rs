@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 use crate::*;
 use std::fs;
 use std::time::{Duration, SystemTime};
@@ -84,10 +85,7 @@ fn test_detect_vcs_status() -> Result<()> {
     assert_eq!(detect_vcs_status(p), VcsStatus::None);
 
     // Init repo
-    std::process::Command::new("git")
-        .arg("init")
-        .current_dir(p)
-        .output()?;
+    toad_git::init::init_repo(p)?;
     assert_eq!(detect_vcs_status(p), VcsStatus::Clean);
 
     // Dirty

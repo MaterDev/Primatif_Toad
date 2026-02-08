@@ -894,6 +894,7 @@ dependencies = [
  "serde_json",
  "tempfile",
  "toad-core",
+ "toad-git",
  "wait-timeout",
  "walkdir",
  "whoami",

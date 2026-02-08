@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::{bail, Result};
 use clap::{CommandFactory, Parser, Subcommand};
 use colored::*;
@@ -279,6 +280,12 @@ fn main() -> Result<()> {
             };
 
             create_project(config)?;
+
+            // 2. Orchestrate Git Init (Option B from evolution.md)
+            let project_path = workspace.projects_dir.join(name);
+            if !*dry_run {
+                toad_git::init::init_repo(&project_path)?;
+            }
 
             if *dry_run {
                 return Ok(());

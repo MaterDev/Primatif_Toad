@@ -1,8 +1,14 @@
 #!/bin/bash
-# Pre-commit hook to keep README version in sync
+# .git/hooks/pre-commit
 
-# Run the sync script
-./scripts/sync_version.sh
+echo "⚓ Running Pre-Commit Hooks..."
 
-# Stage the README if it was changed
-git add README.md
+# 1. Check License Boundary
+./scripts/check_license_boundary.sh
+if [ $? -ne 0 ]; then
+    echo "❌ Pre-commit check failed."
+    exit 1
+fi
+
+echo "✅ All checks passed."
+exit 0

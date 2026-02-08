@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 use toad_core::ProjectDetail;
 
 /// Generates a full Markdown manifest string from a list of project details and a fingerprint.

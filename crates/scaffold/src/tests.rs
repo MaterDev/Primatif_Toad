@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use super::scaffold::*;
 use std::fs;
 use tempfile::tempdir;
@@ -18,7 +19,6 @@ fn test_create_project_success() {
     assert!(proj_path.exists());
     assert!(proj_path.join("docs").is_dir());
     assert!(proj_path.join("README.md").is_file());
-    assert!(proj_path.join(".git").is_dir());
 }
 
 #[test]

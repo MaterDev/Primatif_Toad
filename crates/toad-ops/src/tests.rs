@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 use super::shell::*;
 use super::stats::*;
 use anyhow::Result;

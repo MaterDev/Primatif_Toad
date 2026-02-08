@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 use anyhow::Result;
 use std::path::Path;
 use std::process::{Command, Stdio};

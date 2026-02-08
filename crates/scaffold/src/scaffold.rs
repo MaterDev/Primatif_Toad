@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Logic for scaffolding new projects within the Code Control Plane.
 
 use anyhow::{Context, Result, bail};
@@ -56,21 +57,8 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
     fs::write(project_path.join(".gitignore"), gitignore_content)
         .context("Failed to write .gitignore")?;
 
-    // 4. Git Init
-    init_git(&project_path).context("Failed to initialize git repository")?;
-
     println!("Project created successfully at: {:?}", project_path);
 
-    Ok(())
-}
-
-/// Initializes a git repository in the given directory.
-fn init_git(path: &Path) -> Result<()> {
-    let status = Command::new("git").arg("init").current_dir(path).status()?;
-
-    if !status.success() {
-        bail!("Git init failed with status: {}", status);
-    }
     Ok(())
 }
 

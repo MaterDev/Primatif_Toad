@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 use std::collections::HashSet;
 use std::path::Path;
 use walkdir::WalkDir;

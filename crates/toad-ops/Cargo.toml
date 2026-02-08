@@ -2,6 +2,7 @@
 name = "toad-ops"
 version = "1.0.1"
 edition = "2021"
+license = "BUSL-1.1"
 
 [dependencies]
 anyhow = "1.0"
@@ -9,6 +10,7 @@ chrono = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 toad-core = { version = "1.0.1", path = "../toad-core" }
+toad-git = { path = "../toad-git" }
 wait-timeout = "0.2"
 walkdir = "2.5"
 whoami = "2.1"

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::{Result, bail};
 use serde::{Deserialize, Serialize};
 use std::fs;
