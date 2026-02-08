@@ -170,10 +170,59 @@ enum Commands {
     },
     /// Generate programmatic CLI documentation (Markdown)
     Docs,
+    /// Manage project contexts (register, switch, list)
+    Project {
+        #[command(subcommand)]
+        subcommand: ProjectCommand,
+    },
     /// List all available commands
     List,
     /// Display version information and the Toad banner
     Version,
+}
+
+#[derive(Subcommand)]
+enum ProjectCommand {
+    /// Register a new project context
+    Register {
+        /// Name of the context
+        name: String,
+        /// Absolute path to the workspace root
+        path: String,
+        /// Optional description
+        #[arg(long, short = 'd')]
+        description: Option<String>,
+    },
+    /// Switch the active project context
+    Switch {
+        /// Name of the context
+        name: String,
+    },
+    /// Show the currently active context
+    Current,
+    /// List all registered contexts
+    List,
+    /// Update an existing context
+    Update {
+        /// Name of the context
+        name: String,
+        /// New path for the context
+        #[arg(long, short = 'p')]
+        path: Option<String>,
+        /// New description
+        #[arg(long, short = 'd')]
+        description: Option<String>,
+    },
+    /// Remove a registered context
+    Delete {
+        /// Name of the context
+        name: String,
+    },
+    /// Show detailed info for a context
+    Info {
+        /// Name of the context
+        name: String,
+    },
 }
 
 #[derive(Subcommand)]
@@ -239,7 +288,7 @@ fn main() -> Result<()> {
         Ok(ws) => ws.clone(),
         Err(e) => {
             if is_bootstrap {
-                Workspace::with_root(PathBuf::from("."))
+                Workspace::with_root(PathBuf::from("."), None, None)
             } else {
                 println!("{} {}", "ERROR:".red().bold(), e);
                 return Ok(());
@@ -306,7 +355,9 @@ fn main() -> Result<()> {
         Commands::Reveal { query, tag } => {
             println!("Searching for projects matching '{}'...", query);
 
-            let registry = toad_core::ProjectRegistry::load().unwrap_or_default();
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
             let current_fp = workspace.get_fingerprint().unwrap_or(0);
 
             let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
@@ -319,7 +370,7 @@ fn main() -> Result<()> {
                     projects: p.clone(),
                     last_sync: std::time::SystemTime::now(),
                 };
-                let _ = new_registry.save();
+                let _ = new_registry.save(workspace.active_context.as_deref(), None);
                 p
             };
 
@@ -559,6 +610,14 @@ fn main() -> Result<()> {
             }
         }
         Commands::Home { path } => {
+            let mut config = toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| {
+                toad_core::GlobalConfig {
+                    home_pointer: PathBuf::from("."),
+                    active_context: None,
+                    project_contexts: std::collections::HashMap::new(),
+                }
+            });
+
             if let Some(new_path) = path {
                 let p = PathBuf::from(new_path);
                 if !p.exists() {
@@ -582,21 +641,47 @@ fn main() -> Result<()> {
                     fs::write(abs_path.join(".toad-root"), marker_content)?;
                 }
 
-                let config = toad_core::GlobalConfig {
-                    home_pointer: abs_path.clone(),
+                // Register as context
+                let name = if config.project_contexts.is_empty() {
+                    "default".to_string()
+                } else {
+                    abs_path.file_name()
+                        .and_then(|n| n.to_str())
+                        .unwrap_or("new-home")
+                        .to_string()
                 };
-                config.save()?;
+
+                config.home_pointer = abs_path.clone();
+                config.project_contexts.insert(name.clone(), toad_core::ProjectContext {
+                    path: abs_path.clone(),
+                    description: Some(format!("Registered via 'toad home'")),
+                    registered_at: std::time::SystemTime::now(),
+                });
+                config.active_context = Some(name.clone());
+                
+                // Create per-context storage
+                let ctx_shadows = toad_core::GlobalConfig::context_dir(&name, None)?.join("shadows");
+                fs::create_dir_all(&ctx_shadows)?;
+
+                config.save(None)?;
                 println!(
-                    "{} Anchor updated to: {:?}",
+                    "{} Anchor updated and registered as context '{}' at: {:?}",
                     "SUCCESS:".green().bold(),
+                    name,
                     abs_path
                 );
             } else {
                 match &discovered {
                     Ok(ws) => {
+                        let context_info = if let Some(name) = &ws.active_context {
+                            format!(" (context: {})", name.bold())
+                        } else {
+                            String::new()
+                        };
                         println!(
-                            "{} Current Toad Home: {:?}",
+                            "{} Current Toad Home{}: {:?}",
                             "ACTIVE:".green().bold(),
+                            context_info,
                             ws.root
                         );
                     }
@@ -1037,7 +1122,7 @@ fn main() -> Result<()> {
                 projects,
                 last_sync: std::time::SystemTime::now(),
             };
-            registry.save()?;
+            registry.save(workspace.active_context.as_deref(), None)?;
 
             pb.finish_and_clear();
             println!(
@@ -1107,7 +1192,7 @@ fn main() -> Result<()> {
                     };
 
                     let custom_dir =
-                        toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
+                        toad_core::GlobalConfig::config_dir(None)?.join("strategies/custom");
                     fs::create_dir_all(&custom_dir)?;
 
                     let mut safe_name = name
@@ -1130,7 +1215,7 @@ fn main() -> Result<()> {
                 }
                 StrategyCommands::Remove { name } => {
                     let custom_dir =
-                        toad_core::GlobalConfig::config_dir()?.join("strategies/custom");
+                        toad_core::GlobalConfig::config_dir(None)?.join("strategies/custom");
                     let mut safe_name = name
                         .to_lowercase()
                         .chars()
@@ -1325,6 +1410,135 @@ fn main() -> Result<()> {
                 "SUCCESS:".green().bold(),
                 docs_path
             );
+        }
+        Commands::Project { subcommand } => {
+            let mut config = toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| {
+                toad_core::GlobalConfig {
+                    home_pointer: PathBuf::from("."),
+                    active_context: None,
+                    project_contexts: std::collections::HashMap::new(),
+                }
+            });
+
+            match subcommand {
+                ProjectCommand::Register { name, path, description } => {
+                    let abs_path = fs::canonicalize(PathBuf::from(path))?;
+                    if !abs_path.exists() {
+                        bail!("Path does not exist: {:?}", abs_path);
+                    }
+
+                    if config.project_contexts.contains_key(name) {
+                        bail!("Context '{}' already exists.", name);
+                    }
+
+                    let ctx = toad_core::ProjectContext {
+                        path: abs_path.clone(),
+                        description: description.clone(),
+                        registered_at: std::time::SystemTime::now(),
+                    };
+
+                    config.project_contexts.insert(name.clone(), ctx);
+                    
+                    // Create per-context storage
+                    let ctx_shadows = toad_core::GlobalConfig::context_dir(name, None)?.join("shadows");
+                    fs::create_dir_all(&ctx_shadows)?;
+
+                    config.save(None)?;
+                    println!("{} Context '{}' registered at {:?}", "SUCCESS:".green().bold(), name, abs_path);
+                }
+                ProjectCommand::Switch { name } => {
+                    if !config.project_contexts.contains_key(name) {
+                        bail!("Context '{}' not found.", name);
+                    }
+                    config.active_context = Some(name.clone());
+                    config.save(None)?;
+                    println!("{} Switched to context '{}'", "SUCCESS:".green().bold(), name);
+                }
+                ProjectCommand::Current => {
+                    if let Some(name) = &config.active_context {
+                        if let Some(ctx) = config.project_contexts.get(name) {
+                            println!("{} Active context: {}", "ACTIVE:".green().bold(), name.bold());
+                            println!("  Path:        {:?}", ctx.path);
+                            if let Some(desc) = &ctx.description {
+                                println!("  Description: {}", desc);
+                            }
+                        }
+                    } else {
+                        println!("{} No active context. Using legacy home: {:?}", "LEGACY:".yellow().bold(), config.home_pointer);
+                    }
+                }
+                ProjectCommand::List => {
+                    println!("{}", "--- REGISTERED PROJECT CONTEXTS ---".green().bold());
+                    if config.project_contexts.is_empty() {
+                        println!("No contexts registered.");
+                    } else {
+                        // Header
+                        println!("{:<15} {:<40} {:<30} {}", "NAME", "PATH", "DESCRIPTION", "ACTIVE");
+                        println!("{:-<15} {:-<40} {:-<30} {:-<6}", "", "", "", "");
+
+                        let mut names: Vec<_> = config.project_contexts.keys().collect();
+                        names.sort();
+
+                        for name in names {
+                            let ctx = config.project_contexts.get(name).unwrap();
+                            let active = if config.active_context.as_ref() == Some(name) { "✅" } else { "" };
+                            let desc = ctx.description.as_deref().unwrap_or("-");
+                            println!("{:<15} {:<40?} {:<30} {:^6}", name.bold(), ctx.path, desc, active);
+                        }
+                    }
+                }
+                ProjectCommand::Update { name, path, description } => {
+                    let ctx = config.project_contexts.get_mut(name).ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
+                    if let Some(p) = path {
+                        let abs_path = fs::canonicalize(PathBuf::from(p))?;
+                        ctx.path = abs_path;
+                    }
+                    if let Some(d) = description {
+                        ctx.description = Some(d.clone());
+                    }
+                    config.save(None)?;
+                    println!("{} Context '{}' updated.", "SUCCESS:".green().bold(), name);
+                }
+                ProjectCommand::Delete { name } => {
+                    if config.active_context.as_ref() == Some(name) {
+                        println!("{} Cannot delete the active context. Switch to another context first.", "ERROR:".red().bold());
+                        return Ok(());
+                    }
+
+                    if !config.project_contexts.contains_key(name) {
+                        bail!("Context '{}' not found.", name);
+                    }
+
+                    print!("Are you sure you want to delete context '{}' and all its cached data? [y/N]: ", name);
+                    io::stdout().flush()?;
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input)?;
+                    if !input.trim().to_lowercase().starts_with('y') {
+                        println!("Aborted.");
+                        return Ok(());
+                    }
+
+                    config.project_contexts.remove(name);
+                    
+                    // Remove per-context storage
+                    let ctx_dir = toad_core::GlobalConfig::context_dir(name, None)?;
+                    if ctx_dir.exists() {
+                        fs::remove_dir_all(&ctx_dir)?;
+                    }
+
+                    config.save(None)?;
+                    println!("{} Context '{}' removed.", "SUCCESS:".green().bold(), name);
+                }
+                ProjectCommand::Info { name } => {
+                    let ctx = config.project_contexts.get(name).ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
+                    println!("{}: {}", "Name".bold(), name);
+                    println!("{}: {:?}", "Path".bold(), ctx.path);
+                    println!("{}: {}", "Description".bold(), ctx.description.as_deref().unwrap_or("-"));
+                    println!("{}: {:?}", "Registered".bold(), ctx.registered_at);
+                    let active = if config.active_context.as_ref() == Some(name) { "Yes" } else { "No" };
+                    println!("{}: {}", "Active".bold(), active);
+                }
+            }
         }
         Commands::List => {
             let mut cmd = Cli::command();

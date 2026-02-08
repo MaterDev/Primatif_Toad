@@ -6,7 +6,7 @@ use tempfile::tempdir;
 #[test]
 fn test_workspace_paths() {
     let root = PathBuf::from("/tmp/toad");
-    let ws = Workspace::with_root(root.clone());
+    let ws = Workspace::with_root(root.clone(), None, None);
     assert_eq!(ws.projects_dir, root.join("projects"));
     assert_eq!(ws.shadows_dir, root.join("shadows"));
     assert_eq!(ws.manifest_path(), root.join("shadows").join("MANIFEST.md"));
@@ -15,7 +15,7 @@ fn test_workspace_paths() {
 #[test]
 fn test_ensure_shadows() -> Result<()> {
     let dir = tempdir()?;
-    let ws = Workspace::with_root(dir.path().to_path_buf());
+    let ws = Workspace::with_root(dir.path().to_path_buf(), None, None);
 
     assert!(!ws.shadows_dir.exists());
     ws.ensure_shadows()?;
@@ -26,7 +26,7 @@ fn test_ensure_shadows() -> Result<()> {
 #[test]
 fn test_get_fingerprint() -> Result<()> {
     let dir = tempdir()?;
-    let ws = Workspace::with_root(dir.path().to_path_buf());
+    let ws = Workspace::with_root(dir.path().to_path_buf(), None, None);
 
     // Should fail if projects dir doesn't exist
     assert!(ws.get_fingerprint().is_err());
@@ -69,7 +69,7 @@ fn test_get_fingerprint() -> Result<()> {
 #[test]
 fn test_fingerprint_performance() -> Result<()> {
     let dir = tempdir()?;
-    let ws = Workspace::with_root(dir.path().to_path_buf());
+    let ws = Workspace::with_root(dir.path().to_path_buf(), None, None);
     fs::create_dir(&ws.projects_dir)?;
 
     // Create 100 projects with 5 high-value files each
@@ -159,7 +159,6 @@ fn test_project_registry_serialization() -> Result<()> {
     let dir = tempdir()?;
     let registry_path = dir.path().join("registry.json");
 
-    // We can't easily override registry_path() without changing the code
     // So we just test manual save/load logic using the same serde logic
     let content = serde_json::to_string_pretty(&registry)?;
     fs::write(&registry_path, content)?;
@@ -210,22 +209,57 @@ fn test_workspace_discovery_tiers() -> Result<()> {
 #[test]
 fn test_global_config_persistence() -> Result<()> {
     let dir = tempdir()?;
-    let home = dir.path().join("fake-home");
-    fs::create_dir(&home)?;
-    unsafe {
-        std::env::set_var("HOME", home.to_str().unwrap());
-    }
+    let base_dir = dir.path().to_path_buf();
 
     let config = GlobalConfig {
         home_pointer: PathBuf::from("/tmp/fake"),
+        active_context: Some("test".to_string()),
+        project_contexts: {
+            let mut m = std::collections::HashMap::new();
+            m.insert(
+                "test".to_string(),
+                ProjectContext {
+                    path: PathBuf::from("/tmp/fake"),
+                    description: None,
+                    registered_at: SystemTime::now(),
+                },
+            );
+            m
+        },
     };
-    config.save()?;
+    config.save(Some(&base_dir))?;
 
-    let loaded = GlobalConfig::load()?.expect("Config should be loaded");
+    let loaded = GlobalConfig::load(Some(&base_dir))?.expect("Config should be loaded");
     assert_eq!(loaded.home_pointer, PathBuf::from("/tmp/fake"));
+    assert_eq!(loaded.active_context, Some("test".to_string()));
+    assert!(loaded.project_contexts.contains_key("test"));
 
-    unsafe {
-        std::env::remove_var("HOME");
-    }
+    Ok(())
+}
+
+#[test]
+fn test_global_config_migration() -> Result<()> {
+    let dir = tempdir()?;
+    let base_dir = dir.path().to_path_buf();
+
+    // Manually write legacy JSON (simulate old format)
+    let legacy_json = serde_json::json!({
+        "home_pointer": "/tmp/legacy"
+    });
+    fs::write(GlobalConfig::config_path(Some(&base_dir))?, serde_json::to_string_pretty(&legacy_json)?)?;
+
+    // Create a legacy registry at the old location
+    fs::write(base_dir.join("registry.json"), "{}")?;
+
+    let loaded = GlobalConfig::load(Some(&base_dir))?.expect("Config should be migrated and loaded");
+    assert_eq!(loaded.active_context, Some("default".to_string()));
+    assert_eq!(loaded.home_pointer, PathBuf::from("/tmp/legacy"));
+    assert!(loaded.project_contexts.contains_key("default"));
+    assert_eq!(loaded.project_contexts.get("default").unwrap().path, PathBuf::from("/tmp/legacy"));
+
+    // Verify registry migration
+    assert!(GlobalConfig::context_dir("default", Some(&base_dir))?.join("registry.json").exists());
+    assert!(!base_dir.join("registry.json").exists());
+
     Ok(())
 }
