@@ -23,7 +23,7 @@ Commands:
   do        Execute a shell command across projects matching a query
   tag       Assign a tag to projects
   untag     Remove a tag from projects
-  manifest  Generate a project manifest for AI context (Shadow)
+  skill     Manage and synchronize AI agent skills
   sync      Synchronize the project registry cache
   strategy  Manage language/stack strategies
   clean     Reclaim disk space by removing build artifacts
