@@ -610,13 +610,12 @@ fn main() -> Result<()> {
             }
         }
         Commands::Home { path } => {
-            let mut config = toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| {
-                toad_core::GlobalConfig {
+            let mut config =
+                toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| toad_core::GlobalConfig {
                     home_pointer: PathBuf::from("."),
                     active_context: None,
                     project_contexts: std::collections::HashMap::new(),
-                }
-            });
+                });
 
             if let Some(new_path) = path {
                 let p = PathBuf::from(new_path);
@@ -645,22 +644,27 @@ fn main() -> Result<()> {
                 let name = if config.project_contexts.is_empty() {
                     "default".to_string()
                 } else {
-                    abs_path.file_name()
+                    abs_path
+                        .file_name()
                         .and_then(|n| n.to_str())
                         .unwrap_or("new-home")
                         .to_string()
                 };
 
                 config.home_pointer = abs_path.clone();
-                config.project_contexts.insert(name.clone(), toad_core::ProjectContext {
-                    path: abs_path.clone(),
-                    description: Some(format!("Registered via 'toad home'")),
-                    registered_at: std::time::SystemTime::now(),
-                });
+                config.project_contexts.insert(
+                    name.clone(),
+                    toad_core::ProjectContext {
+                        path: abs_path.clone(),
+                        description: Some("Registered via 'toad home'".to_string()),
+                        registered_at: std::time::SystemTime::now(),
+                    },
+                );
                 config.active_context = Some(name.clone());
-                
+
                 // Create per-context storage
-                let ctx_shadows = toad_core::GlobalConfig::context_dir(&name, None)?.join("shadows");
+                let ctx_shadows =
+                    toad_core::GlobalConfig::context_dir(&name, None)?.join("shadows");
                 fs::create_dir_all(&ctx_shadows)?;
 
                 config.save(None)?;
@@ -1412,16 +1416,19 @@ fn main() -> Result<()> {
             );
         }
         Commands::Project { subcommand } => {
-            let mut config = toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| {
-                toad_core::GlobalConfig {
+            let mut config =
+                toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| toad_core::GlobalConfig {
                     home_pointer: PathBuf::from("."),
                     active_context: None,
                     project_contexts: std::collections::HashMap::new(),
-                }
-            });
+                });
 
             match subcommand {
-                ProjectCommand::Register { name, path, description } => {
+                ProjectCommand::Register {
+                    name,
+                    path,
+                    description,
+                } => {
                     let abs_path = fs::canonicalize(PathBuf::from(path))?;
                     if !abs_path.exists() {
                         bail!("Path does not exist: {:?}", abs_path);
@@ -1438,13 +1445,19 @@ fn main() -> Result<()> {
                     };
 
                     config.project_contexts.insert(name.clone(), ctx);
-                    
+
                     // Create per-context storage
-                    let ctx_shadows = toad_core::GlobalConfig::context_dir(name, None)?.join("shadows");
+                    let ctx_shadows =
+                        toad_core::GlobalConfig::context_dir(name, None)?.join("shadows");
                     fs::create_dir_all(&ctx_shadows)?;
 
                     config.save(None)?;
-                    println!("{} Context '{}' registered at {:?}", "SUCCESS:".green().bold(), name, abs_path);
+                    println!(
+                        "{} Context '{}' registered at {:?}",
+                        "SUCCESS:".green().bold(),
+                        name,
+                        abs_path
+                    );
                 }
                 ProjectCommand::Switch { name } => {
                     if !config.project_contexts.contains_key(name) {
@@ -1452,19 +1465,31 @@ fn main() -> Result<()> {
                     }
                     config.active_context = Some(name.clone());
                     config.save(None)?;
-                    println!("{} Switched to context '{}'", "SUCCESS:".green().bold(), name);
+                    println!(
+                        "{} Switched to context '{}'",
+                        "SUCCESS:".green().bold(),
+                        name
+                    );
                 }
                 ProjectCommand::Current => {
                     if let Some(name) = &config.active_context {
                         if let Some(ctx) = config.project_contexts.get(name) {
-                            println!("{} Active context: {}", "ACTIVE:".green().bold(), name.bold());
+                            println!(
+                                "{} Active context: {}",
+                                "ACTIVE:".green().bold(),
+                                name.bold()
+                            );
                             println!("  Path:        {:?}", ctx.path);
                             if let Some(desc) = &ctx.description {
                                 println!("  Description: {}", desc);
                             }
                         }
                     } else {
-                        println!("{} No active context. Using legacy home: {:?}", "LEGACY:".yellow().bold(), config.home_pointer);
+                        println!(
+                            "{} No active context. Using legacy home: {:?}",
+                            "LEGACY:".yellow().bold(),
+                            config.home_pointer
+                        );
                     }
                 }
                 ProjectCommand::List => {
@@ -1473,7 +1498,7 @@ fn main() -> Result<()> {
                         println!("No contexts registered.");
                     } else {
                         // Header
-                        println!("{:<15} {:<40} {:<30} {}", "NAME", "PATH", "DESCRIPTION", "ACTIVE");
+                        println!("{:<15} {:<40} {:<30} ACTIVE", "NAME", "PATH", "DESCRIPTION");
                         println!("{:-<15} {:-<40} {:-<30} {:-<6}", "", "", "", "");
 
                         let mut names: Vec<_> = config.project_contexts.keys().collect();
@@ -1481,14 +1506,31 @@ fn main() -> Result<()> {
 
                         for name in names {
                             let ctx = config.project_contexts.get(name).unwrap();
-                            let active = if config.active_context.as_ref() == Some(name) { "✅" } else { "" };
+                            let active = if config.active_context.as_ref() == Some(name) {
+                                "✅"
+                            } else {
+                                ""
+                            };
                             let desc = ctx.description.as_deref().unwrap_or("-");
-                            println!("{:<15} {:<40?} {:<30} {:^6}", name.bold(), ctx.path, desc, active);
+                            println!(
+                                "{:<15} {:<40?} {:<30} {:^6}",
+                                name.bold(),
+                                ctx.path,
+                                desc,
+                                active
+                            );
                         }
                     }
                 }
-                ProjectCommand::Update { name, path, description } => {
-                    let ctx = config.project_contexts.get_mut(name).ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
+                ProjectCommand::Update {
+                    name,
+                    path,
+                    description,
+                } => {
+                    let ctx = config
+                        .project_contexts
+                        .get_mut(name)
+                        .ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
                     if let Some(p) = path {
                         let abs_path = fs::canonicalize(PathBuf::from(p))?;
                         ctx.path = abs_path;
@@ -1501,7 +1543,10 @@ fn main() -> Result<()> {
                 }
                 ProjectCommand::Delete { name } => {
                     if config.active_context.as_ref() == Some(name) {
-                        println!("{} Cannot delete the active context. Switch to another context first.", "ERROR:".red().bold());
+                        println!(
+                            "{} Cannot delete the active context. Switch to another context first.",
+                            "ERROR:".red().bold()
+                        );
                         return Ok(());
                     }
 
@@ -1519,7 +1564,7 @@ fn main() -> Result<()> {
                     }
 
                     config.project_contexts.remove(name);
-                    
+
                     // Remove per-context storage
                     let ctx_dir = toad_core::GlobalConfig::context_dir(name, None)?;
                     if ctx_dir.exists() {
@@ -1530,12 +1575,23 @@ fn main() -> Result<()> {
                     println!("{} Context '{}' removed.", "SUCCESS:".green().bold(), name);
                 }
                 ProjectCommand::Info { name } => {
-                    let ctx = config.project_contexts.get(name).ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
+                    let ctx = config
+                        .project_contexts
+                        .get(name)
+                        .ok_or_else(|| anyhow::anyhow!("Context '{}' not found.", name))?;
                     println!("{}: {}", "Name".bold(), name);
                     println!("{}: {:?}", "Path".bold(), ctx.path);
-                    println!("{}: {}", "Description".bold(), ctx.description.as_deref().unwrap_or("-"));
+                    println!(
+                        "{}: {}",
+                        "Description".bold(),
+                        ctx.description.as_deref().unwrap_or("-")
+                    );
                     println!("{}: {:?}", "Registered".bold(), ctx.registered_at);
-                    let active = if config.active_context.as_ref() == Some(name) { "Yes" } else { "No" };
+                    let active = if config.active_context.as_ref() == Some(name) {
+                        "Yes"
+                    } else {
+                        "No"
+                    };
                     println!("{}: {}", "Active".bold(), active);
                 }
             }

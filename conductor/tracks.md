@@ -65,7 +65,7 @@ detailed plan in its respective folder.
       [./tracks/102-multi-repo/](./tracks/102-multi-repo/)_
 
 - [~] **Track: v1.0.2 Named Project Contexts** _Link:
-      [./tracks/102-contexts/](./tracks/102-contexts/)_
+  [./tracks/102-contexts/](./tracks/102-contexts/)_
 
 - [ ] **Track: v1.0.2 Submodule Awareness** _Link:
       [./tracks/102-submodule-aware/](./tracks/102-submodule-aware/)_

@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 use super::*;
 use std::fs;
+use std::sync::Mutex;
 use tempfile::tempdir;
+
+static DISCOVERY_LOCK: Mutex<()> = Mutex::new(());
 
 #[test]
 fn test_workspace_paths() {
@@ -175,9 +178,14 @@ fn test_project_registry_serialization() -> Result<()> {
 
 #[test]
 fn test_workspace_discovery_tiers() -> Result<()> {
+    let _lock = DISCOVERY_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+
     let dir = tempdir()?;
     let root = dir.path();
     fs::write(root.join(".toad-root"), "")?;
+
+    let original_cwd = std::env::current_dir().unwrap_or_else(|_| fs::canonicalize(root).unwrap());
+    let original_root = std::env::var("TOAD_ROOT").ok();
 
     // 1. Env Var tier
     unsafe {
@@ -202,6 +210,14 @@ fn test_workspace_discovery_tiers() -> Result<()> {
     let other_dir = tempdir()?;
     std::env::set_current_dir(other_dir.path())?;
     assert!(Workspace::discover().is_err());
+
+    // Restore global state
+    let _ = std::env::set_current_dir(&original_cwd);
+    if let Some(val) = original_root {
+        unsafe {
+            std::env::set_var("TOAD_ROOT", val);
+        }
+    }
 
     Ok(())
 }
@@ -246,19 +262,30 @@ fn test_global_config_migration() -> Result<()> {
     let legacy_json = serde_json::json!({
         "home_pointer": "/tmp/legacy"
     });
-    fs::write(GlobalConfig::config_path(Some(&base_dir))?, serde_json::to_string_pretty(&legacy_json)?)?;
+    fs::write(
+        GlobalConfig::config_path(Some(&base_dir))?,
+        serde_json::to_string_pretty(&legacy_json)?,
+    )?;
 
     // Create a legacy registry at the old location
     fs::write(base_dir.join("registry.json"), "{}")?;
 
-    let loaded = GlobalConfig::load(Some(&base_dir))?.expect("Config should be migrated and loaded");
+    let loaded =
+        GlobalConfig::load(Some(&base_dir))?.expect("Config should be migrated and loaded");
     assert_eq!(loaded.active_context, Some("default".to_string()));
     assert_eq!(loaded.home_pointer, PathBuf::from("/tmp/legacy"));
     assert!(loaded.project_contexts.contains_key("default"));
-    assert_eq!(loaded.project_contexts.get("default").unwrap().path, PathBuf::from("/tmp/legacy"));
+    assert_eq!(
+        loaded.project_contexts.get("default").unwrap().path,
+        PathBuf::from("/tmp/legacy")
+    );
 
     // Verify registry migration
-    assert!(GlobalConfig::context_dir("default", Some(&base_dir))?.join("registry.json").exists());
+    assert!(
+        GlobalConfig::context_dir("default", Some(&base_dir))?
+            .join("registry.json")
+            .exists()
+    );
     assert!(!base_dir.join("registry.json").exists());
 
     Ok(())
@@ -275,7 +302,10 @@ fn test_project_registry_context_paths() -> Result<()> {
 
     // 2. Context path
     let context_path = ProjectRegistry::registry_path(Some("test-ctx"), Some(&base_dir))?;
-    assert_eq!(context_path, base_dir.join("contexts/test-ctx/registry.json"));
+    assert_eq!(
+        context_path,
+        base_dir.join("contexts/test-ctx/registry.json")
+    );
 
     Ok(())
 }
@@ -332,8 +362,14 @@ fn test_artifact_migration_logic() -> Result<()> {
     // Verify shadows moved
     let new_shadows = base_dir.join("contexts/default/shadows");
     assert!(new_shadows.exists());
-    assert_eq!(fs::read_to_string(new_shadows.join("tags.json"))?, "tags content");
-    assert_eq!(fs::read_to_string(new_shadows.join("MANIFEST.md"))?, "manifest content");
+    assert_eq!(
+        fs::read_to_string(new_shadows.join("tags.json"))?,
+        "tags content"
+    );
+    assert_eq!(
+        fs::read_to_string(new_shadows.join("MANIFEST.md"))?,
+        "manifest content"
+    );
     assert!(!legacy_shadows.exists());
 
     Ok(())
@@ -353,9 +389,11 @@ fn test_display_impls() {
 
 #[test]
 fn test_workspace_discovery_env_var() -> Result<()> {
+    let _lock = DISCOVERY_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+
     let dir = tempdir()?;
     let root = dir.path().to_path_buf();
-    
+
     let original_root = std::env::var("TOAD_ROOT").ok();
     unsafe {
         std::env::set_var("TOAD_ROOT", root.to_str().unwrap());
@@ -365,9 +403,13 @@ fn test_workspace_discovery_env_var() -> Result<()> {
     assert_eq!(ws.root, fs::canonicalize(&root)?);
 
     if let Some(val) = original_root {
-        unsafe { std::env::set_var("TOAD_ROOT", val); }
+        unsafe {
+            std::env::set_var("TOAD_ROOT", val);
+        }
     } else {
-        unsafe { std::env::remove_var("TOAD_ROOT"); }
+        unsafe {
+            std::env::remove_var("TOAD_ROOT");
+        }
     }
     Ok(())
 }
@@ -375,6 +417,8 @@ fn test_workspace_discovery_env_var() -> Result<()> {
 #[test]
 #[cfg_attr(tarpaulin, ignore)]
 fn test_workspace_discovery_upward() -> Result<()> {
+    let _lock = DISCOVERY_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+
     let dir = tempdir()?;
     let root_path = dir.path().to_path_buf();
     let root = fs::canonicalize(&root_path)?;
@@ -382,9 +426,16 @@ fn test_workspace_discovery_upward() -> Result<()> {
 
     let sub = root.join("depth/1/2/3");
     fs::create_dir_all(&sub)?;
-    
-    let original_cwd = std::env::current_dir()?;
-    
+
+    // Save TOAD_ROOT and clear it so discover() doesn't short-circuit via env var
+    let original_root = std::env::var("TOAD_ROOT").ok();
+    unsafe {
+        std::env::remove_var("TOAD_ROOT");
+    }
+
+    // current_dir() can fail if another test deleted the cwd, so recover first
+    let original_cwd = std::env::current_dir().unwrap_or_else(|_| root.clone());
+
     // Use a scope to ensure Workspace::discover happens while CWD is set
     let ws_res = {
         std::env::set_current_dir(&sub)?;
@@ -392,6 +443,13 @@ fn test_workspace_discovery_upward() -> Result<()> {
         let _ = std::env::set_current_dir(&original_cwd);
         res
     };
+
+    // Restore TOAD_ROOT
+    if let Some(val) = original_root {
+        unsafe {
+            std::env::set_var("TOAD_ROOT", val);
+        }
+    }
 
     let ws = ws_res?;
     assert_eq!(fs::canonicalize(ws.root)?, root);
@@ -419,11 +477,14 @@ fn test_global_config_active_path() -> Result<()> {
     assert_eq!(config.active_path()?, root1);
 
     // 2. Use active context
-    config.project_contexts.insert("ctx2".to_string(), ProjectContext {
-        path: root2.clone(),
-        description: None,
-        registered_at: SystemTime::now(),
-    });
+    config.project_contexts.insert(
+        "ctx2".to_string(),
+        ProjectContext {
+            path: root2.clone(),
+            description: None,
+            registered_at: SystemTime::now(),
+        },
+    );
     config.active_context = Some("ctx2".to_string());
     assert_eq!(config.active_path()?, root2);
 
@@ -432,9 +493,11 @@ fn test_global_config_active_path() -> Result<()> {
 
 #[test]
 fn test_workspace_new_and_ensure() -> Result<()> {
+    let _lock = DISCOVERY_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+
     let dir = tempdir()?;
     let base_dir = fs::canonicalize(dir.path())?;
-    
+
     // Set env vars so discover() works and uses our temp dir
     let original_config = std::env::var("TOAD_CONFIG_DIR").ok();
     let original_root = std::env::var("TOAD_ROOT").ok();
@@ -449,11 +512,14 @@ fn test_workspace_new_and_ensure() -> Result<()> {
         active_context: Some("default".to_string()),
         project_contexts: {
             let mut m = std::collections::HashMap::new();
-            m.insert("default".to_string(), ProjectContext {
-                path: base_dir.clone(),
-                description: None,
-                registered_at: SystemTime::now(),
-            });
+            m.insert(
+                "default".to_string(),
+                ProjectContext {
+                    path: base_dir.clone(),
+                    description: None,
+                    registered_at: SystemTime::now(),
+                },
+            );
             m
         },
     };
@@ -462,20 +528,28 @@ fn test_workspace_new_and_ensure() -> Result<()> {
     let ws = Workspace::new();
     assert_eq!(fs::canonicalize(&ws.root)?, base_dir);
     assert!(ws.shadows_dir.starts_with(&base_dir));
-    
+
     ws.ensure_shadows()?;
     assert!(ws.shadows_dir.exists());
 
     // Restore env vars
     if let Some(val) = original_config {
-        unsafe { std::env::set_var("TOAD_CONFIG_DIR", val); }
+        unsafe {
+            std::env::set_var("TOAD_CONFIG_DIR", val);
+        }
     } else {
-        unsafe { std::env::remove_var("TOAD_CONFIG_DIR"); }
+        unsafe {
+            std::env::remove_var("TOAD_CONFIG_DIR");
+        }
     }
     if let Some(val) = original_root {
-        unsafe { std::env::set_var("TOAD_ROOT", val); }
+        unsafe {
+            std::env::set_var("TOAD_ROOT", val);
+        }
     } else {
-        unsafe { std::env::remove_var("TOAD_ROOT"); }
+        unsafe {
+            std::env::remove_var("TOAD_ROOT");
+        }
     }
     Ok(())
 }
@@ -484,15 +558,15 @@ fn test_workspace_new_and_ensure() -> Result<()> {
 fn test_project_registry_context_save() -> Result<()> {
     let dir = tempdir()?;
     let base_dir = dir.path().to_path_buf();
-    
+
     let registry = ProjectRegistry::default();
     registry.save(Some("my-ctx"), Some(&base_dir))?;
-    
+
     let target = base_dir.join("contexts/my-ctx/registry.json");
     assert!(target.exists());
-    
+
     let loaded = ProjectRegistry::load(Some("my-ctx"), Some(&base_dir))?;
     assert_eq!(loaded.fingerprint, 0);
-    
+
     Ok(())
 }

@@ -198,6 +198,9 @@ impl GlobalConfig {
         if let Some(base) = base_dir {
             return Ok(base.to_path_buf());
         }
+        if let Ok(overridden) = std::env::var("TOAD_CONFIG_DIR") {
+            return Ok(PathBuf::from(overridden));
+        }
         dirs::home_dir()
             .map(|h| h.join(".toad"))
             .ok_or_else(|| anyhow::anyhow!("Could not find home directory"))
@@ -224,7 +227,9 @@ impl GlobalConfig {
         let config_val: serde_json::Value = serde_json::from_str(&content)?;
 
         // Migration logic: If the config is in the old format (no active_context or project_contexts)
-        if config_val.get("active_context").is_none() && config_val.get("project_contexts").is_none() {
+        if config_val.get("active_context").is_none()
+            && config_val.get("project_contexts").is_none()
+        {
             let home_pointer_val = config_val.get("home_pointer").and_then(|v| v.as_str());
             if let Some(home_path) = home_pointer_val {
                 let path = PathBuf::from(home_path);
@@ -264,10 +269,10 @@ impl GlobalConfig {
     }
 
     pub fn active_path(&self) -> Result<PathBuf> {
-        if let Some(name) = &self.active_context {
-            if let Some(ctx) = self.project_contexts.get(name) {
-                return Ok(ctx.path.clone());
-            }
+        if let Some(name) = &self.active_context
+            && let Some(ctx) = self.project_contexts.get(name)
+        {
+            return Ok(ctx.path.clone());
         }
         Ok(self.home_pointer.clone())
     }
@@ -304,7 +309,10 @@ impl GlobalConfig {
                 }
                 // Attempt to remove the old directory if it's now empty
                 let _ = fs::remove_dir(&legacy_shadows);
-                println!("Migrated shadows from {:?} to {:?}", legacy_shadows, target_shadows);
+                println!(
+                    "Migrated shadows from {:?} to {:?}",
+                    legacy_shadows, target_shadows
+                );
             }
         }
 
@@ -408,7 +416,11 @@ impl Workspace {
         Self::discover().unwrap_or_else(|_| Self::with_root(PathBuf::from("."), None, None))
     }
 
-    pub fn with_root(root: PathBuf, active_context: Option<String>, base_dir: Option<&Path>) -> Self {
+    pub fn with_root(
+        root: PathBuf,
+        active_context: Option<String>,
+        base_dir: Option<&Path>,
+    ) -> Self {
         let shadows_dir = if let Some(name) = &active_context {
             GlobalConfig::context_dir(name, base_dir)
                 .map(|d| d.join("shadows"))
