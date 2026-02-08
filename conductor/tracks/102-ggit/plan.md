@@ -3,6 +3,15 @@
 > **Source of Truth:** `docs/releases/v1.0.2/tasks.md` § Phase 5. This plan is
 > an execution guide. The release docs are authoritative.
 
+## Phase 0: Target Unification
+
+- [ ] **P5-0a: TargetSource & Logical Targets**
+  - Add `TargetSource` enum (HubRoot, Submodule, PondProject, Orphan) to `toad-core`.
+  - Update `ProjectDetail` to include its source.
+- [ ] **P5-0b: Registry-First Orchestration**
+  - Refactor `toad-ops` (the engine for `do` and `ggit`) to consume the `ProjectRegistry` instead of scanning disk via `fs::read_dir`.
+  - Update `toad do` to use the cached list of managed targets.
+
 ## Phase 1: Data Models
 
 - [ ] **P5-1: Git Data Models**

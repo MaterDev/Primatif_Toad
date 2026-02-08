@@ -60,6 +60,11 @@ Toad is a distributed ecosystem of Git submodules managed by a central Hub.
 Toad supports multiple workspace roots via **Named Project Contexts**.
 
 - **Switching:** Use `toad project switch <name>` to change targets. `toad home` is legacy.
+- **Context Types:**
+  - **Hub:** A root repository with submodules (Recursive).
+  - **Pond:** A directory containing multiple independent repositories (Flat).
+  - **Generic:** A simple project directory.
+- **Recursive Semantic Discovery:** In Hub contexts, Toad recursively scans submodules to extract Stack, Essence, and Taxonomy, ensuring data density parity across the hierarchy.
 - **Active Awareness:** Always check `toad project current` before scanning or creating files.
 - **AI Navigator:** For complex architecture links, always refer to `CROSS_REPO_MAP.md` at the root. This is the source of truth for dependency graphs and type flow.
 
