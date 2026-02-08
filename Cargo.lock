@@ -276,21 +276,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "discovery"
-version = "1.0.2"
-dependencies = [
- "anyhow",
- "filetime",
- "ignore",
- "rayon",
- "serde",
- "serde_json",
- "tempfile",
- "toad-core",
- "toad-git",
-]
-
-[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -709,14 +694,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "scaffold"
-version = "1.0.2"
-dependencies = [
- "anyhow",
- "tempfile",
-]
-
-[[package]]
 name = "serde"
 version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -839,18 +816,18 @@ dependencies = [
  "chrono",
  "clap",
  "colored",
- "discovery",
  "filetime",
  "indicatif",
  "predicates",
  "rayon",
- "scaffold",
  "serde_json",
  "tempfile",
  "toad-core",
+ "toad-discovery",
  "toad-git",
  "toad-manifest",
  "toad-ops",
+ "toad-scaffold",
  "toml",
  "whoami",
 ]
@@ -866,6 +843,21 @@ dependencies = [
  "serde_json",
  "tempfile",
  "toml",
+]
+
+[[package]]
+name = "toad-discovery"
+version = "1.0.2"
+dependencies = [
+ "anyhow",
+ "filetime",
+ "ignore",
+ "rayon",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "toad-core",
+ "toad-git",
 ]
 
 [[package]]
@@ -898,6 +890,15 @@ dependencies = [
  "wait-timeout",
  "walkdir",
  "whoami",
+]
+
+[[package]]
+name = "toad-scaffold"
+version = "1.0.2"
+dependencies = [
+ "anyhow",
+ "tempfile",
+ "toad-git",
 ]
 
 [[package]]

@@ -1,18 +1,17 @@
-// SPDX-License-Identifier: MIT
 use anyhow::{bail, Result};
 use clap::{CommandFactory, Parser, Subcommand};
 use colored::*;
-use discovery::scan_all_projects;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
-use scaffold::{create_project, open_in_editor, ProjectConfig};
 use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 use toad_core::{TagRegistry, VcsStatus, Workspace};
+use toad_discovery::scan_all_projects;
 use toad_ops::stats::{calculate_project_stats, format_size};
+use toad_scaffold::{create_project, open_in_editor, ProjectConfig};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -328,12 +327,8 @@ fn main() -> Result<()> {
                 dry_run: *dry_run,
             };
 
-            let project_path = create_project(config)?;
+            create_project(config)?;
 
-            // 2. Orchestrate Git Init (Option B from evolution.md)
-            if !*dry_run {
-                toad_git::init::init_repo(&project_path)?;
-            }
             if *dry_run {
                 return Ok(());
             }
@@ -1554,7 +1549,10 @@ fn main() -> Result<()> {
                         bail!("Context '{}' not found.", name);
                     }
 
-                    print!("Are you sure you want to delete context '{}' and all its cached data? [y/N]: ", name);
+                    print!(
+                        "Are you sure you want to delete context '{}' and all its cached data? [y/N]: ",
+                        name
+                    );
                     io::stdout().flush()?;
                     let mut input = String::new();
                     io::stdin().read_line(&mut input)?;

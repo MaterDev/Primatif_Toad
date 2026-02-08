@@ -15,15 +15,15 @@ protecting its advanced intelligence layer under a source-available license
    switching and isolated scan caches.
 2. **Workspace Orchestration:** Manage the `projects/` directory as an external
    collection of independent repositories using a "whitelist-only" strategy.
-2. **Open Core Licensing:** Maintain a clear boundary between open-source
+3. **Open Core Licensing:** Maintain a clear boundary between open-source
    contracts (MIT) and protected intelligence (BUSL-1.1).
-3. **Multi-Repo Git Orchestration:** Provide first-class group-git operations
+4. **Multi-Repo Git Orchestration:** Provide first-class group-git operations
    (`toad ggit`) to manage distributed submodule ecosystems.
-4. **Discovery & Scaffolding:** Automate project pattern detection and component
+5. **Discovery & Scaffolding:** Automate project pattern detection and component
    generation via specialized Rust crates.
-5. **Unified Tooling:** Centralize quality gates and management scripts for a
+6. **Unified Tooling:** Centralize quality gates and management scripts for a
    diverse set of local codebases.
-6. **AI-First Design:** Maintain high-quality context metadata ("Shadows") and
+7. **AI-First Design:** Maintain high-quality context metadata ("Shadows") and
    architectural maps to enable AI agents to assist across the ecosystem.
 
 ## Core Roles

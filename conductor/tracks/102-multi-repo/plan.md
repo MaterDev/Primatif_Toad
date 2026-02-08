@@ -5,7 +5,7 @@
 
 ## Phase 1: Repo Creation
 
-- [ ] **P1-1 & P1-2: Create GitHub Repos**
+- [~] **P1-1 & P1-2: Create GitHub Repos**
   - Create 6 new public repos under `Primatif/`.
 - [ ] **P1-3: Configure Repo Settings**
   - Set default branch to `main` for all new repos.
