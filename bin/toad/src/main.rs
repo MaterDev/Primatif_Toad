@@ -210,6 +210,9 @@ enum GgitCommand {
         /// Automatically commit the Hub root if submodules are changed (Cascade)
         #[arg(long, short = 'c')]
         cascade: bool,
+        /// Halt the entire batch if a single repo fails
+        #[arg(long, short = 'f')]
+        fail_fast: bool,
     },
     /// Push changes across repositories
     Push {
@@ -219,6 +222,9 @@ enum GgitCommand {
         /// Filter by tag
         #[arg(long, short = 't')]
         tag: Option<String>,
+        /// Halt the entire batch if a single repo fails
+        #[arg(long, short = 'f')]
+        fail_fast: bool,
     },
     /// Pull changes across repositories
     Pull {
@@ -228,6 +234,9 @@ enum GgitCommand {
         /// Filter by tag
         #[arg(long, short = 't')]
         tag: Option<String>,
+        /// Halt the entire batch if a single repo fails
+        #[arg(long, short = 'f')]
+        fail_fast: bool,
     },
     /// Synchronize and align repositories (safe multi-repo update)
     Sync {
@@ -1937,6 +1946,7 @@ fn main() -> Result<()> {
                     query,
                     tag,
                     cascade,
+                    fail_fast,
                 } => {
                     println!("{}", "--- MULTI-REPO GIT COMMIT ---".blue().bold());
 
@@ -1968,9 +1978,11 @@ fn main() -> Result<()> {
                     }
 
                     let mut results = Vec::new();
+                    let mut submodule_failed = false;
                     let mut submodule_changed = false;
 
                     for p in &targets {
+                        let mut project_sub_failed = false;
                         // 1. Commit submodules first
                         for sub in &p.submodules {
                             let sub_path = workspace.root.join(&sub.path);
@@ -1978,35 +1990,70 @@ fn main() -> Result<()> {
                                 println!("Committing submodule: {}", sub.name.cyan());
                                 let res =
                                     toad_git::commit::commit(&sub_path, &message, &sub.name)?;
+                                if !res.success {
+                                    submodule_failed = true;
+                                    project_sub_failed = true;
+                                } else {
+                                    submodule_changed = true;
+                                }
                                 results.push(res);
-                                submodule_changed = true;
+
+                                if *fail_fast && submodule_failed {
+                                    break;
+                                }
                             }
                         }
 
-                        // 2. Commit the project itself
+                        if *fail_fast && submodule_failed {
+                            break;
+                        }
+
+                        // 2. Commit the project itself (Block if its own submodules failed)
+                        if project_sub_failed {
+                            println!(
+                                "{} Skipping project {} because its submodules failed.",
+                                "WARN:".yellow(),
+                                p.name.cyan()
+                            );
+                            continue;
+                        }
+
                         if toad_git::commit::is_dirty(&p.path)? {
                             println!("Committing project: {}", p.name.cyan());
                             let res = toad_git::commit::commit(&p.path, &message, &p.name)?;
+                            if !res.success && *fail_fast {
+                                results.push(res);
+                                break;
+                            }
                             results.push(res);
                         }
                     }
 
-                    // 3. Cascade to Hub Root if requested
+                    // 3. Cascade to Hub Root if requested (Block if ANY submodule failed)
                     if *cascade && submodule_changed {
-                        let root_path = &workspace.root;
-                        if toad_git::commit::is_dirty(root_path)? {
-                            println!("Cascading commit to Hub Root...");
-                            let res = toad_git::commit::commit(root_path, &message, "Hub Root")?;
-                            results.push(res);
+                        if submodule_failed {
+                            println!(
+                                "{} Aborting Hub Root cascade because one or more submodules failed.",
+                                "ERROR:".red().bold()
+                            );
+                        } else {
+                            let root_path = &workspace.root;
+                            if toad_git::commit::is_dirty(root_path)? {
+                                println!("Cascading commit to Hub Root...");
+                                let res = toad_git::commit::commit(root_path, &message, "Hub Root")?;
+                                results.push(res);
+                            }
                         }
                     }
 
                     // Summary
                     println!("\n--- COMMIT SUMMARY ---");
+                    let mut any_fail = false;
                     for res in results {
                         let status = if res.success {
                             "OK".green()
                         } else {
+                            any_fail = true;
                             "FAIL".red()
                         };
                         println!("{:<30} {}", res.project_name.bold(), status);
@@ -2014,8 +2061,16 @@ fn main() -> Result<()> {
                             println!("  Error: {}", res.stderr.dimmed());
                         }
                     }
+
+                    if any_fail {
+                        std::process::exit(1);
+                    }
                 }
-                GgitCommand::Push { query, tag } => {
+                GgitCommand::Push {
+                    query,
+                    tag,
+                    fail_fast,
+                } => {
                     println!("{}", "--- MULTI-REPO GIT PUSH ---".blue().bold());
                     let targets: Vec<_> = projects
                         .into_iter()
@@ -2045,32 +2100,71 @@ fn main() -> Result<()> {
                     }
 
                     let mut results = Vec::new();
+                    let mut any_sub_failed = false;
+
                     for p in targets {
-                        // Push submodules
+                        let mut project_sub_failed = false;
+                        // Push submodules first
                         for sub in p.submodules {
                             let sub_path = workspace.root.join(&sub.path);
                             println!("Pushing submodule: {}", sub.name.cyan());
                             let res = toad_git::remote::push(&sub_path, &sub.name, None, None)?;
+                            if !res.success {
+                                any_sub_failed = true;
+                                project_sub_failed = true;
+                            }
                             results.push(res);
+
+                            if *fail_fast && any_sub_failed {
+                                break;
+                            }
                         }
-                        // Push project
+
+                        if *fail_fast && any_sub_failed {
+                            break;
+                        }
+
+                        // Push project (Block if its own submodules failed)
+                        if project_sub_failed {
+                            println!(
+                                "{} Skipping push for project {} because its submodules failed.",
+                                "WARN:".yellow(),
+                                p.name.cyan()
+                            );
+                            continue;
+                        }
+
                         println!("Pushing project: {}", p.name.cyan());
                         let res = toad_git::remote::push(&p.path, &p.name, None, None)?;
+                        if !res.success && *fail_fast {
+                            results.push(res);
+                            break;
+                        }
                         results.push(res);
                     }
 
                     // Summary
                     println!("\n--- PUSH SUMMARY ---");
+                    let mut any_fail = false;
                     for res in results {
                         let status = if res.success {
                             "OK".green()
                         } else {
+                            any_fail = true;
                             "FAIL".red()
                         };
                         println!("{:<30} {}", res.project_name.bold(), status);
                     }
+
+                    if any_fail {
+                        std::process::exit(1);
+                    }
                 }
-                GgitCommand::Pull { query, tag } => {
+                GgitCommand::Pull {
+                    query,
+                    tag,
+                    fail_fast,
+                } => {
                     println!("{}", "--- MULTI-REPO GIT PULL ---".blue().bold());
                     let targets: Vec<_> = projects
                         .into_iter()
@@ -2100,30 +2194,65 @@ fn main() -> Result<()> {
                     }
 
                     let mut results = Vec::new();
+                    let mut any_failed = false;
+
                     for p in targets {
-                        // Pull project
+                        // Pull project first
                         println!("Pulling project: {}", p.name.cyan());
                         let res = toad_git::remote::pull(&p.path, &p.name)?;
+                        let project_failed = !res.success;
+                        if project_failed {
+                            any_failed = true;
+                        }
                         results.push(res);
+
+                        if project_failed {
+                            if *fail_fast {
+                                break;
+                            }
+                            println!(
+                                "{} Skipping submodules for project {} because project pull failed.",
+                                "WARN:".yellow(),
+                                p.name.cyan()
+                            );
+                            continue;
+                        }
 
                         // Pull submodules
                         for sub in p.submodules {
                             let sub_path = workspace.root.join(&sub.path);
                             println!("Pulling submodule: {}", sub.name.cyan());
                             let res = toad_git::remote::pull(&sub_path, &sub.name)?;
+                            if !res.success {
+                                any_failed = true;
+                            }
                             results.push(res);
+
+                            if *fail_fast && any_failed {
+                                break;
+                            }
+                        }
+
+                        if *fail_fast && any_failed {
+                            break;
                         }
                     }
 
                     // Summary
                     println!("\n--- PULL SUMMARY ---");
+                    let mut any_fail = false;
                     for res in results {
                         let status = if res.success {
                             "OK".green()
                         } else {
+                            any_fail = true;
                             "FAIL".red()
                         };
                         println!("{:<30} {}", res.project_name.bold(), status);
+                    }
+
+                    if any_fail {
+                        std::process::exit(1);
                     }
                 }
                 _ => bail!("Command not yet implemented."),
