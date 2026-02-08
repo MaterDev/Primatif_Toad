@@ -255,6 +255,14 @@ first, then automatically updates the Hub's pointers to those new commits.
 
 ---
 
+## 📜 License
+
+**Primatif Toad** is open-source software licensed under the **MIT License**.
+Please note that this license applies specifically to the Primatif Toad Hub and
+CLI orchestrator.
+
+---
+
 <!-- Project Banner -->
 
 <div align="center">
