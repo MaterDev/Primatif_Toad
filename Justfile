@@ -13,19 +13,23 @@ install:
     ./scripts/install_toad.sh
 
 # --- Quality Assurance (QA) ---
-
-# Run full QA suite (Sync -> Check Licenses -> Format -> Lint -> Test -> Build)
-qa: sync-version check-licenses fmt lint test build
-    @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
-
-# Sync README version with Cargo.toml
-sync-version:
-    ./scripts/sync_version.sh
-
-# Verify MIT/BUSL-1.1 license boundaries
-check-licenses:
-    ./scripts/check_license_boundary.sh
-
+ 
+ # Run full QA suite (Sync -> Check Licenses -> Format -> Lint -> Test -> Build)
+-qa: sync-version docs check-licenses fmt lint test build
++qa: sync-version docs check-licenses fmt lint test build
+     @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
+ 
+ # Sync README version with Cargo.toml
+ sync-version:
+     ./scripts/sync_version.sh
+ 
++# Generate CLI documentation
++docs:
++    cargo run -p toad -- docs
++
+ # Verify MIT/BUSL-1.1 license boundaries
+ check-licenses:
+     ./scripts/check_license_boundary.sh
 # Setup Git hooks
 setup-hooks:
     @mkdir -p .git/hooks
