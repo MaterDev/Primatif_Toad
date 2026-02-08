@@ -66,14 +66,38 @@ detailed plan in its respective folder.
 - [x] **Track: v1.0.2 Submodule Awareness** _Link:
       [./tracks/102-submodule-aware/](./tracks/102-submodule-aware/)_
 
-- [ ] **Track: v1.0.2 Group-Git Orchestration** _Link:
+- [x] **Track: v1.0.2 Group-Git Orchestration** _Link:
       [./tracks/archive/102-ggit/](./tracks/102-ggit/)_
 
-- [ ] **Track: v1.0.2 Custom Workflows** _Link:
+- [x] **Track: v1.0.2 Custom Workflows** _Link:
       [./tracks/archive/102-workflows/](./tracks/102-workflows/)_
 
-- [ ] **Track: v1.0.2 Governance & AI Navigation** _Link:
+- [x] **Track: v1.0.2 Governance & AI Navigation** _Link:
       [./tracks/archive/102-governance/](./tracks/102-governance/)_
+
+- [ ] **Track: v1.1.0 Blockers** _Link:
+      [./tracks/110-0-blockers/](./tracks/110-0-blockers/)_
+
+- [ ] **Track: v1.1.0 Global Install** _Link:
+      [./tracks/110-1-global-install/](./tracks/110-1-global-install/)_
+
+- [ ] **Track: v1.1.0 Deep Extraction** _Link:
+      [./tracks/110-2-deep-extraction/](./tracks/110-2-deep-extraction/)_
+
+- [ ] **Track: v1.1.0 Integrity** _Link:
+      [./tracks/110-3-integrity/](./tracks/110-3-integrity/)_
+
+- [ ] **Track: v1.1.0 Agent Interface** _Link:
+      [./tracks/110-4-agent-interface/](./tracks/110-4-agent-interface/)_
+
+- [ ] **Track: v1.1.0 MCP Server** _Link:
+      [./tracks/110-5-mcp-server/](./tracks/110-5-mcp-server/)_
+
+- [ ] **Track: v1.1.0 Pattern Intel** _Link:
+      [./tracks/110-6-pattern-intel/](./tracks/110-6-pattern-intel/)_
+
+- [ ] **Track: v1.1.0 Synthesis** _Link:
+      [./tracks/110-7-synthesis/](./tracks/110-7-synthesis/)_
 
 ---
 
