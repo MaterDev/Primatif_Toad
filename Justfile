@@ -10,14 +10,19 @@ cli *args:
 
 # --- Bootstrap & Environment ---
 
-# Fully initialize the development environment (Submodules + Tools + Hooks)
-setup: init setup-tools setup-hooks build
+# Fully initialize the development environment (Submodules + Tools + Hooks + Git Config)
+setup: init setup-tools setup-hooks setup-git-config build
     @echo "\n🐸 Welcome to the Toad Pond! Your development environment is ready."
 
 # Initialize and update all submodules
 init:
     git submodule update --init --recursive
     @echo "✅ Submodules initialized."
+
+# Configure specialized Git merge strategies
+setup-git-config:
+    @git config merge.ours.driver true
+    @echo "✅ Git merge strategies configured."
 
 # Install the Toad CLI to your system (Production)
 install:
