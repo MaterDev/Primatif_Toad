@@ -12,12 +12,12 @@
 | Component | Stack | Role | Dependencies |
 | :--- | :--- | :--- | :--- |
 | **`Primatif_Toad`** | `Rust` | Root | - |
-| &nbsp;&nbsp;└─ `crates/toad-git` | `Rust` | Extension | - |
-| &nbsp;&nbsp;└─ `crates/toad-core` | `Rust` | Extension | - |
-| &nbsp;&nbsp;└─ `crates/toad-discovery` | `Rust` | Extension | - |
 | &nbsp;&nbsp;└─ `crates/toad-manifest` | `Rust` | Extension | - |
 | &nbsp;&nbsp;└─ `crates/toad-scaffold` | `Rust` | Extension | - |
+| &nbsp;&nbsp;└─ `crates/toad-git` | `Rust` | Extension | - |
 | &nbsp;&nbsp;└─ `crates/toad-ops` | `Rust` | Extension | - |
+| &nbsp;&nbsp;└─ `crates/toad-core` | `Rust` | Extension | - |
+| &nbsp;&nbsp;└─ `crates/toad-discovery` | `Rust` | Extension | - |
 | **`crates/toad-core`** | `Rust` | Root | - |
 | **`crates/toad-discovery`** | `Rust` | Root | - |
 | **`crates/toad-git`** | `Rust` | Root | - |

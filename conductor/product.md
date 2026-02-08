@@ -2,30 +2,30 @@
 
 ## Vision
 
-**Primatif Toad** is a DevOps Overlay and Developer CLI designed to manage a
-modular ecosystem of independent projects. It follows an **Open Core** model,
-maintaining a legitimate open-source foundation (MIT CLI and core types) while
-protecting its advanced intelligence layer under a source-available license
-(BUSL-1.1).
+**Primatif Toad** is an AI-Native Local-Ops Platform and Developer CLI designed
+to manage a modular ecosystem of independent projects. It acts as a **Context
+Oracle**, transforming raw repository data into high-fidelity, machine-readable
+metadata for AI agents (Gemini, Claude, local LLMs).
 
 ## Core Goals
 
-1. **Named Project Contexts:** Manage multiple independent workspace roots
-   (e.g., development workspaces, client projects) with explicit context
-   switching and isolated scan caches.
-2. **Workspace Orchestration:** Manage the `projects/` directory as an external
-   collection of independent repositories using a "whitelist-only" strategy.
-3. **Open Core Multi-Repo:** Extract core logic into independent, whitelisted
-   repositories linked via Git submodules to ensure licensing isolation (MIT vs.
-   BUSL-1.1) and library stability.
-4. **Multi-Repo Git Orchestration:** Provide first-class group-git operations
-   (`toad ggit`) to manage distributed submodule ecosystems.
-5. **Discovery & Scaffolding:** Automate project pattern detection and component
-   generation via specialized Rust crates.
-6. **Unified Tooling:** Centralize quality gates and management scripts for a
-   diverse set of local codebases.
-7. **AI-First Design:** Maintain high-quality context metadata ("Shadows") and
-   architectural maps to enable AI agents to assist across the ecosystem.
+1. **Global Context Architecture:** Decouple Toad metadata from the user's
+   source repositories. All context lives in a central `~/.toad/` home for
+   total portability.
+2. **Context Engineering:** Generate high-density, tiered context
+   (`MANIFEST.md`, `context.json`, `llms.txt`, `AGENTS.md`) specifically
+   optimized for AI context windows.
+3. **Live Oracle (MCP):** Provide a Model Context Protocol (MCP) server so
+   agents can query ecosystem health and patterns in real-time.
+4. **Multi-Repo Orchestration:** Provide first-class group-git operations
+   (`toad ggit`) and parallel execution (`toad do`) across distributed
+   submodule ecosystems.
+5. **Structural DNA Mapping:** Automatically detect architectural patterns
+   (Data Layer, API Surface, Auth Patterns) to facilitate cross-repo synthesis.
+6. **Named Project Contexts:** Switch between isolated workspace roots (Hub or
+   Pond modes) with zero context drift.
+7. **Quality & Safety:** Centralize quality gates and enforce transactional
+   safety across all managed codebases.
 
 ## Core Roles
 

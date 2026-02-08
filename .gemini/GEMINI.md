@@ -2,8 +2,9 @@
 
 ## Identity & Purpose
 
-- **Role:** This is **Primatif_Toad** (CLI: `toad`), the **Toad Control** system for local development.
-- **Goal:** Provide a portable, Mac-agnostic control plane to manage, audit, and manipulate software projects in the `projects/` directory.
+- **Role:** This is **Primatif_Toad** (CLI: `toad`), the **Context Oracle** for local development.
+- **Goal:** Provide a portable, AI-native control plane that transforms raw repository data into high-fidelity context metadata.
+- **Vision:** Implement **Context Engineering** principles—progressive disclosure, tiered prompts, and live-syncing machine-readable metadata.
 - **Protocol:** This project uses the **Conductor** extension for solo-dev orchestration.
 
 ---
@@ -20,59 +21,29 @@ At the start of every session, you MUST read the **Conductor Index** to understa
 
 ---
 
-## 🛠️ Operational Protocol (Universal File Resolution)
-
-You must adhere to the **Universal File Resolution Protocol** (defined in `conductor/USER_GUIDE.md`) to manage tracks and state.
+## 🛠️ Operational Protocol (AI-Native Engineering)
 
 - **Solo-Dev Flow:** You are the **AI Project Manager**. Your job is to track atomic progress in `plan.md` files so the user doesn't have to manage the complexity.
-- **Modular Codebase:** Strictly follow the crate-based architecture defined in `tech-stack.md`.
-- **Quality Gates:** Never consider a task finished until `just fmt`, `just lint`, and `just test` pass.
-- **Commit History:** Follow the structured, high-context format (Motivation, Implementation, Impact, Context) to ensure the Git history serves as a readable long-term memory for future AI agents.
+- **Context Engineering:** Prioritize **Progressive Disclosure**. Give the minimum viable context first and use tiered metadata (`llms.txt` → `SYSTEM_PROMPT.md` → `CONTEXT.md`) for deep dives.
+- **View-Agnostic Logic:** Every command must return structured data. Logic lives in library crates; the binary is a thin formatter.
+- **Quality Gates:** Never consider a task finished until `just fmt`, `just lint`, `just test`, and **`toad skill sync`** pass.
+- **Commit History:** Follow the structured format (Motivation, Implementation, Impact, Context) to ensure the Git history serves as a readable long-term memory.
 
 ---
 
-## ⚖️ Licensing Architecture (Open Core)
+## 🌊 Multi-Repo & Context Architecture
 
-Toad follows an **Open Core** model. Every code change MUST land in the correct license boundary.
+Toad is a distributed ecosystem with a central **Global Home** (`~/.toad/`).
 
-- **MIT Layer (Open Contracts):** `toad-core`, `scaffold`, `bin/toad`.
-  - *Data models, traits, interfaces, and CLI glue.*
-- **BUSL-1.1 Layer (Intelligence):** `discovery`, `toad-git`, `toad-manifest`, `toad-ops`.
-  - *Scanning engine, VCS intelligence, context generation, and operational logic.*
-- **The Hard Gate:** MIT crates MUST NEVER depend on BUSL-1.1 crates (except the binary). Violation triggers immediate CI/Hook failure.
-- **Decision Framework:** New capability? If it's a data model → MIT. If it's analysis/intelligence → BUSL-1.1.
-
----
-
-## 🌊 Multi-Repo & Submodule Conventions
-
-Toad is a distributed ecosystem of Git submodules managed by a central Hub.
-
-- **Git Orchestration:** Always use `toad ggit` for multi-repo operations (status, branch, commit, push, pull). Avoid raw `git` commands in the Hub root.
-- **Responsibility:** You are responsible for committing and pushing changes across submodules, managing their versions, and ensuring dependency integrity within the Hub and across crates. Use the `toad` CLI (e.g., `ggit`) whenever possible.
-- **SOTW (State of the World):** Never run `toad ggit sync --force` unless explicitly authorized. Always run `toad ggit preflight` before syncing to ensure all submodules are pushed and clean.
-- **Naming:** Follow the `{type}/{scope}` convention for all cross-repo branches (e.g., `feat/new-scanner`).
-
----
-
-## 🗺️ Project Contexts & Navigation
-
-Toad supports multiple workspace roots via **Named Project Contexts**.
-
-- **Switching:** Use `toad project switch <name>` to change targets. `toad home` is legacy.
-- **Context Types:**
-  - **Hub:** A root repository with submodules (Recursive).
-  - **Pond:** A directory containing multiple independent repositories (Flat).
-  - **Generic:** A simple project directory.
-- **Recursive Semantic Discovery:** In Hub contexts, Toad recursively scans submodules to extract Stack, Essence, and Taxonomy, ensuring data density parity across the hierarchy.
-- **Active Awareness:** Always check `toad project current` before scanning or creating files.
-- **AI Navigator:** For complex architecture links, always refer to `CROSS_REPO_MAP.md` at the root. This is the source of truth for dependency graphs and type flow.
+- **Path Separation:** Toad metadata lives in the Global Home; the user's project directory is read-only by default.
+- **Git Orchestration:** Use `toad ggit` for multi-repo operations.
+- **Intelligence Layer:** Use `toad-discovery`, `toad-git`, `toad-manifest`, and `toad-ops` for all analysis and logic.
+- **Active Awareness:** Always check `toad project current` before scanning.
 
 ## System Structure
 
-- `bin/toad`: **The Interface.** Main CLI application (`toad`). (MIT)
-- `crates/`: **The Capabilities.** Git submodules with individual licenses.
-- `projects/`: **The Target.** Managed repositories (ignored by Git).
+- `bin/toad`: **The Interface.** Main CLI application.
+- `bin/toad-mcp`: **The Oracle.** Model Context Protocol server.
+- `crates/`: **The Capabilities.** Git submodules with individual responsibilities.
 - `conductor/`: **The Orchestrator.** Project state, tracks, and orchestration rules.
-- `shadows/`: **The Context.** AI-specific metadata and context maps (ignored by Git).
-- `CROSS_REPO_MAP.md`: **The Map.** Declared architectural links and type flow.
+- `shadows/`: **The Context.** AI-specific metadata and context maps (Managed in `~/.toad/shadows/` in v1.1.0).

@@ -9,6 +9,7 @@
 - [ ] **P4-5: Migration Pre-flights**
 
 ## Cross-Cutting Mandates
+
 - [ ] **M-1: Schema-First Contract**
 - [ ] **M-2: Layered Output Strategy**
 - [ ] **M-3: Idempotent Discovery**

@@ -181,8 +181,8 @@ bin/toad
 └── toad-ops        ← depends on: toad-core
 ```
 
-The system is designed for high separation of concerns. MIT types flow
-downward; internal logic flows upward into the primary binary.
+The system is designed for high separation of concerns. MIT types flow downward;
+internal logic flows upward into the primary binary.
 
 ---
 

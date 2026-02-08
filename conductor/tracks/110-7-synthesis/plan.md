@@ -8,6 +8,7 @@
 - [ ] **P5-4: Pattern Synthesis Logic**
 
 ## Cross-Cutting Mandates
+
 - [ ] **M-1: Schema-First Contract**
 - [ ] **M-2: Layered Output Strategy**
 - [ ] **M-3: Idempotent Discovery**

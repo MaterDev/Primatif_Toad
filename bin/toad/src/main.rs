@@ -2501,8 +2501,12 @@ fn main() -> Result<()> {
 
                     for p in targets {
                         // 1. Checkout project
-                        println!("Checking out {} in project: {}...", branch.cyan(), p.name.cyan());
-                        let res = toad_git::branch::checkout(&p.path, &branch, &p.name, *create)?;
+                        println!(
+                            "Checking out {} in project: {}...",
+                            branch.cyan(),
+                            p.name.cyan()
+                        );
+                        let res = toad_git::branch::checkout(&p.path, branch, &p.name, *create)?;
                         if !res.success {
                             any_failed = true;
                         }
@@ -2515,8 +2519,13 @@ fn main() -> Result<()> {
                         // 2. Checkout submodules
                         for sub in p.submodules {
                             let sub_path = workspace.root.join(&sub.path);
-                            println!("Checking out {} in submodule: {}...", branch.cyan(), sub.name.cyan());
-                            let sub_res = toad_git::branch::checkout(&sub_path, &branch, &sub.name, *create)?;
+                            println!(
+                                "Checking out {} in submodule: {}...",
+                                branch.cyan(),
+                                sub.name.cyan()
+                            );
+                            let sub_res =
+                                toad_git::branch::checkout(&sub_path, branch, &sub.name, *create)?;
                             if !sub_res.success {
                                 any_failed = true;
                             }

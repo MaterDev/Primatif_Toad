@@ -11,6 +11,7 @@
 - [ ] **P3-7: Context Initialization Command**
 
 ## Cross-Cutting Mandates
+
 - [ ] **M-1: Schema-First Contract**
 - [ ] **M-2: Layered Output Strategy**
 - [ ] **M-3: Idempotent Discovery**

@@ -212,14 +212,11 @@ Before marking any task complete, verify:
 
 - [ ] All tests pass
 - [ ] Code coverage meets requirements (>80%)
-- [ ] Code follows project's code style guidelines (as defined in
-      `code_styleguides/`)
-- [ ] All public functions/methods are documented (e.g., docstrings, JSDoc,
-      GoDoc)
-- [ ] Type safety is enforced (e.g., type hints, TypeScript types, Go types)
-- [ ] No linting or static analysis errors (using the project's configured
-      tools)
-- [ ] Works correctly on mobile (if applicable)
+- [ ] Code follows project's code style guidelines
+- [ ] **Context Freshness:** Run `toad skill sync` to update AI intuition.
+- [ ] All public functions/methods are documented
+- [ ] Type safety is enforced
+- [ ] No linting or static analysis errors
 - [ ] Documentation updated if needed
 - [ ] No security vulnerabilities introduced
 

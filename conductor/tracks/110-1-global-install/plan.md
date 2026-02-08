@@ -12,6 +12,7 @@
 - [ ] **P0-8: Embed Default Strategies**
 
 ## Cross-Cutting Mandates
+
 - [ ] **M-1: Schema-First Contract** (Derive Serialize + Deserialize)
 - [ ] **M-2: Layered Output Strategy** (Support --json)
 - [ ] **M-3: Idempotent Discovery** (Read-only ops are side-effect free)

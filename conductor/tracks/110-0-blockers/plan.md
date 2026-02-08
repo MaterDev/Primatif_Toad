@@ -16,6 +16,7 @@
   - [ ] Move prompt logic to binary boundary.
 
 ## Cross-Cutting Mandates
+
 - [ ] **M-1: Schema-First Contract**
 - [ ] **M-2: Layered Output Strategy**
 - [ ] **M-3: Idempotent Discovery**
