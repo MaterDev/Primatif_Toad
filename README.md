@@ -7,6 +7,7 @@
 The modular meta-engineering platform.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: BSL-1.1](https://img.shields.io/badge/License-BSL--1.1-blue.svg)](crates/toad-git/LICENSE)
 [![Version: v1.0.2](https://img.shields.io/badge/version-v1.0.2-green.svg)](Cargo.toml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
 
@@ -26,31 +27,65 @@ By centralizing observability and orchestration, Local-Ops solves the critical p
 
 Ultimately, Local-Ops bridges the gap between raw code and developer productivity, ensuring that a massive portfolio of work remains a live asset rather than an unmanageable burden of technical debt.
 
-## The v1.0.0 Bloom
-
-- **Dynamic Strategy Engine:** Modular "Stack Support Plugins" allow you to add support for any language (Elixir, C#, Docker) by dropping a TOML file into `~/.toad/strategies/`.
-- **Multi-Core Parallelism:** Leverages `rayon` for sub-second scanning and concurrent bulk command execution across 100+ projects.
-- **Safety Guardrails:** Built-in "Danger Pattern" detection (`rm -rf`, `reset --hard`) with forced `PROCEED` confirmations and `--dry-run` modes.
-- **Visual Analytics:** High-fidelity disk usage auditing with the **Atari Heatmap** and a "Bloat Index" (Source vs. Artifact ratio).
-- **Taxonomy (Tagging):** Unified "Ingredients" taxonomy identifies hybrid projects and manages them through a single evidence-based pipeline.
-- **Global Anchor:** System-wide CLI access via `toad home`, allowing management from any directory on your Mac.
-
 ## 🐸 Quick Start
 
-1. **Install:** `just install`
-2. **Anchor:** `toad home .` (Set your current directory as the system default)
-3. **Analyze:** `toad stats` (See your ecosystem's health heatmap)
-4. **Extend:** `toad strategy add Elixir --match mix.exs --tag elixir` (Add a new language support plugin)
----
+```bash
+# Clone (with submodules)
+git clone --recurse-submodules https://github.com/Primatif/Primatif_Toad.git
+
+# Install
+just install
+
+# Anchor your workspace
+toad home .
+
+# Analyze your ecosystem
+toad stats
+```
+
+## What's New in v1.0.2 "Open Core"
+
+- **Open-Core Architecture:** Codebase split into MIT (open) and BSL-1.1
+  (source-available) components across separate git repositories, managed as
+  submodules.
+- **Multi-Repo Git Orchestration (`toad ggit`):** First-class git operations
+  across all repos — status, commit, push, pull, sync, branch listing, and
+  submodule alignment.
+- **Named Project Contexts (`toad project`):** Register multiple workspace roots
+  and switch between them instantly. All commands resolve against the active
+  context.
+- **AI Skill Distribution (`toad skill sync`):** Generate and distribute
+  architectural blueprints, CLI references, and manifests to any AI vendor
+  (Windsurf, Gemini, Cursor, Claude, Copilot, and more).
+- **Custom Workflows (`toad cw`):** Register and execute custom scripts as
+  first-class Toad commands.
+- **Submodule Awareness:** Automatic discovery and status reporting for git
+  submodules within any managed project.
+
+See the [CHANGELOG](CHANGELOG.md) for the full release history.
 
 ## Core Commands
 
 ### Analytics & Health
 
-- `toad status`: Check Git health and activity tiers across the ecosystem.
-- `toad stats`: View the visual disk usage heatmap and artifact bloat analysis.
-- `toad clean`: Reclaim disk space by removing detected build artifacts.
-- `toad reveal <query>`: Search for projects by name or `#tag`.
+- **`toad status`** — Git health and activity tiers across the ecosystem (with
+  submodule status).
+- **`toad stats`** — Visual disk usage heatmap and artifact bloat analysis.
+- **`toad clean`** — Reclaim disk space by removing detected build artifacts.
+- **`toad reveal <query>`** — Search for projects by name or `#tag`.
+
+### Multi-Repo Git Orchestration
+
+- **`toad ggit status`** — Consolidated git status across all repositories.
+- **`toad ggit commit -m "msg"`** — Commit changes across repositories.
+- **`toad ggit commit -m "msg" --cascade`** — Commit submodules first, then
+  cascade to the Hub root.
+- **`toad ggit push`** — Push all repositories to their remotes.
+- **`toad ggit pull`** — Pull latest changes across all repositories.
+- **`toad ggit sync`** — Synchronize submodule refs with pre-flight safety
+  checks.
+- **`toad ggit branches`** — List all branches across repositories.
+- **`toad ggit align`** — Force-align submodules to Hub root expectations.
 
 ### Orchestration (Bulk Ops)
 
@@ -58,19 +93,36 @@ Ultimately, Local-Ops bridges the gap between raw code and developer productivit
 > potentially destructive. We strongly recommend using the `--dry-run` flag to
 > preview changes before running them for real.
 
-- `toad do "<command>"`: Execute shell commands across matching projects in
+- **`toad do "<command>"`** — Execute shell commands across matching projects in
   parallel.
-- `toad do "git pull" --tag stable`: Batch update only your stable tools.
-- `toad do "rm -rf target" --dry-run`: Safely preview destructive maintenance.
+- **`toad do "git pull" --tag stable`** — Batch update only your stable tools.
+- **`toad do "rm -rf target" --dry-run`** — Safely preview destructive
+  maintenance.
+
+### Project Contexts
+
+- **`toad project register <name> <path>`** — Register a new workspace root.
+- **`toad project switch <name>`** — Switch the active context.
+- **`toad project current`** — Show the active context.
+- **`toad project list`** — List all registered contexts.
+
+### AI Skills & Context
+
+- **`toad skill sync`** — Generate and distribute architectural blueprints, CLI
+  references, and manifests to registered AI vendors.
+- **`toad skill list`** — List distributed skills and registered vendors.
+
+### Custom Workflows
+
+- **`toad cw register <name> <script>`** — Register a custom workflow script.
+- **`toad cw run <name>`** — Execute a registered workflow.
+- **`toad cw list`** — List all registered workflows.
 
 ### Taxonomy & Stack Support
 
-- `toad strategy list`: List all installed stack support plugins (built-in and
-  custom).
-- `toad strategy add`: Interactively create a new stack support plugin.
-- `toad tag <project> <tag>`: Assign custom metadata.
-- `toad manifest`: Synchronize high-fidelity AI context ("Shadows").
-
+- **`toad strategy list`** — List all installed stack support plugins.
+- **`toad strategy add`** — Interactively create a new stack support plugin.
+- **`toad tag <project> <tag>`** — Assign custom metadata.
 ---
 
 ## 🌿 Stack Support Plugins
@@ -102,14 +154,48 @@ See the [Stack Support Plugins Guide](docs/guides/PLUGINS.md) for more details.
 
 ## 🪵 Architecture
 
-Toad is built as a modular Rust workspace, ensuring logic is decoupled and
-reusable:
+Toad is built as a modular Rust workspace using an **open-core** model. Each
+crate is its own git repository, managed as a submodule:
 
-- **`toad` (The Orchestrator):** The primary CLI binary.
-- **`toad-core`:** Shared data models, global configuration, and fingerprinting.
-- **`discovery`:** Strategy-based tech stack detection and parallel scanning.
-- **`toad-ops`:** Shell execution engine with safety filters and timeouts.
-- **`scaffold`:** Boilerplate generation logic.
+```text
+Primatif_Toad/                          (MIT — Hub)
+├── bin/toad/                           CLI binary (MIT)
+├── crates/
+│   ├── toad-core/                      Data models & config (MIT)
+│   ├── toad-scaffold/                  Project scaffolding (MIT)
+│   ├── toad-discovery/                 Ecosystem scanning (BSL-1.1)
+│   ├── toad-git/                       Git orchestration (BSL-1.1)
+│   ├── toad-manifest/                  Context generation (BSL-1.1)
+│   └── toad-ops/                       Batch ops & safety (BSL-1.1)
+├── docs/
+└── scripts/
+```
+
+### License Split
+
+| Component                                                 | License     | Rationale                                                                        |
+| :-------------------------------------------------------- | :---------- | :------------------------------------------------------------------------------- |
+| `bin/toad`, `toad-core`, `toad-scaffold`                  | **MIT**     | CLI glue, data models, scaffolding — open-source face of the project             |
+| `toad-discovery`, `toad-git`, `toad-manifest`, `toad-ops` | **BSL-1.1** | Intelligence layer — scanning, git orchestration, context generation, operations |
+
+BSL-1.1 crates are **source-available**: publicly visible, cloneable, and usable
+for non-commercial purposes. They automatically convert to MIT on
+**2034-02-07**.
+
+### Dependency Graph
+
+```text
+bin/toad (MIT)
+├── toad-core       (MIT)        ← shared data models
+├── toad-scaffold   (MIT)        ← project creation
+├── toad-discovery  (BSL-1.1)    ← depends on: toad-core, toad-git
+├── toad-git        (BSL-1.1)    ← depends on: toad-core
+├── toad-manifest   (BSL-1.1)    ← depends on: toad-core
+└── toad-ops        (BSL-1.1)    ← depends on: toad-core
+```
+
+No MIT crate depends on a BSL-1.1 crate. The MIT types flow downward; the
+BSL-1.1 intelligence flows upward into the MIT binary.
 
 ---
 
@@ -122,6 +208,20 @@ reusable:
 - **Dprint:** `cargo install dprint` (Formatted code and docs)
 - **Tarpaulin:** `cargo install cargo-tarpaulin` (Coverage reporting)
 
+### Clone & Build
+
+```bash
+git clone --recurse-submodules https://github.com/Primatif/Primatif_Toad.git
+cd Primatif_Toad
+cargo build
+```
+
+If you already cloned without `--recurse-submodules`:
+
+```bash
+git submodule update --init --recursive
+```
+
 ### Quality Gates
 
 We maintain a strict **>80% code coverage** mandate. Before every commit, run:
@@ -130,7 +230,8 @@ We maintain a strict **>80% code coverage** mandate. Before every commit, run:
 just qa
 ```
 
-This executes formatting, clippy, unit tests, and coverage verification.
+This executes version sync, docs generation, license boundary checks,
+formatting, clippy, unit tests, and a full build.
 
 ---
 

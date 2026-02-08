@@ -17,6 +17,7 @@
 !/Justfile
 !/LICENSE
 !/README.md
+!/CHANGELOG.md
 !/dprint.json
 !/conductor/
 !/conductor/**
