@@ -1,18 +1,24 @@
 [submodule "crates/toad-core"]
 	path = crates/toad-core
 	url = git@github.com:Primatif/toad-core.git
+	branch = develop
 [submodule "crates/toad-scaffold"]
 	path = crates/toad-scaffold
 	url = git@github.com:Primatif/toad-scaffold.git
+	branch = develop
 [submodule "crates/toad-discovery"]
 	path = crates/toad-discovery
 	url = git@github.com:Primatif/toad-discovery.git
+	branch = develop
 [submodule "crates/toad-git"]
 	path = crates/toad-git
 	url = git@github.com:Primatif/toad-git.git
+	branch = develop
 [submodule "crates/toad-manifest"]
 	path = crates/toad-manifest
 	url = git@github.com:Primatif/toad-manifest.git
+	branch = develop
 [submodule "crates/toad-ops"]
 	path = crates/toad-ops
 	url = git@github.com:Primatif/toad-ops.git
+	branch = develop
