@@ -253,6 +253,22 @@ toad ggit push
 The `--cascade` flag is critical: it commits your changes in the submodules
 first, then automatically updates the Hub's pointers to those new commits.
 
+### 3. Sticky Merge Strategy
+
+We use an **intentional drift** strategy for branch tracking. The `dev` branch
+tracks `dev` submodules, and the `main` branch tracks `main` submodules.
+
+To prevent merge conflicts or accidental overwrites of these settings, we use a
+**"Sticky Merge"** strategy:
+
+- **`.gitattributes`**: Configured to use the `ours` merge driver for
+  `.gitmodules`.
+- **Automation**: Running `just setup` automatically configures your local git
+  to respect this rule.
+
+When you merge `dev` into `main`, Git will automatically preserve the production
+branch tracking from the target branch.
+
 ---
 
 ## 📜 License
