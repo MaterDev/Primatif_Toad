@@ -475,13 +475,24 @@ fn main() -> Result<()> {
 
                 // Submodule Display logic during scan
                 println!(
-                    "{} {} ({})",
+                    "{} {} ({}) {}",
                     "»".blue(),
                     project.name.bold(),
-                    project.stack.dimmed()
+                    project.stack.dimmed(),
+                    project.vcs_status
                 );
 
                 for sub in project.submodules {
+                    total_matching += 1;
+                    match sub.vcs_status {
+                        VcsStatus::Dirty => dirty.push(format!("{} -> {}", project.name, sub.name)),
+                        VcsStatus::Untracked => {
+                            untracked.push(format!("{} -> {}", project.name, sub.name))
+                        }
+                        VcsStatus::Clean => clean_count += 1,
+                        VcsStatus::None => no_repo_count += 1,
+                    }
+
                     let status_indicator = if sub.initialized {
                         format!("{}", sub.vcs_status)
                     } else {
