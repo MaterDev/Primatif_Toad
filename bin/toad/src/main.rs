@@ -724,7 +724,11 @@ fn main() -> Result<()> {
                     toad_core::ProjectContext {
                         path: abs_path.clone(),
                         description: Some("Registered via 'toad home'".to_string()),
-                        context_type: toad_core::ContextType::Generic,
+                        context_type: if abs_path.join(".gitmodules").exists() {
+                            toad_core::ContextType::Hub
+                        } else {
+                            toad_core::ContextType::Generic
+                        },
                         registered_at: std::time::SystemTime::now(),
                     },
                 );
