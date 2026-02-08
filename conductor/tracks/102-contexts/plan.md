@@ -5,11 +5,11 @@
 
 ## Phase 1: Data Models & Storage
 
-- [~] **P4b-1: GlobalConfig Extension**
+- [x] **P4b-1: GlobalConfig Extension** [06b22e6]
   - Add `ProjectContext` struct, `active_context`, `project_contexts` HashMap.
   - Implement auto-migration from old `home_pointer`-only config to `default`
     context.
-- [ ] **P4b-2: Storage Reorganization — Per-Context Artifacts**
+- [x] **P4b-2: Storage Reorganization — Per-Context Artifacts** [06b22e6]
   - Add `context_dir()` and `context_shadows_dir()` to `GlobalConfig`.
   - Move `ProjectRegistry` to `~/.toad/contexts/<name>/registry.json`.
   - Move `shadows/` from workspace root to `~/.toad/contexts/<name>/shadows/`.
@@ -20,18 +20,18 @@
 
 ## Phase 2: Workspace Resolution
 
-- [ ] **P4b-3: Workspace Resolution Update**
+- [x] **P4b-3: Workspace Resolution Update** [06b22e6]
   - Update `Workspace::discover()` to resolve via active context.
   - Priority: `TOAD_ROOT` env > `.toad-root` upward search > `active_context` >
     `home_pointer`.
 
 ## Phase 3: CLI Integration
 
-- [ ] **P4b-4: Installation Flow — `toad home` Update**
+- [x] **P4b-4: Installation Flow — `toad home` Update** [06b22e6]
   - `toad home <path>` registers and switches context (backward compat
     shortcut).
   - `toad home` (no args) shows active context's root.
-- [ ] **P4b-5: `toad project` Command**
+- [x] **P4b-5: `toad project` Command** [06b22e6]
   - Implement `register`, `switch`, `current`, `list`, `update`, `delete`,
     `info`.
   - `register` creates `~/.toad/contexts/<name>/shadows/`.
@@ -40,9 +40,9 @@
 
 ## Phase 4: Scripts
 
-- [ ] **P4b-6: Developer Setup Script**
+- [x] **P4b-6: Developer Setup Script** [06b22e6]
   - Create `scripts/dev_setup.sh` for fresh clone + submodule init.
-- [ ] **P4b-7: History Cleanup Script**
+- [x] **P4b-7: History Cleanup Script** [06b22e6]
   - Create `scripts/history_cleanup.sh` (one-time post-split,
     `git filter-repo`).
 
