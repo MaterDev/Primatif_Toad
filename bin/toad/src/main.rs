@@ -1467,10 +1467,16 @@ fn main() -> Result<()> {
                             cli_path
                         );
                     }
-                    println!("\n{} AI Agent memory is now synchronized.", "SUCCESS:".green().bold());
+                    println!(
+                        "\n{} AI Agent memory is now synchronized.",
+                        "SUCCESS:".green().bold()
+                    );
                 }
                 SkillCommand::List => {
-                    println!("{}", "--- REGISTERED AI VENDORS & SKILLS ---".green().bold());
+                    println!(
+                        "{}",
+                        "--- REGISTERED AI VENDORS & SKILLS ---".green().bold()
+                    );
                     if let Some(name) = &workspace.active_context {
                         if let Ok(Some(config)) = toad_core::GlobalConfig::load(None) {
                             if let Some(ctx) = config.project_contexts.get(name) {
@@ -1488,7 +1494,7 @@ fn main() -> Result<()> {
                     } else {
                         println!("No active context found.");
                     }
-                    
+
                     println!("\n--- ACTIVE TOAD SKILLS ---");
                     println!("- toad-blueprint: Architectural & dependency map.");
                     println!("- toad-cli: High-density command reference.");
@@ -2164,8 +2170,7 @@ fn main() -> Result<()> {
                             let sub_path = workspace.root.join(&sub.path);
                             if toad_git::commit::is_dirty(&sub_path)? {
                                 println!("Committing submodule: {}", sub.name.cyan());
-                                let res =
-                                    toad_git::commit::commit(&sub_path, &message, &sub.name)?;
+                                let res = toad_git::commit::commit(&sub_path, message, &sub.name)?;
                                 if !res.success {
                                     submodule_failed = true;
                                     project_sub_failed = true;
@@ -2196,7 +2201,7 @@ fn main() -> Result<()> {
 
                         if toad_git::commit::is_dirty(&p.path)? {
                             println!("Committing project: {}", p.name.cyan());
-                            let res = toad_git::commit::commit(&p.path, &message, &p.name)?;
+                            let res = toad_git::commit::commit(&p.path, message, &p.name)?;
                             if !res.success && *fail_fast {
                                 results.push(res);
                                 break;
@@ -2216,7 +2221,7 @@ fn main() -> Result<()> {
                             let root_path = &workspace.root;
                             if toad_git::commit::is_dirty(root_path)? {
                                 println!("Cascading commit to Hub Root...");
-                                let res = toad_git::commit::commit(root_path, &message, "Hub Root")?;
+                                let res = toad_git::commit::commit(root_path, message, "Hub Root")?;
                                 results.push(res);
                             }
                         }
@@ -2725,12 +2730,7 @@ fn main() -> Result<()> {
                         for name in names {
                             let wf = registry.workflows.get(name).unwrap();
                             let desc = wf.description.as_deref().unwrap_or("-");
-                            println!(
-                                "{:<15} {:<40?} {}",
-                                name.bold(),
-                                wf.script_path,
-                                desc
-                            );
+                            println!("{:<15} {:<40?} {}", name.bold(), wf.script_path, desc);
                         }
                     }
                 }

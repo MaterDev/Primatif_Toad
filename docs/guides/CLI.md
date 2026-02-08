@@ -18,12 +18,14 @@ Commands:
   do        Execute a shell command across projects matching a query
   tag       Assign a tag to projects
   untag     Remove a tag from projects
-  manifest  Generate a project manifest for AI context (Shadow)
+  skill     Manage and synchronize AI agent skills
   sync      Synchronize the project registry cache
   strategy  Manage language/stack strategies
   clean     Reclaim disk space by removing build artifacts
   docs      Generate programmatic CLI documentation (Markdown)
   project   Manage project contexts (register, switch, list)
+  ggit      Multi-repo Git orchestration
+  cw        Custom workflows and script orchestration
   list      List all available commands
   version   Display version information and the Toad banner
   help      Print this message or the help of the given subcommand(s)

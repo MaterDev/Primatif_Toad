@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-use assert_cmd::Command;
+use assert_cmd::cargo_bin_cmd;
 use std::fs;
 use tempfile::tempdir;
-use toad_core::GlobalConfig;
 
 #[test]
 fn test_project_lifecycle() -> Result<(), Box<dyn std::error::Error>> {
@@ -14,7 +13,7 @@ fn test_project_lifecycle() -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir(&work_dir2)?;
     fs::create_dir(&base_dir)?;
 
-    let mut cmd = Command::cargo_bin("toad")?;
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.env("TOAD_CONFIG_DIR", base_dir.to_str().unwrap());
 
     // 1. Register
@@ -30,7 +29,7 @@ fn test_project_lifecycle() -> Result<(), Box<dyn std::error::Error>> {
     .success();
 
     // 2. List
-    let mut cmd = Command::cargo_bin("toad")?;
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.env("TOAD_CONFIG_DIR", base_dir.to_str().unwrap());
     cmd.args(["project", "list"])
         .assert()
@@ -39,14 +38,14 @@ fn test_project_lifecycle() -> Result<(), Box<dyn std::error::Error>> {
         .stdout(predicates::str::contains("work1"));
 
     // 3. Switch
-    let mut cmd = Command::cargo_bin("toad")?;
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.env("TOAD_CONFIG_DIR", base_dir.to_str().unwrap());
     cmd.args(["project", "switch", "unique1"])
         .assert()
         .success();
 
     // 4. Current
-    let mut cmd = Command::cargo_bin("toad")?;
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.env("TOAD_CONFIG_DIR", base_dir.to_str().unwrap());
     cmd.args(["project", "current"])
         .assert()
@@ -55,7 +54,7 @@ fn test_project_lifecycle() -> Result<(), Box<dyn std::error::Error>> {
         .stdout(predicates::str::contains("work1"));
 
     // 5. Update
-    let mut cmd = Command::cargo_bin("toad")?;
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.env("TOAD_CONFIG_DIR", base_dir.to_str().unwrap());
     cmd.args(["project", "update", "unique1", "-d", "Updated description"])
         .assert()
@@ -75,7 +74,7 @@ fn test_home_shortcut() -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir(&work_dir)?;
     fs::create_dir(&base_dir)?;
 
-    let mut cmd = Command::cargo_bin("toad")?;
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.env("TOAD_CONFIG_DIR", base_dir.to_str().unwrap());
 
     // toad home <path> (auto-register default)
@@ -87,7 +86,7 @@ fn test_home_shortcut() -> Result<(), Box<dyn std::error::Error>> {
         .assert()
         .success();
 
-    let mut cmd = Command::cargo_bin("toad")?;
+    let mut cmd = cargo_bin_cmd!("toad");
     cmd.env("TOAD_CONFIG_DIR", base_dir.to_str().unwrap());
     cmd.args(["project", "current"])
         .assert()
