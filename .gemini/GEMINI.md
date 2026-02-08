@@ -19,6 +19,15 @@ At the start of every session, you MUST read the **Conductor Index** to understa
 4. **Workflow:** `conductor/workflow.md` (How we work & QA gates)
 5. **Tracks:** `conductor/tracks.md` (What's in progress)
 
+### 📋 Pre-Flight Alignment Mandate
+
+Before starting work on a new **Release Roadmap** or implementing **Major Architectural Changes**, you MUST audit and update the following files to ensure they reflect the current project vision, technology standards, and operational practices:
+1. `conductor/product.md` (Vision & Goals)
+2. `conductor/product-guidelines.md` (Design & Tone)
+3. `conductor/tech-stack.md` (Component Hierarchy & Principles)
+4. `conductor/workflow.md` (QA Gates & Task Lifecycles)
+5. `.gemini/GEMINI.md` (Identity & AI-Native Protocol)
+
 ---
 
 ## 🛠️ Operational Protocol (AI-Native Engineering)
