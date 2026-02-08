@@ -21,7 +21,7 @@ for mit_crate in "${MIT_CRATES[@]}"; do
     # Read the dependencies section
     # Use grep to find BUSL crates in the dependencies
     for busl_crate in "${BUSL_CRATES[@]}"; do
-        if grep -q "^$busl_crate =" "$toml_path" || grep -q "^$busl_crate = {" "$toml_path"; then
+        if grep -E "^$busl_crate[[:space:]]*=" "$toml_path" || grep -E "^$busl_crate[[:space:]]*=[[:space:]]*\{" "$toml_path"; then
             echo "❌ LICENSE BOUNDARY VIOLATION: $mit_crate (MIT) depends on $busl_crate (BUSL-1.1)"
             echo "   Location: $toml_path"
             VIOLATIONS=$((VIOLATIONS + 1))

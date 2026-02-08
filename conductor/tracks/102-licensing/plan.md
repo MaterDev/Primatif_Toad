@@ -1,7 +1,7 @@
 # Implementation Plan: Licensing Migration (v1.0.2 Phase 0)
 
-> **Source of Truth:** `docs/releases/v1.0.2/tasks.md` § Phase 0.
-> This plan is an execution guide. The release docs are authoritative.
+> **Source of Truth:** `docs/releases/v1.0.2/tasks.md` § Phase 0. This plan is
+> an execution guide. The release docs are authoritative.
 
 ## Phase 0: License Files & Cargo.toml Updates
 
@@ -31,5 +31,6 @@
 
 ## References
 
-- [Evolution Doc](../../../docs/releases/v1.0.2/evolution.md) — § The Licensing Strategy, § Governance
+- [Evolution Doc](../../../docs/releases/v1.0.2/evolution.md) — § The Licensing
+  Strategy, § Governance
 - [Task Breakdown](../../../docs/releases/v1.0.2/tasks.md) — § Phase 0

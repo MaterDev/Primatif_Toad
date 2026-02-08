@@ -16,9 +16,8 @@ for toml in crates/*/Cargo.toml; do
     if [ -f "$toml" ]; then
         # Update [package] version
         sed -i '' "s/^version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"$VERSION\"/" "$toml"
-        # Update internal dependencies
-        sed -i '' "s/toad-core = { version = \"[0-9]*\.[0-9]*\.[0-9]*\"/toad-core = { version = \"$VERSION\"/" "$toml"
-        sed -i '' "s/toad-git = { version = \"[0-9]*\.[0-9]*\.[0-9]*\"/toad-git = { version = \"$VERSION\"/" "$toml"
+        # Update any dependency starting with 'toad-' or matching 'discovery'/'scaffold'
+        sed -i '' "s/\(toad-[a-z]*\|discovery\|scaffold\)[[:space:]]*=[[:space:]]*{[[:space:]]*version[[:space:]]*=[[:space:]]*\"[0-9]*\.[0-9]*\.[0-9]*\"/\1 = { version = \"$VERSION\"/g" "$toml"
     fi
 done
 

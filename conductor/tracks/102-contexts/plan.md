@@ -35,7 +35,8 @@
   - Implement `register`, `switch`, `current`, `list`, `update`, `delete`,
     `info`.
   - `register` creates `~/.toad/contexts/<name>/shadows/`.
-  - `delete` removes `~/.toad/contexts/<name>/` entirely (with confirmation).
+  - `delete` removes context directory; MUST block or switch to 'default' if
+    deleting the active context.
 
 ## Phase 4: Scripts
 

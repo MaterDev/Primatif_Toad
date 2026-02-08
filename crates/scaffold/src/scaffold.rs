@@ -22,8 +22,7 @@ pub struct ProjectConfig<'a> {
 /// - A `docs/` directory.
 /// - A `README.md` file.
 /// - A `.gitignore` file.
-/// - Initializing a Git repository.
-pub fn create_project(config: ProjectConfig) -> Result<()> {
+pub fn create_project(config: ProjectConfig) -> Result<PathBuf> {
     let project_path = config.root_dir.join(config.name);
 
     if project_path.exists() {
@@ -37,8 +36,7 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
         );
         println!("[Dry Run] Would create directories: docs/");
         println!("[Dry Run] Would write files: README.md, .gitignore");
-        println!("[Dry Run] Would initialize Git repository");
-        return Ok(());
+        return Ok(project_path);
     }
 
     println!("Creating project: {}", config.name);
@@ -59,7 +57,7 @@ pub fn create_project(config: ProjectConfig) -> Result<()> {
 
     println!("Project created successfully at: {:?}", project_path);
 
-    Ok(())
+    Ok(project_path)
 }
 
 /// Launches a specified editor in the project directory.

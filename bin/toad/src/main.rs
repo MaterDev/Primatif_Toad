@@ -279,14 +279,12 @@ fn main() -> Result<()> {
                 dry_run: *dry_run,
             };
 
-            create_project(config)?;
+            let project_path = create_project(config)?;
 
             // 2. Orchestrate Git Init (Option B from evolution.md)
-            let project_path = workspace.projects_dir.join(name);
             if !*dry_run {
                 toad_git::init::init_repo(&project_path)?;
             }
-
             if *dry_run {
                 return Ok(());
             }
