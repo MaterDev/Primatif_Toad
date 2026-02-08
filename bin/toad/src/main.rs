@@ -174,10 +174,73 @@ enum Commands {
         #[command(subcommand)]
         subcommand: ProjectCommand,
     },
+    /// Multi-repo Git orchestration
+    Ggit {
+        #[command(subcommand)]
+        subcommand: GgitCommand,
+    },
     /// List all available commands
     List,
     /// Display version information and the Toad banner
     Version,
+}
+
+#[derive(Subcommand)]
+enum GgitCommand {
+    /// Show consolidated Git status across repositories
+    Status {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+    },
+    /// Commit changes across repositories
+    Commit {
+        /// Commit message
+        #[arg(long, short = 'm')]
+        message: String,
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Automatically commit the Hub root if submodules are changed (Cascade)
+        #[arg(long, short = 'c')]
+        cascade: bool,
+    },
+    /// Push changes across repositories
+    Push {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+    },
+    /// Pull changes across repositories
+    Pull {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+    },
+    /// Synchronize and align repositories (safe multi-repo update)
+    Sync {
+        /// Optional query to filter projects
+        #[arg(long, short = 'q')]
+        query: Option<String>,
+        /// Filter by tag
+        #[arg(long, short = 't')]
+        tag: Option<String>,
+        /// Skip pre-flight safety checks
+        #[arg(long, short = 'f')]
+        force: bool,
+    },
 }
 
 #[derive(Subcommand)]
@@ -1799,6 +1862,271 @@ fn main() -> Result<()> {
                     };
                     println!("{}: {}", "Active".bold(), active);
                 }
+            }
+        }
+        Commands::Ggit { subcommand } => {
+            let registry =
+                toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+                    .unwrap_or_default();
+            let current_fp = workspace.get_fingerprint().unwrap_or(0);
+
+            let projects = if registry.fingerprint == current_fp && !registry.projects.is_empty() {
+                registry.projects
+            } else {
+                scan_all_projects(&workspace)?
+            };
+
+            match subcommand {
+                GgitCommand::Status { query, tag } => {
+                    println!("{}", "--- MULTI-REPO GIT STATUS ---".green().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    // For Hub contexts, we also want to show submodule status as peers
+                    let mut all_repos = Vec::new();
+                    for p in targets {
+                        // The primary project
+                        all_repos.push((p.name.clone(), p.path.clone(), p.vcs_status.clone()));
+
+                        // Its submodules
+                        for sub in p.submodules {
+                            all_repos.push((
+                                format!("{} > {}", p.name, sub.name),
+                                workspace.root.join(&sub.path),
+                                sub.vcs_status.clone(),
+                            ));
+                        }
+                    }
+
+                    // Header
+                    println!("{:<40} {:<15} BRANCH", "REPOSITORY", "STATUS");
+                    println!("{:-<40} {:-<15} {:-<20}", "", "", "");
+
+                    for (name, path, status) in all_repos {
+                        let branch = toad_git::branch::current_branch(&path).unwrap_or_default();
+                        println!("{:<40} {:<15} {}", name.bold(), status, branch.cyan());
+                    }
+                }
+                GgitCommand::Commit {
+                    message,
+                    query,
+                    tag,
+                    cascade,
+                } => {
+                    println!("{}", "--- MULTI-REPO GIT COMMIT ---".blue().bold());
+
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    let mut submodule_changed = false;
+
+                    for p in &targets {
+                        // 1. Commit submodules first
+                        for sub in &p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            if toad_git::commit::is_dirty(&sub_path)? {
+                                println!("Committing submodule: {}", sub.name.cyan());
+                                let res =
+                                    toad_git::commit::commit(&sub_path, &message, &sub.name)?;
+                                results.push(res);
+                                submodule_changed = true;
+                            }
+                        }
+
+                        // 2. Commit the project itself
+                        if toad_git::commit::is_dirty(&p.path)? {
+                            println!("Committing project: {}", p.name.cyan());
+                            let res = toad_git::commit::commit(&p.path, &message, &p.name)?;
+                            results.push(res);
+                        }
+                    }
+
+                    // 3. Cascade to Hub Root if requested
+                    if *cascade && submodule_changed {
+                        let root_path = &workspace.root;
+                        if toad_git::commit::is_dirty(root_path)? {
+                            println!("Cascading commit to Hub Root...");
+                            let res = toad_git::commit::commit(root_path, &message, "Hub Root")?;
+                            results.push(res);
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- COMMIT SUMMARY ---");
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
+                        if !res.success {
+                            println!("  Error: {}", res.stderr.dimmed());
+                        }
+                    }
+                }
+                GgitCommand::Push { query, tag } => {
+                    println!("{}", "--- MULTI-REPO GIT PUSH ---".blue().bold());
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    for p in targets {
+                        // Push submodules
+                        for sub in p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            println!("Pushing submodule: {}", sub.name.cyan());
+                            let res = toad_git::remote::push(&sub_path, &sub.name, None, None)?;
+                            results.push(res);
+                        }
+                        // Push project
+                        println!("Pushing project: {}", p.name.cyan());
+                        let res = toad_git::remote::push(&p.path, &p.name, None, None)?;
+                        results.push(res);
+                    }
+
+                    // Summary
+                    println!("\n--- PUSH SUMMARY ---");
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
+                    }
+                }
+                GgitCommand::Pull { query, tag } => {
+                    println!("{}", "--- MULTI-REPO GIT PULL ---".blue().bold());
+                    let targets: Vec<_> = projects
+                        .into_iter()
+                        .filter(|p| {
+                            let name_match = match query {
+                                Some(ref q) => p.name.to_lowercase().contains(&q.to_lowercase()),
+                                None => true,
+                            };
+                            let tag_match = match tag {
+                                Some(ref t) => {
+                                    let target = if t.starts_with('#') {
+                                        t.clone()
+                                    } else {
+                                        format!("#{}", t)
+                                    };
+                                    p.tags.contains(&target)
+                                }
+                                None => true,
+                            };
+                            name_match && tag_match
+                        })
+                        .collect();
+
+                    if targets.is_empty() {
+                        println!("No projects found matching filters.");
+                        return Ok(());
+                    }
+
+                    let mut results = Vec::new();
+                    for p in targets {
+                        // Pull project
+                        println!("Pulling project: {}", p.name.cyan());
+                        let res = toad_git::remote::pull(&p.path, &p.name)?;
+                        results.push(res);
+
+                        // Pull submodules
+                        for sub in p.submodules {
+                            let sub_path = workspace.root.join(&sub.path);
+                            println!("Pulling submodule: {}", sub.name.cyan());
+                            let res = toad_git::remote::pull(&sub_path, &sub.name)?;
+                            results.push(res);
+                        }
+                    }
+
+                    // Summary
+                    println!("\n--- PULL SUMMARY ---");
+                    for res in results {
+                        let status = if res.success {
+                            "OK".green()
+                        } else {
+                            "FAIL".red()
+                        };
+                        println!("{:<30} {}", res.project_name.bold(), status);
+                    }
+                }
+                _ => bail!("Command not yet implemented."),
             }
         }
         Commands::List => {
