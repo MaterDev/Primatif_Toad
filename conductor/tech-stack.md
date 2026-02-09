@@ -40,22 +40,22 @@ submodules in the `crates/` directory:
 
 1. **Modular by Default:** New capabilities must live in a dedicated crate.
 2. **The 700-Line Limit:** No single file may exceed 700 lines. If a file
-   approaches this limit, it MUST be refactored into smaller, logically
-   distinct modules.
+   approaches this limit, it MUST be refactored into smaller, logically distinct
+   modules.
 3. **View-Agnostic Backend:** Command logic MUST return structured data
    (`Result<T>`) and perform no direct I/O or printing.
-3. **Licensing-Aware Architecture:** MIT for types/contracts; BUSL-1.1 for
+4. **Licensing-Aware Architecture:** MIT for types/contracts; BUSL-1.1 for
    intelligence/logic.
-4. **Dependency Direction:** MIT crates MUST NEVER depend on BUSL-1.1 crates
+5. **Dependency Direction:** MIT crates MUST NEVER depend on BUSL-1.1 crates
    (except binary crates).
-5. **Git Intelligence Isolation:** All `git` execution MUST live in `toad-git`.
-6. **The Context Window is Sacred:** Optimize all generated metadata for AI
+6. **Git Intelligence Isolation:** All `git` execution MUST live in `toad-git`.
+7. **The Context Window is Sacred:** Optimize all generated metadata for AI
    context windows (Progressive Disclosure).
-7. **Strategy Pattern:** Use traits for extensible features.
-8. **Separate Tests:** Unit tests live in companion `tests.rs` files.
-9. **Clean Code:** Small functions, explicit `anyhow` error handling, zero
-   global state.
-10. **Whitelist-Only VCS:** Git ignores everything by default.
+8. **Strategy Pattern:** Use traits for extensible features.
+9. **Separate Tests:** Unit tests live in companion `tests.rs` files.
+10. **Clean Code:** Small functions, explicit `anyhow` error handling, zero
+    global state.
+11. **Whitelist-Only VCS:** Git ignores everything by default.
 
 ## 🎨 Aesthetic Standards
 

@@ -34,7 +34,9 @@ fn test_reveal_no_projects() -> Result<(), Box<dyn std::error::Error>> {
         .arg("test")
         .assert()
         .success()
-        .stdout(predicate::str::contains("No projects found."));
+        .stdout(predicate::str::contains(
+            "No projects found matching 'test'.",
+        ));
     Ok(())
 }
 
@@ -291,7 +293,9 @@ fn test_sync() -> Result<(), Box<dyn std::error::Error>> {
         .assert()
         .success()
         .stdout(predicate::str::contains("Scanning projects..."))
-        .stdout(predicate::str::contains("SUCCESS: Registry synchronized"));
+        .stdout(predicate::str::contains(
+            "SUCCESS: Registry updated with 1 projects.",
+        ));
 
     Ok(())
 }
@@ -387,7 +391,9 @@ fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
         .arg("temp")
         .assert()
         .success()
-        .stdout(predicate::str::contains("No projects found."));
+        .stdout(predicate::str::contains(
+            "No projects found matching 'temp'.",
+        ));
 
     Ok(())
 }
@@ -596,7 +602,7 @@ fn test_clean_real_execution() -> Result<(), Box<dyn std::error::Error>> {
         .arg("-y") // Skip confirmation
         .assert()
         .success()
-        .stdout(predicate::str::contains("Successfully cleaned 1 projects"));
+        .stdout(predicate::str::contains("■ 1 Succeeded"));
 
     assert!(!target_dir.exists());
     assert!(proj_path.exists());
