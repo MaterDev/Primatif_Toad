@@ -96,7 +96,10 @@ pub fn handle_tag(
         bail!("Must provide a project name or use filters (--query, --tag, --harvest).");
     }
 
-    tag_reg.save(&workspace.tags_path())?;
+    if let Err(e) = tag_reg.save(&workspace.tags_path()) {
+        println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
+        return Err(e);
+    }
     println!(
         "{} Processed {} projects.",
         "SUCCESS:".green().bold(),
@@ -183,7 +186,10 @@ pub fn handle_untag(
         bail!("Must provide a project name or use filters (--query, --tag).");
     }
 
-    tag_reg.save(&workspace.tags_path())?;
+    if let Err(e) = tag_reg.save(&workspace.tags_path()) {
+        println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
+        return Err(e);
+    }
     println!(
         "{} Processed {} projects.",
         "SUCCESS:".green().bold(),

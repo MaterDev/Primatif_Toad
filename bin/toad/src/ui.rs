@@ -1,40 +1,9 @@
 use colored::*;
 use toad_core::{
-    AnalyticsReport, BatchOperationReport, BranchGroup, MultiRepoGitReport, MultiRepoStatusReport,
-    SearchResult, StatusReport, VcsStatus,
+    AnalyticsReport, BatchOperationReport, MultiRepoGitReport, MultiRepoStatusReport, SearchResult,
+    StatusReport, VcsStatus,
 };
 use toad_ops::stats::format_size;
-
-pub fn format_multi_repo_branch_report(groups: &[BranchGroup]) {
-    println!("{}", "--- MULTI-REPO BRANCH LIST ---".green().bold());
-
-    if groups.is_empty() {
-        println!("No branches found.");
-        return;
-    }
-
-    for group in groups {
-        println!("\n{} {}", "»".blue(), group.name.bold());
-        for p in &group.projects {
-            let local_marker = if p.exists_locally {
-                "L".green()
-            } else {
-                "-".dimmed()
-            };
-            let remote_marker = if p.exists_remotely {
-                "R".red()
-            } else {
-                "-".dimmed()
-            };
-            println!(
-                "  [{}{}] {}",
-                local_marker,
-                remote_marker,
-                p.project_name.cyan()
-            );
-        }
-    }
-}
 
 pub fn format_multi_repo_git_report(report: &MultiRepoGitReport) {
     println!("\n{}", format!("--- {} ---", report.title).blue().bold());

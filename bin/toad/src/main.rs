@@ -14,6 +14,9 @@ use cli::{Cli, Commands};
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_banner() {
+    // Force colors to ensure they show up in all environments
+    colored::control::set_override(true);
+
     let toad = r###"      _   _      
      (.)_(.)    
   _ (   _   ) _ 

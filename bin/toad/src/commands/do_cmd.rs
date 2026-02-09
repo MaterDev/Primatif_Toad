@@ -105,7 +105,13 @@ pub fn handle(
         skip_count: report.skip_count,
         user: whoami::username().unwrap_or_else(|_| "unknown".to_string()),
     };
-    let _ = toad_ops::audit::log_operation(entry);
+    if let Err(e) = toad_ops::audit::log_operation(entry) {
+        println!(
+            "{} Failed to write to audit log: {}",
+            "WARNING:".yellow(),
+            e
+        );
+    }
 
     Ok(())
 }
