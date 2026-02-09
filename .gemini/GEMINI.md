@@ -33,6 +33,7 @@ Before starting work on a new **Release Roadmap** or implementing **Major Archit
 ## 🛠️ Operational Protocol (AI-Native Engineering)
 
 - **Solo-Dev Flow:** You are the **AI Project Manager**. Your job is to track atomic progress in `plan.md` files so the user doesn't have to manage the complexity.
+- **The 700-Line Limit:** You MUST ensure that NO file exceeds 700 lines. Proactively refactor and modularize code that violates this rule. Monolithic files (like the current `main.rs`) are your primary targets for decomposition.
 - **Context Engineering:** Prioritize **Progressive Disclosure**. Give the minimum viable context first and use tiered metadata (`llms.txt` → `SYSTEM_PROMPT.md` → `CONTEXT.md`) for deep dives.
 - **View-Agnostic Logic:** Every command must return structured data. Logic lives in library crates; the binary is a thin formatter.
 - **Quality Gates:** Never consider a task finished until `just fmt`, `just lint`, `just test`, and **`toad skill sync`** pass.

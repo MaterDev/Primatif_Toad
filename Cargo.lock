@@ -882,6 +882,7 @@ version = "1.0.2"
 dependencies = [
  "anyhow",
  "chrono",
+ "rayon",
  "serde",
  "serde_json",
  "tempfile",

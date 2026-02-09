@@ -212,6 +212,7 @@ Before marking any task complete, verify:
 
 - [ ] All tests pass
 - [ ] Code coverage meets requirements (>80%)
+- [ ] **Small Files:** No file exceeds 700 lines of code.
 - [ ] Code follows project's code style guidelines
 - [ ] **Context Freshness:** Run `toad skill sync` to update AI intuition.
 - [ ] All public functions/methods are documented

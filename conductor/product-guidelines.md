@@ -35,9 +35,10 @@ Documentation and generated metadata are the "Long-term Memory" for AI agents.
 - **Context Integrity:** Employs multi-level hash fingerprinting and auto-sync
   triggers to ensure the AI's view is always synchronized with the filesystem.
 
-## 4. Engineering Tone
+## 4. Engineering Standards
 
 - **Concise:** Favor high information density over conversational filler.
+- **Small File Principle:** NO file should ever exceed **700 lines of code**. Monolithic files are considered technical debt and MUST be refactored into logical modules or specialized crates once this limit is approached.
 - **Action-Oriented:** Documentation and CLI output should focus on "What's
   next?" and "How do I fix this?".
 

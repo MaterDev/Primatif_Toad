@@ -75,7 +75,7 @@ detailed plan in its respective folder.
 - [x] **Track: v1.0.2 Governance & AI Navigation** _Link:
       [./tracks/archive/102-governance/](./tracks/102-governance/)_
 
-- [ ] **Track: v1.1.0 Blockers** _Link:
+- [~] **Track: v1.1.0 Blockers** _Link:
       [./tracks/110-0-blockers/](./tracks/110-0-blockers/)_
 
 - [ ] **Track: v1.1.0 Global Install** _Link:

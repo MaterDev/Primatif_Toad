@@ -39,7 +39,10 @@ submodules in the `crates/` directory:
 ## 📐 Design Principles
 
 1. **Modular by Default:** New capabilities must live in a dedicated crate.
-2. **View-Agnostic Backend:** Command logic MUST return structured data
+2. **The 700-Line Limit:** No single file may exceed 700 lines. If a file
+   approaches this limit, it MUST be refactored into smaller, logically
+   distinct modules.
+3. **View-Agnostic Backend:** Command logic MUST return structured data
    (`Result<T>`) and perform no direct I/O or printing.
 3. **Licensing-Aware Architecture:** MIT for types/contracts; BUSL-1.1 for
    intelligence/logic.
