@@ -2,9 +2,9 @@
 
 ## Tasks (from docs/releases/v1.1.0/tasks.md)
 
-- [~] **BLK-1: Resolve "No-Print" Violation**
-  - [ ] Audit `main.rs` for direct printing.
-  - [ ] Extract logic into library functions returning result types.
+- [x] **BLK-1: Resolve "No-Print" Violation** [9a3f3d7]
+  - [x] Audit `main.rs` for direct printing.
+  - [x] Extract logic into library functions returning result types.
 - [ ] **BLK-2: Decouple Terminal Progress**
   - [ ] Define `ProgressReporter` trait in `toad-core`.
   - [ ] Replace `indicatif` calls with trait calls.
