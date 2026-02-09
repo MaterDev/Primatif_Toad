@@ -559,7 +559,9 @@ fn test_error_no_workspace() {
         .arg("status")
         .assert()
         .success() // Should print error message and exit cleanly (Ok(()))
-        .stdout(predicate::str::contains("ERROR: Toad workspace not found"));
+        .stdout(predicate::str::contains(
+            "ERROR: Workspace not found. Use 'toad home <path>' to anchor a directory.",
+        ));
 }
 
 #[test]

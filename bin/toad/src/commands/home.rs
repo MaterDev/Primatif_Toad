@@ -1,24 +1,22 @@
-use anyhow::{bail, Result};
+use anyhow::Result;
 use colored::*;
 use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
-use toad_core::{ContextType, GlobalConfig, ProjectContext, Workspace};
+use toad_core::{ToadResult, Workspace};
 
-pub fn handle(
-    workspace_discovered: Result<Workspace, anyhow::Error>,
-    path: Option<String>,
-) -> Result<()> {
-    let mut config = GlobalConfig::load(None)?.unwrap_or_else(|| GlobalConfig {
-        home_pointer: PathBuf::from("."),
-        active_context: None,
-        project_contexts: std::collections::HashMap::new(),
-    });
+pub fn handle(workspace_discovered: ToadResult<Workspace>, path: Option<String>) -> Result<()> {
+    let mut config =
+        toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| toad_core::GlobalConfig {
+            home_pointer: PathBuf::from("."),
+            active_context: None,
+            project_contexts: std::collections::HashMap::new(),
+        });
 
     if let Some(new_path) = path {
         let p = PathBuf::from(new_path);
         if !p.exists() {
-            bail!("Path does not exist: {:?}", p);
+            anyhow::bail!("Path does not exist: {:?}", p);
         }
         let abs_path = fs::canonicalize(p)?;
         if !abs_path.join(".toad-root").exists() {
@@ -34,10 +32,7 @@ pub fn handle(
                 println!("Aborted.");
                 return Ok(());
             }
-            let marker_content = "# Primatif Toad Workspace Root
-# This file identifies this directory as a Toad Control Plane home.
-# Do not delete this file if you want the 'toad' CLI to recognize this workspace.
-";
+            let marker_content = "# Primatif Toad Workspace Root\n# This file identifies this directory as a Toad Control Plane home.\n# Do not delete this file if you want the 'toad' CLI to recognize this workspace.\n";
             fs::write(abs_path.join(".toad-root"), marker_content)?;
         }
 
@@ -54,13 +49,13 @@ pub fn handle(
         config.home_pointer = abs_path.clone();
         config.project_contexts.insert(
             name.clone(),
-            ProjectContext {
+            toad_core::ProjectContext {
                 path: abs_path.clone(),
                 description: Some("Registered via 'toad home'".to_string()),
                 context_type: if abs_path.join(".gitmodules").exists() {
-                    ContextType::Hub
+                    toad_core::ContextType::Hub
                 } else {
-                    ContextType::Generic
+                    toad_core::ContextType::Generic
                 },
                 ai_vendors: Vec::new(),
                 registered_at: std::time::SystemTime::now(),
@@ -68,7 +63,7 @@ pub fn handle(
         );
         config.active_context = Some(name.clone());
 
-        let ctx_shadows = GlobalConfig::context_dir(&name, None)?.join("shadows");
+        let ctx_shadows = toad_core::GlobalConfig::context_dir(&name, None)?.join("shadows");
         fs::create_dir_all(&ctx_shadows)?;
 
         config.save(None)?;
