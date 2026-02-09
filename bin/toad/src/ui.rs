@@ -1,9 +1,32 @@
 use colored::*;
+use indicatif::ProgressBar;
 use toad_core::{
-    AnalyticsReport, BatchOperationReport, MultiRepoGitReport, MultiRepoStatusReport, SearchResult,
-    StatusReport, VcsStatus,
+    AnalyticsReport, BatchOperationReport, MultiRepoGitReport, MultiRepoStatusReport,
+    ProgressReporter, SearchResult, StatusReport, VcsStatus,
 };
 use toad_ops::stats::format_size;
+
+pub struct IndicatifReporter {
+    pub pb: ProgressBar,
+}
+
+impl ProgressReporter for IndicatifReporter {
+    fn set_message(&self, msg: &str) {
+        self.pb.set_message(msg.to_string());
+    }
+    fn inc(&self, delta: u64) {
+        self.pb.inc(delta);
+    }
+    fn set_length(&self, len: u64) {
+        self.pb.set_length(len);
+    }
+    fn finish(&self) {
+        self.pb.finish_and_clear();
+    }
+    fn finish_with_message(&self, msg: &str) {
+        self.pb.finish_with_message(msg.to_string());
+    }
+}
 
 pub fn format_multi_repo_git_report(report: &MultiRepoGitReport) {
     println!("\n{}", format!("--- {} ---", report.title).blue().bold());

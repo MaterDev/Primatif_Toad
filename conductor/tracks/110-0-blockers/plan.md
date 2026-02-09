@@ -5,7 +5,7 @@
 - [x] **BLK-1: Resolve "No-Print" Violation** [9a3f3d7]
   - [x] Audit `main.rs` for direct printing.
   - [x] Extract logic into library functions returning result types.
-- [ ] **BLK-2: Decouple Terminal Progress**
+- [~] **BLK-2: Decouple Terminal Progress**
   - [ ] Define `ProgressReporter` trait in `toad-core`.
   - [ ] Replace `indicatif` calls with trait calls.
 - [ ] **BLK-3: Typed Error Surface**

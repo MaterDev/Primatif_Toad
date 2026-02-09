@@ -1,9 +1,10 @@
+use crate::ui::IndicatifReporter;
 use anyhow::Result;
 use colored::*;
 use indicatif::{ProgressBar, ProgressStyle};
-use std::time::{Duration, SystemTime};
-use toad_core::{ProjectRegistry, Workspace};
-use toad_discovery::scan_all_projects;
+use std::time::Duration;
+use toad_core::Workspace;
+use toad_discovery::sync_registry;
 
 pub fn handle(workspace: &Workspace) -> Result<()> {
     println!("Scanning projects...");
@@ -11,25 +12,15 @@ pub fn handle(workspace: &Workspace) -> Result<()> {
     pb.set_style(
         ProgressStyle::default_spinner().template("{spinner:.green} [{elapsed_precise}] {msg}")?,
     );
-    pb.set_message("Discovering projects on disk...");
     pb.enable_steady_tick(Duration::from_millis(100));
 
-    let fingerprint = workspace.get_fingerprint()?;
-    let projects = scan_all_projects(workspace)?;
+    let reporter = IndicatifReporter { pb };
+    let count = sync_registry(workspace, &reporter)?;
 
-    pb.set_message("Saving to registry...");
-    let registry = ProjectRegistry {
-        fingerprint,
-        projects,
-        last_sync: SystemTime::now(),
-    };
-    registry.save(workspace.active_context.as_deref(), None)?;
-
-    pb.finish_with_message("SUCCESS: Registry synchronized.");
     println!(
         "{} Registry updated with {} projects.",
         "SUCCESS:".green().bold(),
-        registry.projects.len()
+        count
     );
     Ok(())
 }

@@ -1,10 +1,11 @@
 use crate::commands::utils::{normalize_tag, resolve_projects};
+use crate::ui::IndicatifReporter;
 use anyhow::Result;
 use colored::*;
 use indicatif::{ProgressBar, ProgressStyle};
-use rayon::prelude::*;
 use std::io::{self, Write};
 use toad_core::Workspace;
+use toad_ops::clean::execute_batch_clean;
 use toad_ops::stats::{calculate_project_stats, format_size};
 
 pub fn handle(
@@ -104,38 +105,21 @@ pub fn handle(
             .progress_chars("■-"),
     );
 
-    let results: Vec<_> = targets
-        .par_iter()
-        .map(|project| {
-            let res = toad_ops::clean::clean_project(&project.path, &project.artifact_dirs, false);
-            pb.inc(1);
-            (project.name.clone(), res)
-        })
-        .collect();
+    let reporter = IndicatifReporter { pb };
+    let report = execute_batch_clean(&targets, &reporter);
 
-    pb.finish_and_clear();
-
-    let mut success_count = 0;
-    let mut fail_count = 0;
-    let mut total_reclaimed = 0;
-
-    for (name, outcome) in results {
+    for (name, outcome) in report.results {
         match outcome {
             Ok(res) => {
-                if res.errors.is_empty() {
-                    success_count += 1;
-                } else {
+                if !res.errors.is_empty() {
                     println!("{} Issues cleaning {}:", "WARNING:".yellow(), name);
                     for err in res.errors {
                         println!("  - {}", err.red());
                     }
-                    fail_count += 1;
                 }
-                total_reclaimed += res.bytes_reclaimed;
             }
             Err(e) => {
                 println!("{} Critical error cleaning {}: {}", "ERROR:".red(), name, e);
-                fail_count += 1;
             }
         }
     }
@@ -144,14 +128,14 @@ pub fn handle(
     println!(
         "{} {} Succeeded | {} {} Failed",
         "■".green(),
-        success_count,
+        report.success_count,
         "■".red(),
-        fail_count
+        report.fail_count
     );
     println!(
         "{} Total Reclaimed: {}",
         "🌿".green(),
-        format_size(total_reclaimed).bold().green()
+        format_size(report.total_reclaimed).bold().green()
     );
 
     Ok(())
