@@ -8,9 +8,9 @@
 - [x] **BLK-2: Decouple Terminal Progress** [c749070]
   - [x] Define `ProgressReporter` trait in `toad-core`.
   - [x] Replace `indicatif` calls with trait calls.
-- [~] **BLK-3: Typed Error Surface**
+- [x] **BLK-3: Typed Error Surface**
   - [x] Implement `ToadError` enum in `toad-core`.
-  - [ ] Replace `anyhow!` in library crates with `ToadError`.
+  - [x] Replace `anyhow!` in library crates with `ToadError`.
 - [x] **BLK-4: Decouple Interactive Prompts** [4dc2536]
   - [x] Audit stdin prompts in library crates.
   - [x] Move prompt logic to binary boundary.

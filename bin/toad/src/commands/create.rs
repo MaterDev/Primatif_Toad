@@ -4,7 +4,7 @@ use std::io::{self, Write};
 use toad_core::Workspace;
 use toad_scaffold::{create_project, open_in_editor, ProjectConfig};
 
-pub fn handle(workspace: &Workspace, name: &str, dry_run: bool) -> Result<()> {
+pub fn handle(workspace: &Workspace, name: &str, dry_run: bool, yes: bool) -> Result<()> {
     let project_path = workspace.projects_dir.join(name);
 
     if dry_run {
@@ -32,18 +32,20 @@ pub fn handle(workspace: &Workspace, name: &str, dry_run: bool) -> Result<()> {
     create_project(config)?;
     println!("Project created successfully at: {:?}", project_path);
 
-    println!("\nWould you like to open this project? [v]scode, [w]indsurf, or [n]o");
-    print!("> ");
-    io::stdout().flush()?;
+    if !yes {
+        println!("\nWould you like to open this project? [v]scode, [w]indsurf, or [n]o");
+        print!("> ");
+        io::stdout().flush()?;
 
-    let mut input = String::new();
-    io::stdin().read_line(&mut input)?;
-    let choice = input.trim().to_lowercase();
+        let mut input = String::new();
+        io::stdin().read_line(&mut input)?;
+        let choice = input.trim().to_lowercase();
 
-    match choice.as_str() {
-        "v" | "vscode" => open_in_editor(name, &workspace.projects_dir, "vscode")?,
-        "w" | "windsurf" => open_in_editor(name, &workspace.projects_dir, "windsurf")?,
-        _ => println!("Skipping editor launch."),
+        match choice.as_str() {
+            "v" | "vscode" => open_in_editor(name, &workspace.projects_dir, "vscode")?,
+            "w" | "windsurf" => open_in_editor(name, &workspace.projects_dir, "windsurf")?,
+            _ => println!("Skipping editor launch."),
+        }
     }
 
     Ok(())

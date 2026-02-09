@@ -61,28 +61,30 @@ pub fn handle(
     println!("\nCommand: {}", command.yellow().bold());
 
     // --- Safety Guardrails ---
-    if toad_ops::safety::is_destructive(&command) {
-        println!(
-            "\n{} This command is potentially {}",
-            "WARNING:".yellow().bold(),
-            "DESTRUCTIVE".red().bold()
-        );
-        print!("Please type 'PROCEED' to confirm: ");
-        io::stdout().flush()?;
-        let mut input = String::new();
-        io::stdin().read_line(&mut input)?;
-        if input.trim() != "PROCEED" {
-            println!("Aborted.");
-            return Ok(());
-        }
-    } else if !yes && !dry_run {
-        print!("\nExecute on {} projects? [y/N]: ", targets.len());
-        io::stdout().flush()?;
-        let mut input = String::new();
-        io::stdin().read_line(&mut input)?;
-        if !input.trim().to_lowercase().starts_with('y') {
-            println!("Aborted.");
-            return Ok(());
+    if !yes && !dry_run {
+        if toad_ops::safety::is_destructive(&command) {
+            println!(
+                "\n{} This command is potentially {}",
+                "WARNING:".yellow().bold(),
+                "DESTRUCTIVE".red().bold()
+            );
+            print!("Please type 'PROCEED' to confirm: ");
+            io::stdout().flush()?;
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            if input.trim() != "PROCEED" {
+                println!("Aborted.");
+                return Ok(());
+            }
+        } else {
+            print!("\nExecute on {} projects? [y/N]: ", targets.len());
+            io::stdout().flush()?;
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            if !input.trim().to_lowercase().starts_with('y') {
+                println!("Aborted.");
+                return Ok(());
+            }
         }
     }
 

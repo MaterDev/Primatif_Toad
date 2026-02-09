@@ -76,8 +76,8 @@ fn main() -> Result<()> {
     }
 
     match &cli.command {
-        Commands::Create { name, dry_run } => {
-            commands::create::handle(&workspace, name, *dry_run)?;
+        Commands::Create { name, dry_run, yes } => {
+            commands::create::handle(&workspace, name, *dry_run, *yes)?;
         }
         Commands::Reveal { query, tag } => {
             commands::reveal::handle(&workspace, query.clone(), tag.clone())?;
@@ -88,8 +88,8 @@ fn main() -> Result<()> {
         Commands::Stats { query, tag, all } => {
             commands::stats::handle(&workspace, query.clone(), tag.clone(), *all)?;
         }
-        Commands::Home { path } => {
-            commands::home::handle(discovered, path.clone())?;
+        Commands::Home { path, yes } => {
+            commands::home::handle(discovered, path.clone(), *yes)?;
         }
         Commands::Do {
             command,

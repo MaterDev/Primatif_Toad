@@ -5,7 +5,7 @@ use std::io::{self, Write};
 use std::path::PathBuf;
 use toad_core::{ToadResult, Workspace};
 
-pub fn handle(workspace_discovered: ToadResult<Workspace>, path: Option<String>) -> Result<()> {
+pub fn handle(workspace_discovered: ToadResult<Workspace>, path: Option<String>, yes: bool) -> Result<()> {
     let mut config =
         toad_core::GlobalConfig::load(None)?.unwrap_or_else(|| toad_core::GlobalConfig {
             home_pointer: PathBuf::from("."),
@@ -20,17 +20,19 @@ pub fn handle(workspace_discovered: ToadResult<Workspace>, path: Option<String>)
         }
         let abs_path = fs::canonicalize(p)?;
         if !abs_path.join(".toad-root").exists() {
-            println!(
-                "{} Path does not contain a '.toad-root' marker.",
-                "WARNING:".yellow().bold()
-            );
-            print!("Initialize as a new Toad home? [y/N]: ");
-            io::stdout().flush()?;
-            let mut input = String::new();
-            io::stdin().read_line(&mut input)?;
-            if !input.trim().to_lowercase().starts_with('y') {
-                println!("Aborted.");
-                return Ok(());
+            if !yes {
+                println!(
+                    "{} Path does not contain a '.toad-root' marker.",
+                    "WARNING:".yellow().bold()
+                );
+                print!("Initialize as a new Toad home? [y/N]: ");
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted.");
+                    return Ok(());
+                }
             }
             let marker_content = "# Primatif Toad Workspace Root\n# This file identifies this directory as a Toad Control Plane home.\n# Do not delete this file if you want the 'toad' CLI to recognize this workspace.\n";
             fs::write(abs_path.join(".toad-root"), marker_content)?;

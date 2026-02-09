@@ -20,6 +20,10 @@ pub enum Commands {
         /// Simulate the action without creating files
         #[arg(long, short = 'd')]
         dry_run: bool,
+
+        /// Skip interactive prompts (e.g., editor launch)
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
     /// Find projects matching a query
     Reveal {
@@ -56,6 +60,10 @@ pub enum Commands {
     Home {
         /// Set a new absolute path for the Toad home
         path: Option<String>,
+
+        /// Skip confirmation prompts
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
     /// Execute a shell command across projects matching a query
     Do {

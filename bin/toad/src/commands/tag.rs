@@ -98,7 +98,7 @@ pub fn handle_tag(
 
     if let Err(e) = tag_reg.save(&workspace.tags_path()) {
         println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
-        return Err(e);
+        return Err(e.into());
     }
     println!(
         "{} Processed {} projects.",
@@ -188,7 +188,7 @@ pub fn handle_untag(
 
     if let Err(e) = tag_reg.save(&workspace.tags_path()) {
         println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
-        return Err(e);
+        return Err(e.into());
     }
     println!(
         "{} Processed {} projects.",
