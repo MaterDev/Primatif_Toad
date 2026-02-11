@@ -5,6 +5,7 @@ pub mod do_cmd;
 pub mod docs;
 pub mod ggit;
 pub mod home;
+pub mod manifest;
 pub mod project;
 pub mod reveal;
 pub mod skill;

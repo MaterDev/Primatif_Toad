@@ -186,6 +186,16 @@ pub enum Commands {
         #[command(subcommand)]
         subcommand: CwCommand,
     },
+    /// Generate a project manifest for AI context
+    Manifest {
+        /// Force JSON output to stdout
+        #[arg(long)]
+        json: bool,
+
+        /// Only check for staleness and exit
+        #[arg(long)]
+        check: bool,
+    },
     /// List all available commands
     List,
     /// Display version information and the Toad banner

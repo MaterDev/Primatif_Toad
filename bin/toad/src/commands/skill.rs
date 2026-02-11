@@ -10,14 +10,12 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
     match subcommand {
         SkillCommand::Sync => {
             println!("{}", "--- SYNCHRONIZING AI SKILLS ---".green().bold());
+            
+            // 1. Generate Manifest & context.json (Internal Shadows)
+            crate::commands::manifest::handle(workspace, false, false)?;
+            
             let fingerprint = workspace.get_fingerprint()?;
             let projects = scan_all_projects(workspace)?;
-
-            // 1. Generate Manifest (Internal Shadow)
-            println!("Updating Semantic Manifest (Shadow)...");
-            let manifest_md = toad_manifest::generate_markdown(&projects, fingerprint);
-            workspace.ensure_shadows()?;
-            fs::write(workspace.manifest_path(), manifest_md)?;
 
             // 2. Generate Blueprint Skill
             println!("Generating Agnostic Architectural Blueprint...");

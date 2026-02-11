@@ -860,6 +860,7 @@ dependencies = [
  "tempfile",
  "toad-core",
  "toad-git",
+ "toad-ops",
 ]
 
 [[package]]

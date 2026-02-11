@@ -81,10 +81,10 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.0 Global Install** _Link:
       [./tracks/110-1-global-install/](./tracks/110-1-global-install/)_
 
-- [~] **Track: v1.1.0 Deep Extraction** _Link:
+- [x] **Track: v1.1.0 Deep Extraction** _Link:
       [./tracks/110-2-deep-extraction/](./tracks/110-2-deep-extraction/)_
 
-- [ ] **Track: v1.1.0 Integrity** _Link:
+- [~] **Track: v1.1.0 Integrity** _Link:
       [./tracks/110-3-integrity/](./tracks/110-3-integrity/)_
 
 - [ ] **Track: v1.1.0 Agent Interface** _Link:

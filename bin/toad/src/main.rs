@@ -10,6 +10,7 @@ mod commands;
 mod ui;
 
 use cli::{Cli, Commands};
+use commands::manifest;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -246,6 +247,9 @@ fn main() -> Result<()> {
         }
         Commands::Cw { subcommand } => {
             commands::cw::handle(subcommand)?;
+        }
+        Commands::Manifest { json, check } => {
+            commands::manifest::handle(&workspace, *json, *check)?;
         }
         Commands::List => {
             use clap::CommandFactory;
