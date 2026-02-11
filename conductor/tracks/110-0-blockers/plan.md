@@ -17,7 +17,7 @@
 
 ## Cross-Cutting Mandates
 
-- [ ] **M-1: Schema-First Contract**
-- [ ] **M-2: Layered Output Strategy**
-- [ ] **M-3: Idempotent Discovery**
-- [ ] **M-4: Data-Service Architecture**
+- [x] **M-1: Schema-First Contract**
+- [x] **M-2: Layered Output Strategy**
+- [x] **M-3: Idempotent Discovery**
+- [x] **M-4: Data-Service Architecture**

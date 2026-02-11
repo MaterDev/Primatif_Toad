@@ -10,6 +10,8 @@ pub fn handle(subcommand: &ProjectCommand) -> Result<()> {
         home_pointer: std::path::PathBuf::from("."),
         active_context: None,
         project_contexts: std::collections::HashMap::new(),
+        auto_sync: true,
+        budget: toad_core::ContextBudget::default(),
     });
 
     match subcommand {

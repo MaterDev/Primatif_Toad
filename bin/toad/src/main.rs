@@ -80,16 +80,68 @@ fn main() -> Result<()> {
             commands::create::handle(&workspace, name, *dry_run, *yes)?;
         }
         Commands::Reveal { query, tag } => {
-            commands::reveal::handle(&workspace, query.clone(), tag.clone())?;
+            let result = commands::reveal::handle(&workspace, query.clone(), tag.clone())?;
+            if cli.json {
+                println!("{}", serde_json::to_string_pretty(&result)?);
+            } else {
+                ui::format_search_results(&result);
+            }
         }
         Commands::Status { query, tag } => {
-            commands::status::handle(&workspace, query.clone(), tag.clone())?;
+            let result = commands::status::handle(&workspace, query.clone(), tag.clone())?;
+            if cli.json {
+                println!("{}", serde_json::to_string_pretty(&result)?);
+            } else {
+                ui::format_status_report(&result, query.as_deref(), tag.as_deref());
+            }
         }
         Commands::Stats { query, tag, all } => {
-            commands::stats::handle(&workspace, query.clone(), tag.clone(), *all)?;
+            let result = commands::stats::handle(&workspace, query.clone(), tag.clone(), *all)?;
+            if cli.json {
+                println!("{}", serde_json::to_string_pretty(&result)?);
+            } else {
+                ui::format_analytics_report(&result, query.as_deref(), tag.as_deref(), *all);
+            }
         }
         Commands::Home { path, yes } => {
-            commands::home::handle(discovered, path.clone(), *yes)?;
+            let result = commands::home::handle(discovered, path.clone(), *yes)?;
+            match result {
+                Some(report) if report.is_new && !report.already_registered => {
+                    // This means we need confirmation
+                    println!(
+                        "{} Path {:?} does not contain a '.toad-root' marker.",
+                        "WARNING:".yellow().bold(),
+                        report.path
+                    );
+                    print!("Initialize as a new Toad home? [y/N]: ");
+                    use std::io::{self, Write};
+                    io::stdout().flush()?;
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input)?;
+                    if input.trim().to_lowercase().starts_with('y') {
+                        // Re-run with yes=true
+                        let confirmed_result = commands::home::handle(
+                            toad_core::Workspace::discover(), // re-discover
+                            path.clone(),
+                            true,
+                        )?;
+                        if cli.json {
+                            println!("{}", serde_json::to_string_pretty(&confirmed_result)?);
+                        } else {
+                            ui::format_home_report(confirmed_result);
+                        }
+                    } else {
+                        println!("Aborted.");
+                    }
+                }
+                result => {
+                    if cli.json {
+                        println!("{}", serde_json::to_string_pretty(&result)?);
+                    } else {
+                        ui::format_home_report(result);
+                    }
+                }
+            }
         }
         Commands::Do {
             command,
@@ -147,7 +199,22 @@ fn main() -> Result<()> {
             commands::skill::handle(subcommand, &workspace)?;
         }
         Commands::Sync => {
-            commands::sync::handle(&workspace)?;
+            if cli.json {
+                let reporter = toad_core::NoOpReporter;
+                let count = commands::sync::handle(&workspace, &reporter)?;
+                println!(
+                    "{}",
+                    serde_json::json!({
+                        "status": "success",
+                        "projects_synchronized": count
+                    })
+                );
+            } else {
+                let reporter = ui::IndicatifReporter::spinner()?;
+                reporter.pb.set_message("Scanning projects...");
+                let count = commands::sync::handle(&workspace, &reporter)?;
+                ui::format_sync_report(count);
+            }
         }
         Commands::Strategy { subcommand } => {
             commands::strategy::handle(subcommand)?;

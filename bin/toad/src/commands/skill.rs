@@ -44,7 +44,7 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
                                 ("toad-cli".to_string(), cli_skill.clone()),
                             ];
                             let synced = toad_ops::workflow::distribute_skills(
-                                &workspace.root,
+                                &workspace.projects_dir,
                                 &ctx.ai_vendors,
                                 skills,
                             )?;
@@ -58,7 +58,7 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
             }
 
             if !distributed {
-                let blueprint_path = workspace.root.join("toad-blueprint.md");
+                let blueprint_path = workspace.projects_dir.join("toad-blueprint.md");
                 fs::write(&blueprint_path, &blueprint)?;
                 println!(
                     "{} Agnostic blueprint updated at root: {:?}",
@@ -66,7 +66,7 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
                     blueprint_path
                 );
 
-                let cli_path = workspace.root.join("toad-cli.md");
+                let cli_path = workspace.projects_dir.join("toad-cli.md");
                 fs::write(&cli_path, &cli_skill)?;
                 println!(
                     "{} CLI reference skill updated at root: {:?}",

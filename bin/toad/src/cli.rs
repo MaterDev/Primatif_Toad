@@ -8,6 +8,10 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
+
+    /// Output results as JSON
+    #[arg(long, global = true)]
+    pub json: bool,
 }
 
 #[derive(Subcommand)]

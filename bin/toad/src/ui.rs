@@ -1,13 +1,33 @@
 use colored::*;
-use indicatif::ProgressBar;
 use toad_core::{
     AnalyticsReport, BatchOperationReport, MultiRepoGitReport, MultiRepoStatusReport,
     ProgressReporter, SearchResult, StatusReport, VcsStatus,
 };
 use toad_ops::stats::format_size;
+use indicatif::{ProgressBar, ProgressStyle};
+use std::time::Duration;
 
 pub struct IndicatifReporter {
     pub pb: ProgressBar,
+}
+
+impl IndicatifReporter {
+    pub fn spinner() -> Result<Self, anyhow::Error> {
+        let pb = ProgressBar::new_spinner();
+        pb.set_style(
+            ProgressStyle::default_spinner().template("{spinner:.green} [{elapsed_precise}] {msg}")?,
+        );
+        pb.enable_steady_tick(Duration::from_millis(100));
+        Ok(Self { pb })
+    }
+}
+
+pub fn format_sync_report(count: usize) {
+    println!(
+        "{} Registry updated with {} projects.",
+        "SUCCESS:".green().bold(),
+        count
+    );
 }
 
 impl ProgressReporter for IndicatifReporter {
@@ -25,6 +45,36 @@ impl ProgressReporter for IndicatifReporter {
     }
     fn finish_with_message(&self, msg: &str) {
         self.pb.finish_with_message(msg.to_string());
+    }
+}
+
+use crate::commands::home::HomeReport;
+
+pub fn format_home_report(report: Option<HomeReport>) {
+    match report {
+        Some(r) => {
+            if r.already_registered {
+                println!(
+                    "{} Toad home is active at: {:?}",
+                    "ACTIVE:".green().bold(),
+                    r.path
+                );
+                println!("Context: {}", r.name.bold());
+            } else if r.is_new {
+                println!(
+                    "{} Initialized and registered new Toad home at: {:?}",
+                    "SUCCESS:".green().bold(),
+                    r.path
+                );
+            }
+        }
+        None => {
+            println!(
+                "{} No Toad home anchored.",
+                "ORPHANED:".red().bold()
+            );
+            println!("Use 'toad home <path>' to anchor this system.");
+        }
     }
 }
 

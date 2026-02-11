@@ -48,9 +48,9 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace) -> Result<()> {
 
                 if submodule_changed
                     && !submodule_failed
-                    && toad_git::commit::is_dirty(&workspace.root)?
+                    && toad_git::commit::is_dirty(&workspace.projects_dir)?
                 {
-                    let res = toad_git::commit::commit(&workspace.root, message, "Hub Root")?;
+                    let res = toad_git::commit::commit(&workspace.projects_dir, message, "Hub Root")?;
                     report.results.push(res);
                 }
             }
@@ -117,7 +117,7 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace) -> Result<()> {
                 results.push(res);
 
                 for sub in p.submodules {
-                    let sub_path = workspace.root.join(&sub.path);
+                    let sub_path = workspace.projects_dir.join(&sub.path);
                     println!(
                         "Checking out {} in submodule: {}...",
                         branch.cyan(),
@@ -170,7 +170,7 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace) -> Result<()> {
                 preflight_results.push(res);
 
                 for sub in &p.submodules {
-                    let sub_path = workspace.root.join(&sub.path);
+                    let sub_path = workspace.projects_dir.join(&sub.path);
                     let sub_res = toad_git::sync::preflight_check(
                         &sub_path,
                         &format!("{} > {}", p.name, sub.name),
@@ -269,7 +269,7 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace) -> Result<()> {
                 }
 
                 for sub in p.submodules {
-                    let sub_path = workspace.root.join(&sub.path);
+                    let sub_path = workspace.projects_dir.join(&sub.path);
                     let sub_branch =
                         toad_git::branch::current_branch(&sub_path).unwrap_or_default();
                     println!(
