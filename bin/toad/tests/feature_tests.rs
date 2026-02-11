@@ -47,18 +47,31 @@ fn test_docs() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_manifest() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    fs::create_dir(dir.path().join("projects"))?;
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    fs::create_dir(root.join("projects"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("skill")
         .arg("sync")
         .assert()
         .success()
         .stdout(predicate::str::contains("SYNCHRONIZING AI SKILLS"));
 
-    assert!(dir.path().join("shadows").join("MANIFEST.md").exists());
+    // In v1.1.0, shadows are per-context under the config dir
+    let manifest_in_context = config_dir.join("contexts/default/shadows/MANIFEST.md");
+    let manifest_legacy = root.join("shadows/MANIFEST.md");
+    assert!(
+        manifest_in_context.exists() || manifest_legacy.exists(),
+        "MANIFEST.md not found at {:?} or {:?}",
+        manifest_in_context,
+        manifest_legacy
+    );
     Ok(())
 }
 

@@ -6,14 +6,19 @@ use tempfile::tempdir;
 #[test]
 fn test_do_dry_run_ish() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("proj-a"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
     // Use -y to skip confirmation
-    cmd.current_dir(dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("do")
         .arg("echo 'running'")
         .arg("-q")
@@ -29,8 +34,11 @@ fn test_do_dry_run_ish() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_do_multiple_parallel() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
 
     for i in 0..10 {
@@ -38,7 +46,9 @@ fn test_do_multiple_parallel() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("do")
         .arg("echo 'hi'")
         .arg("-q")
@@ -53,15 +63,19 @@ fn test_do_multiple_parallel() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_do_destructive_abort() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("proj-danger"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
     // This command contains a destructive pattern but we won't provide 'PROCEED'
-    cmd.current_dir(dir.path())
-        .env("TOAD_ROOT", dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("do")
         .arg("rm -rf /")
         .arg("-q")
@@ -77,15 +91,19 @@ fn test_do_destructive_abort() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_do_fail_fast() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("proj-1"))?;
     fs::create_dir(projects_dir.join("proj-2"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
-        .env("TOAD_ROOT", dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("do")
         .arg("false") // Will fail
         .arg("-q")
@@ -102,16 +120,12 @@ fn test_do_fail_fast() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_clean_dry_run() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
-
-    // Setup strategies
-    let config_dir = dir.path().join(".toad");
-    fs::create_dir_all(config_dir.join("strategies/builtin"))?;
-    toad_core::strategy::StrategyRegistry::install_defaults(
-        &config_dir.join("strategies/builtin"),
-    )?;
 
     let proj_path = projects_dir.join("test-clean");
     fs::create_dir(&proj_path)?;
@@ -121,8 +135,9 @@ fn test_clean_dry_run() -> Result<(), Box<dyn std::error::Error>> {
     fs::write(target_dir.join("junk"), "0".repeat(100))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
-        .env("TOAD_ROOT", dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
+        .env("TOAD_ROOT", &root)
         .arg("clean")
         .arg("--dry-run")
         .arg("-y")
@@ -141,16 +156,12 @@ fn test_clean_dry_run() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_clean_activity_tier() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
-
-    // Setup strategies
-    let config_dir = dir.path().join(".toad");
-    fs::create_dir_all(config_dir.join("strategies/builtin"))?;
-    toad_core::strategy::StrategyRegistry::install_defaults(
-        &config_dir.join("strategies/builtin"),
-    )?;
 
     // 1. Active project (newly created)
     let active_path = projects_dir.join("active-proj");
@@ -169,8 +180,9 @@ fn test_clean_activity_tier() -> Result<(), Box<dyn std::error::Error>> {
 
     // Clean only cold projects
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
-        .env("TOAD_ROOT", dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
+        .env("TOAD_ROOT", &root)
         .arg("clean")
         .arg("--tier")
         .arg("cold")
@@ -187,16 +199,12 @@ fn test_clean_activity_tier() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_clean_real_execution() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
-
-    // Setup strategies
-    let config_dir = dir.path().join(".toad");
-    fs::create_dir_all(config_dir.join("strategies/builtin"))?;
-    toad_core::strategy::StrategyRegistry::install_defaults(
-        &config_dir.join("strategies/builtin"),
-    )?;
 
     let proj_path = projects_dir.join("test-clean-real");
     fs::create_dir(&proj_path)?;
@@ -206,8 +214,9 @@ fn test_clean_real_execution() -> Result<(), Box<dyn std::error::Error>> {
     fs::write(target_dir.join("artifact"), "data")?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
-        .env("TOAD_ROOT", dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
+        .env("TOAD_ROOT", &root)
         .arg("clean")
         .arg("-y") // Skip confirmation
         .assert()
@@ -222,8 +231,11 @@ fn test_clean_real_execution() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_stats_basic() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
 
     let proj_path = projects_dir.join("test-stats");
@@ -232,7 +244,9 @@ fn test_stats_basic() -> Result<(), Box<dyn std::error::Error>> {
     fs::write(proj_path.join("main.rs"), "0".repeat(100))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("stats")
         .assert()
         .success()
@@ -244,14 +258,18 @@ fn test_stats_basic() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_stats_all() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("stats-proj"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
-        .env("TOAD_ROOT", dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("stats")
         .arg("--all")
         .assert()

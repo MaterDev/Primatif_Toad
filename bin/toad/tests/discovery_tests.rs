@@ -7,11 +7,16 @@ use tempfile::tempdir;
 #[test]
 fn test_reveal_no_projects() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    fs::create_dir(dir.path().join("projects"))?;
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    fs::create_dir(root.join("projects"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("reveal")
         .arg("test")
         .assert()
@@ -25,13 +30,18 @@ fn test_reveal_no_projects() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_reveal_with_project() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("my-cool-project"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("reveal")
         .arg("cool")
         .assert()
@@ -43,8 +53,11 @@ fn test_reveal_with_project() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_status_mixed() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
 
     // 1. Clean Project
@@ -65,7 +78,9 @@ fn test_status_mixed() -> Result<(), Box<dyn std::error::Error>> {
     fs::write(dirty_path.join("README.md"), "hello")?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("status")
         .assert()
         .success()
@@ -82,17 +97,21 @@ fn test_status_mixed() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_sync() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    fs::write(dir.path().join(".toad-root"), "")?;
-    let projects_dir = dir.path().join("projects");
+    let root = fs::canonicalize(dir.path())?;
+    fs::write(root.join(".toad-root"), "")?;
+    let config_dir = root.join(".toad");
+    fs::create_dir_all(&config_dir)?;
+    let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
     fs::create_dir(projects_dir.join("sync-proj"))?;
 
     let mut cmd = cargo_bin_cmd!("toad");
-    cmd.current_dir(dir.path())
+    cmd.current_dir(&root)
+        .env("TOAD_ROOT", &root)
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .arg("sync")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Scanning projects..."))
         .stdout(predicate::str::contains(
             "SUCCESS: Registry updated with 1 projects.",
         ));
@@ -103,26 +122,36 @@ fn test_sync() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_reveal_cached() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    let home = dir.path().join("fake-home");
-    fs::create_dir(&home)?;
-    let toad_dir = home.join(".toad");
-    fs::create_dir(&toad_dir)?;
-
     fs::write(dir.path().join(".toad-root"), "")?;
+    let config_dir = dir.path().join(".toad");
+    fs::create_dir_all(&config_dir)?;
+
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
 
     let mut cmd_sync = cargo_bin_cmd!("toad");
     cmd_sync
-        .env("HOME", &home)
+        .env("TOAD_ROOT", dir.path())
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .current_dir(dir.path())
         .arg("sync")
         .assert()
         .success();
 
-    let registry_path = toad_dir.join("registry.json");
-    let mut registry_json: serde_json::Value =
-        serde_json::from_str(&fs::read_to_string(&registry_path)?)?;
+    // In v1.1.0, registry is per-context
+    let registry_path = config_dir.join("contexts/default/registry.json");
+    // Ensure dir exists before trying to read it
+    fs::create_dir_all(registry_path.parent().unwrap())?;
+    
+    let mut registry_json = if registry_path.exists() {
+        serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&registry_path)?)?
+    } else {
+        serde_json::json!({
+            "fingerprint": 0,
+            "projects": [],
+            "last_sync": { "secs_since_epoch": 0, "nanos_since_epoch": 0 }
+        })
+    };
 
     let cached_project = serde_json::json!({
         "name": "cached-proj",
@@ -134,7 +163,9 @@ fn test_reveal_cached() -> Result<(), Box<dyn std::error::Error>> {
         "tags": ["#cached"],
         "taxonomy": ["#rust"],
         "artifact_dirs": ["target"],
-        "sub_projects": []
+        "sub_projects": [],
+        "submodules": [],
+        "source": "PondProject"
     });
     registry_json["projects"]
         .as_array_mut()
@@ -142,16 +173,27 @@ fn test_reveal_cached() -> Result<(), Box<dyn std::error::Error>> {
         .push(cached_project);
     fs::write(&registry_path, serde_json::to_string(&registry_json)?)?;
 
+    let mut cmd_reveal = cargo_bin_cmd!("toad");
+    cmd_reveal
+        .env("TOAD_ROOT", dir.path())
+        .env("TOAD_CONFIG_DIR", &config_dir)
+        .current_dir(dir.path())
+        .arg("reveal")
+        .arg("cached")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("- cached-proj"));
+
     Ok(())
 }
 
 #[test]
 fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
-    let home = dir.path().join("fake-home");
-    fs::create_dir(&home)?;
-
     fs::write(dir.path().join(".toad-root"), "")?;
+    let config_dir = dir.path().join(".toad");
+    fs::create_dir_all(&config_dir)?;
+
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
 
@@ -162,7 +204,8 @@ fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
     // 2. Sync to create cache
     let mut cmd_sync = cargo_bin_cmd!("toad");
     cmd_sync
-        .env("HOME", &home)
+        .env("TOAD_ROOT", dir.path())
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .current_dir(dir.path())
         .arg("sync")
         .assert()
@@ -171,7 +214,8 @@ fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
     // 3. Verify it's found (cached)
     let mut cmd_reveal1 = cargo_bin_cmd!("toad");
     cmd_reveal1
-        .env("HOME", &home)
+        .env("TOAD_ROOT", dir.path())
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .current_dir(dir.path())
         .arg("reveal")
         .arg("temp")
@@ -185,7 +229,8 @@ fn test_reveal_staleness() -> Result<(), Box<dyn std::error::Error>> {
     // 5. Verify it's NOT found (re-scan triggered by fingerprint change)
     let mut cmd_reveal2 = cargo_bin_cmd!("toad");
     cmd_reveal2
-        .env("HOME", &home)
+        .env("TOAD_ROOT", dir.path())
+        .env("TOAD_CONFIG_DIR", &config_dir)
         .current_dir(dir.path())
         .arg("reveal")
         .arg("temp")

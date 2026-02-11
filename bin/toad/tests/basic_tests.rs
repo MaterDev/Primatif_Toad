@@ -18,11 +18,11 @@ fn test_list() {
     cmd.arg("list")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Usage: toad <COMMAND>"));
+        .stdout(predicate::str::contains("Usage: toad [OPTIONS] <COMMAND>"));
 }
 
 #[test]
-fn test_error_no_workspace() {
+fn test_uninitialized_behavior() {
     let dir = tempdir().unwrap();
     // No .toad-root marker here
 
@@ -33,10 +33,8 @@ fn test_error_no_workspace() {
         .env_remove("TOAD_CONFIG_DIR")
         .arg("status")
         .assert()
-        .success() // Should print error message and exit cleanly (Ok(()))
-        .stdout(predicate::str::contains(
-            "ERROR: Workspace not found. Use 'toad home <path>' to anchor a directory.",
-        ));
+        .success() // Should succeed now (zero-config)
+        .stdout(predicate::str::contains("--- ECOSYSTEM HEALTH SCAN ---"));
 }
 
 #[test]
@@ -69,6 +67,9 @@ fn test_stale_context_warning() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut cmd = cargo_bin_cmd!("toad");
     cmd.current_dir(dir.path())
+        .env_remove("TOAD_CONFIG_DIR")
+        .env("HOME", dir.path()) // Ensure it doesn't find real ~/.toad
+        .env("TOAD_ROOT", dir.path())
         .arg("version")
         .assert()
         .success()
