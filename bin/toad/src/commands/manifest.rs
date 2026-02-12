@@ -1,33 +1,17 @@
 use anyhow::Result;
 use colored::*;
 use std::fs;
-use toad_core::Workspace;
+use toad_core::{ToadError, Workspace};
 
-pub fn handle(workspace: &Workspace, json_flag: bool, check: bool, quiet: bool) -> Result<()> {
+pub fn handle(workspace: &Workspace, json_flag: bool, check: bool, quiet: bool, project_filter: Option<&str>) -> Result<()> {
     let current_fp = workspace.get_fingerprint()?;
-    
-    // Check staleness logic
-    let mut stored_fp = 0;
-    let manifest_path = workspace.manifest_path();
-    if manifest_path.exists() {
-        if let Ok(content) = fs::read_to_string(&manifest_path) {
-            if let Some(line) = content.lines().find(|l| l.contains("**Fingerprint:**")) {
-                stored_fp = line
-                    .split('`')
-                    .nth(1)
-                    .unwrap_or_default()
-                    .parse::<u64>()
-                    .unwrap_or_default();
-            }
-        }
-    }
+    let stored_fp = workspace.stored_fingerprint();
 
     let is_stale = current_fp != stored_fp;
 
     if check {
         if is_stale {
-            println!("{} Context is stale. (Stored: {}, Current: {})", "STALE:".yellow().bold(), stored_fp, current_fp);
-            std::process::exit(1);
+            return Err(ToadError::Discovery(format!("Context is stale. (Stored: {}, Current: {})", stored_fp, current_fp)).into());
         } else {
             if !quiet {
                 println!("{} Context is up to date.", "FRESH:".green().bold());
@@ -48,10 +32,20 @@ pub fn handle(workspace: &Workspace, json_flag: bool, check: bool, quiet: bool) 
     
     // Load the projects we just saved
     let registry = toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)?;
-    let projects = &registry.projects;
+    
+    let projects: Vec<_> = registry.projects.iter()
+        .filter(|p| {
+            if let Some(f) = project_filter {
+                p.name.to_lowercase().contains(&f.to_lowercase())
+            } else {
+                true
+            }
+        })
+        .cloned()
+        .collect();
     
     // 1. Save Markdown Manifest
-    let manifest_md = toad_manifest::generate_markdown(projects, current_fp, Some(config.budget.ecosystem_tokens));
+    let manifest_md = toad_manifest::generate_markdown(&projects, current_fp, Some(config.budget.ecosystem_tokens));
     workspace.ensure_shadows()?;
     fs::write(workspace.manifest_path(), manifest_md)?;
 
@@ -65,15 +59,15 @@ pub fn handle(workspace: &Workspace, json_flag: bool, check: bool, quiet: bool) 
     }
 
     // SYSTEM_PROMPT.md
-    let system_prompt = toad_manifest::generate_system_prompt(projects, Some(config.budget.ecosystem_tokens));
+    let system_prompt = toad_manifest::generate_system_prompt(&projects, Some(config.budget.ecosystem_tokens));
     fs::write(workspace.shadows_dir.join("SYSTEM_PROMPT.md"), system_prompt)?;
 
     // llms.txt
-    let llms_txt = toad_manifest::generate_llms_txt(projects);
+    let llms_txt = toad_manifest::generate_llms_txt(&projects);
     fs::write(workspace.shadows_dir.join("llms.txt"), llms_txt)?;
 
     // Per-project files
-    for p in projects {
+    for p in &projects {
         let proj_shadow_dir = workspace.shadows_dir.join(&p.name);
         fs::create_dir_all(&proj_shadow_dir)?;
 
@@ -81,8 +75,8 @@ pub fn handle(workspace: &Workspace, json_flag: bool, check: bool, quiet: bool) 
         let agents_md = toad_manifest::generate_agents_md(p);
         fs::write(proj_shadow_dir.join("AGENTS.md"), agents_md)?;
 
-        // CONTEXT.md (Current: project-specific manifest view)
-        let context_md = toad_manifest::generate_markdown(&[p.clone()], current_fp, Some(config.budget.project_tokens));
+        // CONTEXT.md (Project-level deep dive)
+        let context_md = toad_manifest::generate_project_context_md(p, Some(config.budget.project_tokens));
         fs::write(proj_shadow_dir.join("CONTEXT.md"), context_md)?;
     }
 

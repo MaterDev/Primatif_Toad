@@ -12,7 +12,7 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
             println!("{}", "--- SYNCHRONIZING AI SKILLS ---".green().bold());
             
             // 1. Generate Manifest & context.json (Internal Shadows)
-            crate::commands::manifest::handle(workspace, false, false, false)?;
+            crate::commands::manifest::handle(workspace, false, false, false, None)?;
             
             let config = GlobalConfig::load(None)?.unwrap_or_default();
             let projects = scan_all_projects(workspace)?;

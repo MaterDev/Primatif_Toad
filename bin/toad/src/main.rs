@@ -1,7 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
 use colored::*;
-use std::fs;
 use std::path::PathBuf;
 use toad_core::Workspace;
 
@@ -53,20 +52,7 @@ fn main() -> Result<()> {
 
     // --- Context Health Check & Auto-Sync ---
     let is_manifest_cmd = matches!(&cli.command, Commands::Manifest { .. });
-    let manifest_path = workspace.manifest_path();
-    let mut stored_fp = 0;
-    if manifest_path.exists() {
-        if let Ok(content) = fs::read_to_string(&manifest_path) {
-            if let Some(line) = content.lines().find(|l| l.contains("**Fingerprint:**")) {
-                stored_fp = line
-                    .split('`')
-                    .nth(1)
-                    .unwrap_or_default()
-                    .parse::<u64>()
-                    .unwrap_or_default();
-            }
-        }
-    }
+    let stored_fp = workspace.stored_fingerprint();
 
     if let Ok(current_fp) = workspace.get_fingerprint() {
         if current_fp != stored_fp && !is_manifest_cmd && !is_bootstrap {
@@ -83,7 +69,7 @@ fn main() -> Result<()> {
                         "INFO:".blue().bold()
                     );
                 }
-                commands::manifest::handle(&workspace, false, false, true)?;
+                commands::manifest::handle(&workspace, false, false, true, None)?;
                 if !cli.json {
                     println!("{} Context synchronized.", "SUCCESS:".green().bold());
                 }
@@ -167,19 +153,125 @@ fn main() -> Result<()> {
             dry_run,
             fail_fast,
         } => {
-            commands::do_cmd::handle(
-                &workspace,
-                command.clone(),
-                query.clone(),
-                tag.clone(),
-                *yes,
-                *dry_run,
-                *fail_fast,
-            )?;
+            if !cli.json {
+                println!("{}", "--- BATCH OPERATION PREFLIGHT ---".blue().bold());
+            }
+
+            let projects = commands::utils::resolve_projects(&workspace)?;
+            let targets = commands::utils::filter_projects(projects, Some(query.as_str()), tag.as_deref());
+
+            if targets.is_empty() {
+                if cli.json {
+                    println!("{}", serde_json::json!({ "status": "error", "message": format!("No projects found matching '{}'", query) }));
+                } else {
+                    println!("No projects found matching '{}'.", query);
+                }
+                return Ok(());
+            }
+
+            if !cli.json {
+                println!("Found {} target(s):", targets.len());
+                for project in &targets {
+                    let path_display = if *dry_run {
+                        format!(" ({:?})", project.path)
+                    } else {
+                        String::new()
+                    };
+                    let tags_display = if project.tags.is_empty() {
+                        String::new()
+                    } else {
+                        format!(" {}", project.tags.join(" ").dimmed())
+                    };
+                    println!(
+                        "  {} {}{}{}",
+                        "»".blue(),
+                        project.name,
+                        tags_display,
+                        path_display
+                    );
+                }
+                println!("\nCommand: {}", command.yellow().bold());
+            }
+
+            // --- Safety Guardrails ---
+            let mut mismatched = Vec::new();
+            for p in &targets {
+                if toad_ops::safety::is_stack_mismatch(command, &p.stack) {
+                    mismatched.push(p.name.clone());
+                }
+            }
+
+            if !*yes && !*dry_run {
+                use std::io::{self, Write};
+                if !mismatched.is_empty() {
+                    println!(
+                        "\n{} Command stack mismatch detected for: {}",
+                        "WARNING:".yellow().bold(),
+                        mismatched.join(", ").cyan()
+                    );
+                    println!("You are running a stack-specific command on projects that don't match.");
+                    print!("Please type 'PROCEED' to confirm: ");
+                    io::stdout().flush()?;
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input)?;
+                    if input.trim() != "PROCEED" {
+                        println!("Aborted.");
+                        return Ok(());
+                    }
+                } else if toad_ops::safety::is_destructive(command) {
+                    println!(
+                        "\n{} This command is potentially {}",
+                        "WARNING:".yellow().bold(),
+                        "DESTRUCTIVE".red().bold()
+                    );
+                    print!("Please type 'PROCEED' to confirm: ");
+                    io::stdout().flush()?;
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input)?;
+                    if input.trim() != "PROCEED" {
+                        println!("Aborted.");
+                        return Ok(());
+                    }
+                } else {
+                    print!("\nExecute on {} projects? [y/N]: ", targets.len());
+                    io::stdout().flush()?;
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input)?;
+                    if !input.trim().to_lowercase().starts_with('y') {
+                        println!("Aborted.");
+                        return Ok(());
+                    }
+                }
+            }
+
+            if *dry_run {
+                if !cli.json {
+                    println!("\n{}", "--- DRY RUN COMPLETE ---".green().bold());
+                } else {
+                    println!("{}", serde_json::json!({ "status": "dry_run", "targets": targets.len() }));
+                }
+                return Ok(());
+            }
+
+            if !cli.json {
+                println!("\n{}", "--- EXECUTING BATCH ---".blue().bold());
+            }
+
+            let report = toad_ops::execute_batch_operation(&targets, command, *fail_fast);
+            
+            if cli.json {
+                println!("{}", serde_json::to_string_pretty(&report)?);
+            } else {
+                ui::format_batch_report(&report);
+            }
+
             // Post-mutation auto-sync
             if !dry_run && !cli.no_sync {
-                commands::manifest::handle(&workspace, false, false, true)?;
+                commands::manifest::handle(&workspace, false, false, true, None)?;
             }
+
+            // Audit Log
+            let _ = commands::do_cmd::log_audit(targets.len(), command.clone(), &report);
         }
         Commands::Tag {
             project,
@@ -199,7 +291,7 @@ fn main() -> Result<()> {
                 *yes,
             )?;
             if !cli.no_sync {
-                commands::manifest::handle(&workspace, false, false, true)?;
+                commands::manifest::handle(&workspace, false, false, true, None)?;
             }
         }
         Commands::Untag {
@@ -218,7 +310,7 @@ fn main() -> Result<()> {
                 *yes,
             )?;
             if !cli.no_sync {
-                commands::manifest::handle(&workspace, false, false, true)?;
+                commands::manifest::handle(&workspace, false, false, true, None)?;
             }
         }
         Commands::Skill { subcommand } => {
@@ -252,16 +344,117 @@ fn main() -> Result<()> {
             yes,
             dry_run,
         } => {
-            commands::clean::handle(
-                &workspace,
-                query.clone(),
-                tag.clone(),
-                tier.clone(),
-                *yes,
-                *dry_run,
-            )?;
+            if !cli.json {
+                println!("{}", "--- 🌊 POND HYGIENE PRE-FLIGHT ---".blue().bold());
+            }
+
+            // For pre-flight, we need to calculate potential savings
+            let projects = commands::utils::resolve_projects(&workspace)?;
+            let targets = commands::utils::filter_projects(projects, query.as_deref(), tag.as_deref());
+            let targets: Vec<_> = targets.into_iter().filter(|p| {
+                let tier_match = match tier {
+                    Some(ref tr) => {
+                        let tier_str = p.activity.to_string().to_lowercase();
+                        tier_str.contains(&tr.to_lowercase())
+                    }
+                    None => true,
+                };
+                tier_match && !p.artifact_dirs.is_empty()
+            }).collect();
+
+            if targets.is_empty() {
+                if cli.json {
+                    println!("{}", serde_json::json!({ "status": "error", "message": "No projects found matching filters with artifacts to clean" }));
+                } else {
+                    println!("No projects found matching filters with artifacts to clean.");
+                }
+                return Ok(());
+            }
+
+            if !cli.json {
+                println!("Found {} project(s) to clean:", targets.len());
+                let mut total_potential_savings = 0;
+
+                for project in &targets {
+                    let artifact_set: std::collections::HashSet<&str> =
+                        project.artifact_dirs.iter().map(|s| s.as_str()).collect();
+                    let stats = toad_ops::stats::calculate_project_stats(&project.path, &artifact_set);
+                    total_potential_savings += stats.artifact_bytes;
+
+                    println!(
+                        "  {} {} ({}) -> {}",
+                        "»".blue(),
+                        project.name.bold(),
+                        project.stack.dimmed(),
+                        toad_ops::stats::format_size(stats.artifact_bytes).yellow()
+                    );
+                }
+
+                println!(
+                    "\n{} Potential Savings: {}",
+                    "🌿".green(),
+                    toad_ops::stats::format_size(total_potential_savings).bold().green()
+                );
+            }
+
+            if !*yes && !*dry_run {
+                use std::io::{self, Write};
+                print!("\nProceed with cleaning? [y/N]: ");
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted.");
+                    return Ok(());
+                }
+            }
+
+            if *dry_run {
+                if !cli.json {
+                    println!("\n{}", "--- 🌊 DRY RUN COMPLETE ---".green().bold());
+                } else {
+                    println!("{}", serde_json::json!({ "status": "dry_run", "targets": targets.len() }));
+                }
+                return Ok(());
+            }
+
+            let report = if cli.json {
+                let reporter = toad_core::NoOpReporter;
+                commands::clean::handle(
+                    &workspace,
+                    query.clone(),
+                    tag.clone(),
+                    tier.clone(),
+                    &reporter,
+                )?
+            } else {
+                println!("\n{}", "--- 🧹 CLEANING POND ---".blue().bold());
+                let pb = indicatif::ProgressBar::new(targets.len() as u64);
+                pb.set_style(
+                    indicatif::ProgressStyle::default_bar()
+                        .template(
+                            "{spinner:.green} [{elapsed_precise}] [{bar:40.green/black}] {pos}/{len} ({eta})",
+                        )?
+                        .progress_chars("■-"),
+                );
+                let reporter = ui::IndicatifReporter { pb };
+                commands::clean::handle(
+                    &workspace,
+                    query.clone(),
+                    tag.clone(),
+                    tier.clone(),
+                    &reporter,
+                )?
+            };
+
+            if cli.json {
+                println!("{}", serde_json::to_string_pretty(&report.1)?);
+            } else {
+                ui::format_clean_report(&report.1);
+            }
+
             if !dry_run && !cli.no_sync {
-                commands::manifest::handle(&workspace, false, false, true)?;
+                commands::manifest::handle(&workspace, false, false, true, None)?;
             }
         }
         Commands::Docs => {
@@ -277,10 +470,10 @@ fn main() -> Result<()> {
             commands::cw::handle(subcommand)?;
         }
         Commands::Manifest { json, check } => {
-            commands::manifest::handle(&workspace, *json, *check, false)?;
+            commands::manifest::handle(&workspace, *json, *check, false, None)?;
         }
-        Commands::InitContext { force } => {
-            commands::init_context::handle(&workspace, *force)?;
+        Commands::InitContext { force, dry_run, project, no_sync } => {
+            commands::init_context::handle(&workspace, *force, *dry_run, project.clone(), *no_sync)?;
         }
         Commands::List => {
             use clap::CommandFactory;

@@ -205,6 +205,18 @@ pub enum Commands {
         /// Force full re-scan
         #[arg(long, short = 'f')]
         force: bool,
+
+        /// Simulate the action without writing files
+        #[arg(long, short = 'd')]
+        dry_run: bool,
+
+        /// Initialize only for a specific project
+        #[arg(long, short = 'p')]
+        project: Option<String>,
+
+        /// Skip registry synchronization
+        #[arg(long)]
+        no_sync: bool,
     },
     /// List all available commands
     List,

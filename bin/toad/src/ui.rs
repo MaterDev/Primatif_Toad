@@ -1,7 +1,7 @@
 use colored::*;
 use toad_core::{
-    AnalyticsReport, BatchOperationReport, MultiRepoGitReport, MultiRepoStatusReport,
-    ProgressReporter, SearchResult, StatusReport, VcsStatus,
+    AnalyticsReport, BatchCleanReport, BatchOperationReport, MultiRepoGitReport,
+    MultiRepoStatusReport, ProgressReporter, SearchResult, StatusReport, VcsStatus,
 };
 use toad_ops::stats::format_size;
 use indicatif::{ProgressBar, ProgressStyle};
@@ -27,6 +27,38 @@ pub fn format_sync_report(count: usize) {
         "{} Registry updated with {} projects.",
         "SUCCESS:".green().bold(),
         count
+    );
+}
+
+pub fn format_clean_report(report: &BatchCleanReport) {
+    for (name, outcome) in &report.results {
+        match outcome {
+            Ok(res) => {
+                if !res.errors.is_empty() {
+                    println!("{} Issues cleaning {}:", "WARNING:".yellow(), name);
+                    for err in &res.errors {
+                        println!("  - {}", err.red());
+                    }
+                }
+            }
+            Err(e) => {
+                println!("{} Critical error cleaning {}: {}", "ERROR:".red(), name, e);
+            }
+        }
+    }
+
+    println!("\n{}", "--- CLEANING COMPLETE ---".blue().bold());
+    println!(
+        "{} {} Succeeded | {} {} Failed",
+        "■".green(),
+        report.success_count,
+        "■".red(),
+        report.fail_count
+    );
+    println!(
+        "{} Total Reclaimed: {}",
+        "🌿".green(),
+        format_size(report.total_reclaimed).bold().green()
     );
 }
 
@@ -168,30 +200,13 @@ pub fn format_search_results(results: &SearchResult) {
 
 pub fn format_analytics_report(
     report: &AnalyticsReport,
-    query: Option<&str>,
-    tag: Option<&str>,
+    _query: Option<&str>,
+    _tag: Option<&str>,
     all: bool,
 ) {
     println!("{}", "--- ECOSYSTEM ANALYTICS ---".green().bold());
 
-    let filtered_offenders: Vec<_> = report
-        .offenders
-        .iter()
-        .filter(|p| {
-            if let Some(q) = query {
-                if !p.name.to_lowercase().contains(&q.to_lowercase()) {
-                    return false;
-                }
-            }
-            // Note: ProjectAnalytics model doesn't store tags yet,
-            // so display-layer tag filtering is a placeholder/no-op for now
-            // but we keep the parameter for signature consistency.
-            let _ = tag;
-            true
-        })
-        .collect();
-
-    if filtered_offenders.is_empty() {
+    if report.offenders.is_empty() {
         println!("No projects found matching filters.");
         return;
     }
@@ -203,15 +218,15 @@ pub fn format_analytics_report(
         format_size(report.total_artifacts).dimmed()
     );
 
-    let limit = if all { filtered_offenders.len() } else { 10 };
-    let display_count = std::cmp::min(filtered_offenders.len(), limit);
+    let limit = if all { report.offenders.len() } else { 10 };
+    let display_count = std::cmp::min(report.offenders.len(), limit);
 
     println!(
         "\n{}",
         format!("TOP {} OFFENDERS", display_count).yellow().bold()
     );
 
-    for p in filtered_offenders.iter().take(display_count) {
+    for p in report.offenders.iter().take(display_count) {
         let size_str = format_size(p.total_size);
 
         let color_size = if p.total_size > 1024 * 1024 * 1024 {
@@ -242,35 +257,16 @@ pub fn format_analytics_report(
     }
 }
 
-pub fn format_status_report(report: &StatusReport, query: Option<&str>, tag: Option<&str>) {
+pub fn format_status_report(report: &StatusReport, _query: Option<&str>, _tag: Option<&str>) {
     println!("{}", "--- ECOSYSTEM HEALTH SCAN ---".green().bold());
 
     let mut dirty = Vec::new();
     let mut untracked = Vec::new();
     let mut clean_count = 0;
     let mut no_repo_count = 0;
-    let mut total_matching = 0;
+    let total_matching = report.projects.len();
 
     for p in &report.projects {
-        if let Some(q) = query {
-            if !p.name.to_lowercase().contains(&q.to_lowercase()) {
-                continue;
-            }
-        }
-
-        if let Some(t) = tag {
-            let target = if t.starts_with('#') {
-                t.to_string()
-            } else {
-                format!("#{}", t)
-            };
-            // Note: ProjectStatus model doesn't store tags yet,
-            // so we skip the filtering here but keep the parameter.
-            let _ = target;
-        }
-
-        total_matching += 1;
-
         match p.vcs_status {
             VcsStatus::Dirty => dirty.push(p.name.clone()),
             VcsStatus::Untracked => untracked.push(p.name.clone()),
