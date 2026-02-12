@@ -70,7 +70,8 @@ fn test_stale_context_warning() -> Result<(), Box<dyn std::error::Error>> {
         .env_remove("TOAD_CONFIG_DIR")
         .env("HOME", dir.path()) // Ensure it doesn't find real ~/.toad
         .env("TOAD_ROOT", dir.path())
-        .arg("version")
+        .arg("--no-sync")
+        .arg("status")
         .assert()
         .success()
         .stdout(predicate::str::contains("Context is stale"));

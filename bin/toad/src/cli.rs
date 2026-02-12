@@ -12,6 +12,10 @@ pub struct Cli {
     /// Output results as JSON
     #[arg(long, global = true)]
     pub json: bool,
+
+    /// Skip automatic context synchronization
+    #[arg(long, global = true)]
+    pub no_sync: bool,
 }
 
 #[derive(Subcommand)]
@@ -195,6 +199,12 @@ pub enum Commands {
         /// Only check for staleness and exit
         #[arg(long)]
         check: bool,
+    },
+    /// Initialize full context (sync, manifest, tiered prompts)
+    InitContext {
+        /// Force full re-scan
+        #[arg(long, short = 'f')]
+        force: bool,
     },
     /// List all available commands
     List,

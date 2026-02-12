@@ -84,13 +84,13 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.0 Deep Extraction** _Link:
       [./tracks/110-2-deep-extraction/](./tracks/110-2-deep-extraction/)_
 
-- [~] **Track: v1.1.0 Integrity** _Link:
+- [x] **Track: v1.1.0 Integrity** _Link:
       [./tracks/110-3-integrity/](./tracks/110-3-integrity/)_
 
-- [ ] **Track: v1.1.0 Agent Interface** _Link:
+- [x] **Track: v1.1.0 Agent Interface** _Link:
       [./tracks/110-4-agent-interface/](./tracks/110-4-agent-interface/)_
 
-- [ ] **Track: v1.1.0 MCP Server** _Link:
+- [~] **Track: v1.1.0 MCP Server** _Link:
       [./tracks/110-5-mcp-server/](./tracks/110-5-mcp-server/)_
 
 - [ ] **Track: v1.1.0 Pattern Intel** _Link:

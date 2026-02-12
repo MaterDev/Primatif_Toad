@@ -1,10 +1,9 @@
 use anyhow::Result;
 use colored::*;
 use std::fs;
-use toad_core::{ProjectRegistry, Workspace};
-use toad_discovery::scan_all_projects;
+use toad_core::Workspace;
 
-pub fn handle(workspace: &Workspace, json_flag: bool, check: bool) -> Result<()> {
+pub fn handle(workspace: &Workspace, json_flag: bool, check: bool, quiet: bool) -> Result<()> {
     let current_fp = workspace.get_fingerprint()?;
     
     // Check staleness logic
@@ -30,41 +29,73 @@ pub fn handle(workspace: &Workspace, json_flag: bool, check: bool) -> Result<()>
             println!("{} Context is stale. (Stored: {}, Current: {})", "STALE:".yellow().bold(), stored_fp, current_fp);
             std::process::exit(1);
         } else {
-            println!("{} Context is up to date.", "FRESH:".green().bold());
+            if !quiet {
+                println!("{} Context is up to date.", "FRESH:".green().bold());
+            }
             return Ok(());
         }
     }
 
-    if !json_flag {
+    if !json_flag && !quiet {
         println!("{}", "--- GENERATING SEMANTIC MANIFEST ---".green().bold());
     }
 
-    let projects = scan_all_projects(workspace)?;
+    let config = toad_core::GlobalConfig::load(None)?.unwrap_or_default();
+    
+    // Perform sync which handles projects discovery, changelog, and registry saving
+    let reporter = toad_core::NoOpReporter;
+    toad_discovery::sync_registry(workspace, &reporter)?;
+    
+    // Load the projects we just saved
+    let registry = toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)?;
+    let projects = &registry.projects;
     
     // 1. Save Markdown Manifest
-    let manifest_md = toad_manifest::generate_markdown(&projects, current_fp);
+    let manifest_md = toad_manifest::generate_markdown(projects, current_fp, Some(config.budget.ecosystem_tokens));
     workspace.ensure_shadows()?;
     fs::write(workspace.manifest_path(), manifest_md)?;
 
-    // 2. Save context.json (The structured side-effect)
-    let registry = ProjectRegistry {
-        fingerprint: current_fp,
-        projects: projects.clone(),
-        last_sync: std::time::SystemTime::now(),
-    };
+    // 2. Save context.json (redundant with registry.json but kept for specialized tooling)
     let registry_json = serde_json::to_string_pretty(&registry)?;
     fs::write(workspace.context_json_path(), &registry_json)?;
 
+    // 3. Generate Tiered Prompts
+    if !quiet && !json_flag {
+        println!("Generating Tiered Prompts (llms.txt, SYSTEM_PROMPT.md)...");
+    }
+
+    // SYSTEM_PROMPT.md
+    let system_prompt = toad_manifest::generate_system_prompt(projects, Some(config.budget.ecosystem_tokens));
+    fs::write(workspace.shadows_dir.join("SYSTEM_PROMPT.md"), system_prompt)?;
+
+    // llms.txt
+    let llms_txt = toad_manifest::generate_llms_txt(projects);
+    fs::write(workspace.shadows_dir.join("llms.txt"), llms_txt)?;
+
+    // Per-project files
+    for p in projects {
+        let proj_shadow_dir = workspace.shadows_dir.join(&p.name);
+        fs::create_dir_all(&proj_shadow_dir)?;
+
+        // AGENTS.md
+        let agents_md = toad_manifest::generate_agents_md(p);
+        fs::write(proj_shadow_dir.join("AGENTS.md"), agents_md)?;
+
+        // CONTEXT.md (Current: project-specific manifest view)
+        let context_md = toad_manifest::generate_markdown(&[p.clone()], current_fp, Some(config.budget.project_tokens));
+        fs::write(proj_shadow_dir.join("CONTEXT.md"), context_md)?;
+    }
+
     if json_flag {
         println!("{}", registry_json);
-    } else {
+    } else if !quiet {
         println!(
-            "{} Manifest and structured context updated ({} projects).",
+            "{} Agent Interface and tiered prompts updated ({} projects).",
             "SUCCESS:".green().bold(),
             projects.len()
         );
-        println!("  - Markdown: {:?}", workspace.manifest_path());
-        println!("  - JSON:     {:?}", workspace.context_json_path());
+        println!("  - Entry Point: {:?}", workspace.shadows_dir.join("llms.txt"));
+        println!("  - JSON Context: {:?}", workspace.context_json_path());
     }
 
     Ok(())

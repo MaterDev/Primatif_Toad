@@ -10,7 +10,6 @@ mod commands;
 mod ui;
 
 use cli::{Cli, Commands};
-use commands::manifest;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -52,25 +51,41 @@ fn main() -> Result<()> {
         }
     };
 
-    // --- Context Health Check ---
+    // --- Context Health Check & Auto-Sync ---
+    let is_manifest_cmd = matches!(&cli.command, Commands::Manifest { .. });
     let manifest_path = workspace.manifest_path();
+    let mut stored_fp = 0;
     if manifest_path.exists() {
         if let Ok(content) = fs::read_to_string(&manifest_path) {
             if let Some(line) = content.lines().find(|l| l.contains("**Fingerprint:**")) {
-                let stored_fp = line
+                stored_fp = line
                     .split('`')
                     .nth(1)
                     .unwrap_or_default()
                     .parse::<u64>()
                     .unwrap_or_default();
+            }
+        }
+    }
 
-                if let Ok(current_fp) = workspace.get_fingerprint() {
-                    if current_fp > stored_fp {
-                        println!(
-                            "{} Context is stale. Run 'toad skill sync' to re-sync intuition.",
-                            "WARNING:".yellow().bold()
-                        );
-                    }
+    if let Ok(current_fp) = workspace.get_fingerprint() {
+        if current_fp != stored_fp && !is_manifest_cmd && !is_bootstrap {
+            if cli.no_sync {
+                println!(
+                    "{} Context is stale. Run 'toad manifest' to re-sync intuition.",
+                    "WARNING:".yellow().bold()
+                );
+            } else {
+                // Opportunistic Refresh
+                if !cli.json {
+                    println!(
+                        "{} Intuition is stale. Refreshing context...",
+                        "INFO:".blue().bold()
+                    );
+                }
+                commands::manifest::handle(&workspace, false, false, true)?;
+                if !cli.json {
+                    println!("{} Context synchronized.", "SUCCESS:".green().bold());
                 }
             }
         }
@@ -161,6 +176,10 @@ fn main() -> Result<()> {
                 *dry_run,
                 *fail_fast,
             )?;
+            // Post-mutation auto-sync
+            if !dry_run && !cli.no_sync {
+                commands::manifest::handle(&workspace, false, false, true)?;
+            }
         }
         Commands::Tag {
             project,
@@ -179,6 +198,9 @@ fn main() -> Result<()> {
                 *harvest,
                 *yes,
             )?;
+            if !cli.no_sync {
+                commands::manifest::handle(&workspace, false, false, true)?;
+            }
         }
         Commands::Untag {
             project,
@@ -195,6 +217,9 @@ fn main() -> Result<()> {
                 filter_tag.clone(),
                 *yes,
             )?;
+            if !cli.no_sync {
+                commands::manifest::handle(&workspace, false, false, true)?;
+            }
         }
         Commands::Skill { subcommand } => {
             commands::skill::handle(subcommand, &workspace)?;
@@ -235,6 +260,9 @@ fn main() -> Result<()> {
                 *yes,
                 *dry_run,
             )?;
+            if !dry_run && !cli.no_sync {
+                commands::manifest::handle(&workspace, false, false, true)?;
+            }
         }
         Commands::Docs => {
             commands::docs::handle(VERSION)?;
@@ -249,7 +277,10 @@ fn main() -> Result<()> {
             commands::cw::handle(subcommand)?;
         }
         Commands::Manifest { json, check } => {
-            commands::manifest::handle(&workspace, *json, *check)?;
+            commands::manifest::handle(&workspace, *json, *check, false)?;
+        }
+        Commands::InitContext { force } => {
+            commands::init_context::handle(&workspace, *force)?;
         }
         Commands::List => {
             use clap::CommandFactory;

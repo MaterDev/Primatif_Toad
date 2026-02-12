@@ -61,8 +61,30 @@ pub fn handle(
     println!("\nCommand: {}", command.yellow().bold());
 
     // --- Safety Guardrails ---
+    let mut mismatched = Vec::new();
+    for p in &targets {
+        if toad_ops::safety::is_stack_mismatch(&command, &p.stack) {
+            mismatched.push(p.name.clone());
+        }
+    }
+
     if !yes && !dry_run {
-        if toad_ops::safety::is_destructive(&command) {
+        if !mismatched.is_empty() {
+            println!(
+                "\n{} Command stack mismatch detected for: {}",
+                "WARNING:".yellow().bold(),
+                mismatched.join(", ").cyan()
+            );
+            println!("You are running a stack-specific command on projects that don't match.");
+            print!("Please type 'PROCEED' to confirm: ");
+            io::stdout().flush()?;
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            if input.trim() != "PROCEED" {
+                println!("Aborted.");
+                return Ok(());
+            }
+        } else if toad_ops::safety::is_destructive(&command) {
             println!(
                 "\n{} This command is potentially {}",
                 "WARNING:".yellow().bold(),
