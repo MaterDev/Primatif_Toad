@@ -46,11 +46,15 @@ Documentation and generated metadata are the "Long-term Memory" for AI agents.
 
 ## 5. Licensing & Architecture Boundaries
 
-Toad follows a strict boundary to protect its intelligence while enabling an
-open-source ecosystem.
+Toad follows a strict "Open Core" boundary to protect its intelligence while
+enabling an open-source ecosystem. All BUSL-1.1 crates convert to MIT after
+8 years (Change Date: 2034-02-07).
 
-- **Dependency Rule:** MIT crates (`toad-core`, `scaffold`) must never depend on
-  BUSL-1.1 crates (`discovery`, `toad-git`, `toad-manifest`, `toad-ops`).
+- **MIT (Open):** `toad-core`, `toad-scaffold`, `bin/toad`.
+- **BUSL-1.1 (Source-Available):** `toad-discovery`, `toad-git`,
+  `toad-manifest`, `toad-ops`, `toad-mcp`.
+- **Dependency Rule:** MIT crates must never depend on BUSL-1.1 crates. Binary
+  crates (`bin/toad`, `bin/toad-mcp`) may depend on everything.
 - **Git Monopoly:** No crate outside of `toad-git` may execute `git` commands or
   reason about Git internals.
 - **Logic Extraction:** Every command MUST extract its business logic into a

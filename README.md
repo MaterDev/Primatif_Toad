@@ -273,9 +273,22 @@ branch tracking from the target branch.
 
 ## 📜 License
 
-**Primatif Toad** is open-source software licensed under the **MIT License**.
-Please note that this license applies specifically to the Primatif Toad Hub and
-CLI orchestrator.
+Primatif Toad uses an **Open Core** licensing model:
+
+| Component | License |
+| :--- | :--- |
+| `bin/toad` (CLI) | MIT |
+| `crates/toad-core` | MIT |
+| `crates/toad-scaffold` | MIT |
+| `crates/toad-discovery` | BUSL-1.1 |
+| `crates/toad-git` | BUSL-1.1 |
+| `crates/toad-manifest` | BUSL-1.1 |
+| `crates/toad-ops` | BUSL-1.1 |
+| `bin/toad-mcp` (MCP server) | BUSL-1.1 |
+
+All BUSL-1.1 components convert to **MIT** on **2034-02-07** (8-year
+conversion). Each crate's repository contains its own LICENSE file with full
+terms.
 
 ---
 

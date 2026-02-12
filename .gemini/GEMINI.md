@@ -52,8 +52,21 @@ Toad is a distributed ecosystem with a central **Global Home** (`~/.toad/`).
 
 ## System Structure
 
-- `bin/toad`: **The Interface.** Main CLI application.
-- `bin/toad-mcp`: **The Oracle.** Model Context Protocol server.
-- `crates/`: **The Capabilities.** Git submodules with individual responsibilities.
+- `bin/toad`: **The Interface.** Main CLI application. [MIT]
+- `bin/toad-mcp`: **The Oracle.** Model Context Protocol server. [BUSL-1.1]
+- `crates/toad-core`: **The Source of Truth.** Shared data models, traits, config. [MIT]
+- `crates/toad-scaffold`: **The Builder.** Project bootstrapping. [MIT]
+- `crates/toad-discovery`: **The Scanner.** Ecosystem scanning & intelligence. [BUSL-1.1]
+- `crates/toad-git`: **The Pulse.** Git operations & VCS intelligence. [BUSL-1.1]
+- `crates/toad-manifest`: **The Chronicler.** Context generation & tiered prompts. [BUSL-1.1]
+- `crates/toad-ops`: **The Hand.** Batch operations, analytics, safety. [BUSL-1.1]
 - `conductor/`: **The Orchestrator.** Project state, tracks, and orchestration rules.
 - `shadows/`: **The Context.** AI-specific metadata and context maps (Managed in `~/.toad/shadows/` in v1.1.0).
+
+## ⚖️ License Boundaries
+
+Toad uses an "Open Core" model. All BUSL-1.1 crates convert to MIT after 8 years (Change Date: 2034-02-07).
+
+- **MIT crates MUST NEVER depend on BUSL-1.1 crates** (except binary crates).
+- **Enforcement:** `scripts/check_license_boundary.sh` runs as a pre-commit hook.
+- **Authoritative source:** `conductor/tech-stack.md` § Component Hierarchy.
