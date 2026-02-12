@@ -22,8 +22,8 @@ submodules in the `crates/` directory:
 
 1. **`bin/toad` (The Interface) [MIT]:** A thin CLI wrapper that parses commands
    and delegates to library crates. Purely for formatting.
-2. **`bin/toad-mcp` (The Oracle) [MIT]:** A Model Context Protocol server that
-   exposes Toad's intelligence to AI agents.
+2. **`bin/toad-mcp` (The Oracle) [BUSL-1.1]:** A Model Context Protocol server
+   that exposes Toad's intelligence to AI agents.
 3. **`crates/toad-git` (The Pulse) [BUSL-1.1]:** All Git operations and VCS
    intelligence.
 4. **`crates/toad-ops` (The Hand) [BUSL-1.1]:** General operational logic and
