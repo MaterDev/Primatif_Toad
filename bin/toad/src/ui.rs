@@ -120,7 +120,11 @@ pub fn format_multi_repo_git_report(report: &MultiRepoGitReport) {
 
     for res in &report.results {
         let status = if res.success {
-            "OK".green()
+            if res.command.contains("(skipped)") {
+                "SKIPPED".yellow()
+            } else {
+                "OK".green()
+            }
         } else {
             "FAIL".red()
         };
