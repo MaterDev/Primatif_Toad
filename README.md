@@ -109,6 +109,8 @@ See the [CHANGELOG](CHANGELOG.md) for the full release history.
 - **`toad skill sync`** — Generate and distribute architectural blueprints, CLI
   references, and manifests to registered AI vendors.
 - **`toad skill list`** — List distributed skills and registered vendors.
+- **`toad-mcp`** — Model Context Protocol server for live AI context
+  orchestration.
 
 ### Custom Workflows
 

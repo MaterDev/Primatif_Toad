@@ -472,6 +472,9 @@ fn main() -> Result<()> {
         Commands::Manifest { json, check } => {
             commands::manifest::handle(&workspace, *json, *check, false, None)?;
         }
+        Commands::Context { task, inspire, project, compare, synthesis } => {
+            commands::context::handle(&workspace, task.clone(), inspire.clone(), project.clone(), compare.clone(), *synthesis)?;
+        }
         Commands::InitContext { force, dry_run, project, no_sync } => {
             commands::init_context::handle(&workspace, *force, *dry_run, project.clone(), *no_sync)?;
         }

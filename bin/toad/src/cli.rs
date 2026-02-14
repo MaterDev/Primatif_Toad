@@ -218,6 +218,28 @@ pub enum Commands {
         #[arg(long)]
         no_sync: bool,
     },
+    /// Inject task-specific context and generate situation reports
+    Context {
+        /// Describe the task to get a tailored situation report
+        #[arg(long, short = 't')]
+        task: Option<String>,
+
+        /// Query for inspiration from existing patterns
+        #[arg(long, short = 'i')]
+        inspire: Option<String>,
+
+        /// Project name to focus on
+        #[arg(long, short = 'p')]
+        project: Option<String>,
+
+        /// Compare with another project (for migration analysis)
+        #[arg(long, short = 'c')]
+        compare: Option<String>,
+
+        /// Generate an ecosystem-wide architectural synthesis report
+        #[arg(long, short = 's')]
+        synthesis: bool,
+    },
     /// List all available commands
     List,
     /// Display version information and the Toad banner

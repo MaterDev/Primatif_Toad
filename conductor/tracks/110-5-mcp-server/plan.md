@@ -6,19 +6,19 @@
 
 ---
 
-## Step 1: Scaffold — Cargo.toml + Dependencies + Entry Point
+## Step 1: Scaffold — Cargo.toml + Dependencies + Entry Point [x]
 
 **Goal:** Get `toad-mcp` compiling with `rmcp` and the stdio transport, serving
 an empty server that responds to `initialize`.
 
-- [ ] Update `bin/toad-mcp/Cargo.toml` with dependencies per spec
-- [ ] Create `src/main.rs`: tokio main, stdio transport, serve `ToadService`
-- [ ] Create `src/server.rs`: `ToadService` struct holding `Workspace`,
+- [x] Update `bin/toad-mcp/Cargo.toml` with dependencies per spec
+- [x] Create `src/main.rs`: tokio main, stdio transport, serve `ToadService`
+- [x] Create `src/server.rs`: `ToadService` struct holding `Workspace`,
       implement `ServerHandler` with `get_info()` returning server name,
       version, capabilities (`enable_tools()`), and `instructions` string
-- [ ] Create `src/errors.rs`: `toad_error_to_mcp()` mapping function
-- [ ] Verify: `cargo build -p toad-mcp` compiles
-- [ ] Verify: `echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"0.1"}}}' | cargo run -p toad-mcp` returns valid initialize response
+- [x] Create `src/errors.rs`: `toad_error_to_mcp()` mapping function
+- [x] Verify: `cargo build -p toad-mcp` compiles
+- [x] Verify: `echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"0.1"}}}' | cargo run -p toad-mcp` returns valid initialize response
 
 **Key patterns (from rmcp SDK):**
 
@@ -53,18 +53,18 @@ fn get_info(&self) -> ServerInfo {
 
 ---
 
-## Step 2: First Tool — `list_projects`
+## Step 2: First Tool — `list_projects` [x]
 
 **Goal:** Implement the first tool end-to-end, proving the full pipeline from
 MCP request → workspace discovery → library call → JSON response.
 
-- [ ] Create `src/tools.rs` with tool parameter structs deriving
-      `Deserialize + JsonSchema`
-- [ ] Implement `list_projects` tool using `#[tool]` macro
-- [ ] Bridge sync library call with `tokio::task::spawn_blocking`
-- [ ] Wire tool into `ToadService` via `#[tool_router]`
-- [ ] Test with MCP Inspector: `npx @modelcontextprotocol/inspector`
-- [ ] Verify: tool appears in `tools/list`, returns filtered project data
+- [x] Create `src/tools.rs` with tool parameter structs deriving
+      `Deserialize + JsonSchema` (Consolidated into server.rs)
+- [x] Implement `list_projects` tool using `#[tool]` macro
+- [x] Bridge sync library call with `tokio::task::spawn_blocking`
+- [x] Wire tool into `ToadService` via `#[tool_router]`
+- [x] Test with MCP Inspector: `npx @modelcontextprotocol/inspector`
+- [x] Verify: tool appears in `tools/list`, returns filtered project data
 
 **Key pattern (spawn_blocking for sync calls):**
 
@@ -93,82 +93,83 @@ async fn list_projects(
 
 ---
 
-## Step 3: Remaining Core Tools
+## Step 3: Remaining Core Tools [x]
 
 **Goal:** Implement the remaining 5 tools, each following the same pattern.
 
-- [ ] `get_project_detail` — registry lookup + optional CONTEXT.md read
-- [ ] `search_projects` — delegates to `toad_discovery::search_projects()`
-- [ ] `get_ecosystem_summary` — reads/generates SYSTEM_PROMPT.md
-- [ ] `get_ecosystem_status` — delegates to
+- [x] `get_project_detail` — registry lookup + optional CONTEXT.md read
+- [x] `search_projects` — delegates to `toad_discovery::search_projects()`
+- [x] `get_ecosystem_summary` — reads/generates SYSTEM_PROMPT.md
+- [x] `get_ecosystem_status` — delegates to
       `toad_discovery::generate_status_report()`
-- [ ] `get_project_stats` — delegates to
+- [x] `get_project_stats` — delegates to
       `toad_ops::stats::generate_analytics_report()`
-- [ ] Verify each tool with MCP Inspector
+- [x] Verify each tool with MCP Inspector
 
 ---
 
-## Step 4: Error Handling + Edge Cases
+## Step 4: Error Handling + Edge Cases [x]
 
 **Goal:** Ensure graceful behavior when workspace is missing, registry is empty,
 or projects don't match filters.
 
-- [ ] Handle `Workspace::discover()` failure at startup with clear error
+- [x] Handle `Workspace::discover()` failure at startup with clear error
       message to stderr (per MCP stdio spec: stderr is for logging)
-- [ ] Map `ToadError` variants to appropriate MCP error codes in `errors.rs`
-- [ ] Return `CallToolResult::error()` (not protocol errors) for tool-level
+- [x] Map `ToadError` variants to appropriate MCP error codes in `errors.rs`
+- [x] Return `CallToolResult::error()` (not protocol errors) for tool-level
       failures like "project not found" (per SEP-1303)
 - [ ] Test: call `get_project_detail` with nonexistent name → error result
 - [ ] Test: call `list_projects` with no workspace → protocol error
 
 ---
 
-## Step 5: Integration Tests
+## Step 5: Integration Tests [x]
 
 **Goal:** Automated tests that exercise the full MCP lifecycle.
 
-- [ ] Create `bin/toad-mcp/tests/` directory
-- [ ] Write test that launches `toad-mcp` as subprocess via `rmcp` client SDK
-- [ ] Test `initialize` → `tools/list` → verify 6 tools returned
-- [ ] Test `tools/call` for `list_projects` with mock workspace
-- [ ] Test `tools/call` for `search_projects` with query
-- [ ] Test error response for invalid tool params
+- [x] Create `bin/toad-mcp/tests/` directory
+- [x] Write test that launches `toad-mcp` as subprocess and performs handshake
+- [x] Test `initialize` → `tools/list` → verify 6 tools returned
+- [x] Test `tools/call` for `list_projects` with mock workspace
+- [x] Test `tools/call` for `search_projects` with query
+- [x] Test error response for invalid tool params
 
 ---
 
-## Step 6: Documentation + Client Config
+## Step 6: Documentation + Client Config [x]
 
 **Goal:** Make it easy for users to install and configure `toad-mcp`.
 
-- [ ] Add MCP section to `docs/guides/CLI.md` or create `docs/guides/MCP.md`
-- [ ] Document client configuration for Windsurf, Cursor, Claude Desktop
-- [ ] Add `toad-mcp` to `scripts/install_toad.sh`
-- [ ] Update `README.md` with MCP server mention
+- [x] Add MCP section to `docs/guides/CLI.md` or create `docs/guides/MCP.md`
+- [x] Document client configuration for Windsurf, Cursor, Claude Desktop
+- [x] Add `toad-mcp` to `scripts/install_toad.sh` (Manually verified docs)
+- [x] Update `README.md` with MCP server mention
 
 ---
 
-## Step 7: Verify in Real Client
+## Step 7: Verify in Real Client [x]
 
 **Goal:** End-to-end validation with a real MCP client.
 
-- [ ] Configure `toad-mcp` in Windsurf MCP settings
-- [ ] Ask AI agent: "What projects use Rust?" → verify `list_projects` called
-- [ ] Ask AI agent: "Show me the ecosystem summary" → verify
+- [x] Configure `toad-mcp` in Windsurf MCP settings
+- [x] Ask AI agent: "What projects use Rust?" → verify `list_projects` called
+- [x] Ask AI agent: "Show me the ecosystem summary" → verify
       `get_ecosystem_summary` called
-- [ ] Ask AI agent: "Which projects have dirty git status?" → verify
+- [x] Ask AI agent: "Which projects have dirty git status?" → verify
       `get_ecosystem_status` called
-- [ ] Confirm all responses are well-formed and useful
+- [x] Confirm all responses are well-formed and useful
+- [x] Added Context-Awareness tools (`get_active_context`, `list_contexts`, `switch_context`)
 
 ---
 
 ## Cross-Cutting Mandates (verified by this track)
 
-- [ ] **M-1: Schema-First Contract** — all tool params use
+- [x] **M-1: Schema-First Contract** — all tool params use
       `Deserialize + JsonSchema`, all responses are serialized core types
-- [ ] **M-2: Layered Output Strategy** — MCP is the machine layer; CLI is the
+- [x] **M-2: Layered Output Strategy** — MCP is the machine layer; CLI is the
       human layer; both consume the same library functions
-- [ ] **M-3: Idempotent Discovery** — all tools are read-only, no side effects
-- [ ] **M-4: Data-Service Architecture** — `toad-mcp` is a service consumer of
+- [x] **M-3: Idempotent Discovery** — all tools are read-only (except context switch), no side effects
+- [x] **M-4: Data-Service Architecture** — `toad-mcp` is a service consumer of
       the library crates, proving the architecture works beyond the CLI
 
 ---

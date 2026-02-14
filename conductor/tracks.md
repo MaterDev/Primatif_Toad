@@ -90,13 +90,13 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.0 Agent Interface** _Link:
       [./tracks/110-4-agent-interface/](./tracks/110-4-agent-interface/)_
 
-- [~] **Track: v1.1.0 MCP Server** _Link:
+- [x] **Track: v1.1.0 MCP Server** _Link:
       [./tracks/110-5-mcp-server/](./tracks/110-5-mcp-server/)_
 
-- [ ] **Track: v1.1.0 Pattern Intel** _Link:
+- [x] **Track: v1.1.0 Pattern Intel** _Link:
       [./tracks/110-6-pattern-intel/](./tracks/110-6-pattern-intel/)_
 
-- [ ] **Track: v1.1.0 Synthesis** _Link:
+- [x] **Track: v1.1.0 Synthesis** _Link:
       [./tracks/110-7-synthesis/](./tracks/110-7-synthesis/)_
 
 ---

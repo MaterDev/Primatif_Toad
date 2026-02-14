@@ -1,4 +1,5 @@
 pub mod clean;
+pub mod context;
 pub mod create;
 pub mod cw;
 pub mod do_cmd;
