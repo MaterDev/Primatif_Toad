@@ -22,3 +22,6 @@
 	path = crates/toad-ops
 	url = git@github.com:Primatif/toad-ops.git
 	branch = dev
+[submodule "bin/toad-mcp"]
+	path = bin/toad-mcp
+	url = git@github.com:Primatif/toad-mcp.git
