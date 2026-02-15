@@ -158,11 +158,15 @@ fn main() -> Result<()> {
             }
 
             let projects = commands::utils::resolve_projects(&workspace)?;
-            let targets = commands::utils::filter_projects(projects, Some(query.as_str()), tag.as_deref());
+            let targets =
+                commands::utils::filter_projects(projects, Some(query.as_str()), tag.as_deref());
 
             if targets.is_empty() {
                 if cli.json {
-                    println!("{}", serde_json::json!({ "status": "error", "message": format!("No projects found matching '{}'", query) }));
+                    println!(
+                        "{}",
+                        serde_json::json!({ "status": "error", "message": format!("No projects found matching '{}'", query) })
+                    );
                 } else {
                     println!("No projects found matching '{}'.", query);
                 }
@@ -209,7 +213,9 @@ fn main() -> Result<()> {
                         "WARNING:".yellow().bold(),
                         mismatched.join(", ").cyan()
                     );
-                    println!("You are running a stack-specific command on projects that don't match.");
+                    println!(
+                        "You are running a stack-specific command on projects that don't match."
+                    );
                     print!("Please type 'PROCEED' to confirm: ");
                     io::stdout().flush()?;
                     let mut input = String::new();
@@ -248,7 +254,10 @@ fn main() -> Result<()> {
                 if !cli.json {
                     println!("\n{}", "--- DRY RUN COMPLETE ---".green().bold());
                 } else {
-                    println!("{}", serde_json::json!({ "status": "dry_run", "targets": targets.len() }));
+                    println!(
+                        "{}",
+                        serde_json::json!({ "status": "dry_run", "targets": targets.len() })
+                    );
                 }
                 return Ok(());
             }
@@ -258,7 +267,7 @@ fn main() -> Result<()> {
             }
 
             let report = toad_ops::execute_batch_operation(&targets, command, *fail_fast);
-            
+
             if cli.json {
                 println!("{}", serde_json::to_string_pretty(&report)?);
             } else {
@@ -350,21 +359,28 @@ fn main() -> Result<()> {
 
             // For pre-flight, we need to calculate potential savings
             let projects = commands::utils::resolve_projects(&workspace)?;
-            let targets = commands::utils::filter_projects(projects, query.as_deref(), tag.as_deref());
-            let targets: Vec<_> = targets.into_iter().filter(|p| {
-                let tier_match = match tier {
-                    Some(ref tr) => {
-                        let tier_str = p.activity.to_string().to_lowercase();
-                        tier_str.contains(&tr.to_lowercase())
-                    }
-                    None => true,
-                };
-                tier_match && !p.artifact_dirs.is_empty()
-            }).collect();
+            let targets =
+                commands::utils::filter_projects(projects, query.as_deref(), tag.as_deref());
+            let targets: Vec<_> = targets
+                .into_iter()
+                .filter(|p| {
+                    let tier_match = match tier {
+                        Some(ref tr) => {
+                            let tier_str = p.activity.to_string().to_lowercase();
+                            tier_str.contains(&tr.to_lowercase())
+                        }
+                        None => true,
+                    };
+                    tier_match && !p.artifact_dirs.is_empty()
+                })
+                .collect();
 
             if targets.is_empty() {
                 if cli.json {
-                    println!("{}", serde_json::json!({ "status": "error", "message": "No projects found matching filters with artifacts to clean" }));
+                    println!(
+                        "{}",
+                        serde_json::json!({ "status": "error", "message": "No projects found matching filters with artifacts to clean" })
+                    );
                 } else {
                     println!("No projects found matching filters with artifacts to clean.");
                 }
@@ -378,7 +394,8 @@ fn main() -> Result<()> {
                 for project in &targets {
                     let artifact_set: std::collections::HashSet<&str> =
                         project.artifact_dirs.iter().map(|s| s.as_str()).collect();
-                    let stats = toad_ops::stats::calculate_project_stats(&project.path, &artifact_set);
+                    let stats =
+                        toad_ops::stats::calculate_project_stats(&project.path, &artifact_set);
                     total_potential_savings += stats.artifact_bytes;
 
                     println!(
@@ -393,7 +410,9 @@ fn main() -> Result<()> {
                 println!(
                     "\n{} Potential Savings: {}",
                     "🌿".green(),
-                    toad_ops::stats::format_size(total_potential_savings).bold().green()
+                    toad_ops::stats::format_size(total_potential_savings)
+                        .bold()
+                        .green()
                 );
             }
 
@@ -413,7 +432,10 @@ fn main() -> Result<()> {
                 if !cli.json {
                     println!("\n{}", "--- 🌊 DRY RUN COMPLETE ---".green().bold());
                 } else {
-                    println!("{}", serde_json::json!({ "status": "dry_run", "targets": targets.len() }));
+                    println!(
+                        "{}",
+                        serde_json::json!({ "status": "dry_run", "targets": targets.len() })
+                    );
                 }
                 return Ok(());
             }
@@ -472,11 +494,35 @@ fn main() -> Result<()> {
         Commands::Manifest { json, check } => {
             commands::manifest::handle(&workspace, *json, *check, false, None)?;
         }
-        Commands::Context { task, inspire, project, compare, synthesis } => {
-            commands::context::handle(&workspace, task.clone(), inspire.clone(), project.clone(), compare.clone(), *synthesis)?;
+        Commands::Context {
+            task,
+            inspire,
+            project,
+            compare,
+            synthesis,
+        } => {
+            commands::context::handle(
+                &workspace,
+                task.clone(),
+                inspire.clone(),
+                project.clone(),
+                compare.clone(),
+                *synthesis,
+            )?;
         }
-        Commands::InitContext { force, dry_run, project, no_sync } => {
-            commands::init_context::handle(&workspace, *force, *dry_run, project.clone(), *no_sync)?;
+        Commands::InitContext {
+            force,
+            dry_run,
+            project,
+            no_sync,
+        } => {
+            commands::init_context::handle(
+                &workspace,
+                *force,
+                *dry_run,
+                project.clone(),
+                *no_sync,
+            )?;
         }
         Commands::List => {
             use clap::CommandFactory;

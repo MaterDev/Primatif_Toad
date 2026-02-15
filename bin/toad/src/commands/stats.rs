@@ -9,6 +9,7 @@ pub fn handle(
     _all: bool,
 ) -> Result<AnalyticsReport> {
     let projects = resolve_projects(workspace)?;
-    let report = toad_ops::stats::generate_analytics_report(&projects, query.as_deref(), tag.as_deref());
+    let report =
+        toad_ops::stats::generate_analytics_report(&projects, query.as_deref(), tag.as_deref());
     Ok(report)
 }

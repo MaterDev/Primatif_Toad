@@ -123,7 +123,7 @@ fn test_clean_dry_run() -> Result<(), Box<dyn std::error::Error>> {
     let root = fs::canonicalize(dir.path())?;
     let config_dir = root.join(".toad");
     fs::create_dir_all(&config_dir)?;
-    
+
     let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
 
@@ -159,7 +159,7 @@ fn test_clean_activity_tier() -> Result<(), Box<dyn std::error::Error>> {
     let root = fs::canonicalize(dir.path())?;
     let config_dir = root.join(".toad");
     fs::create_dir_all(&config_dir)?;
-    
+
     let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
 
@@ -202,7 +202,7 @@ fn test_clean_real_execution() -> Result<(), Box<dyn std::error::Error>> {
     let root = fs::canonicalize(dir.path())?;
     let config_dir = root.join(".toad");
     fs::create_dir_all(&config_dir)?;
-    
+
     let projects_dir = root.join("projects");
     fs::create_dir(&projects_dir)?;
 

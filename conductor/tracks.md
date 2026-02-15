@@ -77,7 +77,7 @@ detailed plan in its respective folder.
       [./tracks/archive/102-governance/](./tracks/archive/102-governance/)_
 
 - [x] **Track: v1.1.0 Blockers** _Link:
-  [./tracks/archive/110-0-blockers/](./tracks/archive/110-0-blockers/)_
+      [./tracks/archive/110-0-blockers/](./tracks/archive/110-0-blockers/)_
 
 - [x] **Track: v1.1.0 Global Install** _Link:
       [./tracks/archive/110-1-global-install/](./tracks/archive/110-1-global-install/)_

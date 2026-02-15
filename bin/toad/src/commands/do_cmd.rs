@@ -1,7 +1,11 @@
 use anyhow::Result;
 use toad_core::BatchOperationReport;
 
-pub fn log_audit(targets_count: usize, command: String, report: &BatchOperationReport) -> Result<()> {
+pub fn log_audit(
+    targets_count: usize,
+    command: String,
+    report: &BatchOperationReport,
+) -> Result<()> {
     let entry = toad_ops::audit::AuditEntry {
         timestamp: chrono::Local::now().to_rfc3339(),
         command,

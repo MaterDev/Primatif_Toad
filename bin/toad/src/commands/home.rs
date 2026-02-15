@@ -1,8 +1,8 @@
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use toad_core::{ToadResult, Workspace, GlobalConfig, ProjectContext, ContextType};
-use serde::{Deserialize, Serialize};
+use toad_core::{ContextType, GlobalConfig, ProjectContext, ToadResult, Workspace};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HomeReport {
@@ -32,7 +32,7 @@ pub fn handle(
         }
         let abs_path = fs::canonicalize(p)?;
         let mut is_new = false;
-        
+
         if !abs_path.join(".toad-root").exists() {
             if !yes {
                 // Return a signal that confirmation is needed
@@ -79,7 +79,7 @@ pub fn handle(
         fs::create_dir_all(&ctx_shadows)?;
 
         config.save(None)?;
-        
+
         Ok(Some(HomeReport {
             path: abs_path,
             name,
@@ -89,14 +89,15 @@ pub fn handle(
     } else {
         // Just querying current home
         match workspace_discovered {
-            Ok(ws) => {
-                Ok(Some(HomeReport {
-                    path: ws.projects_dir.clone(),
-                    name: ws.active_context.clone().unwrap_or_else(|| "unknown".to_string()),
-                    is_new: false,
-                    already_registered: true,
-                }))
-            }
+            Ok(ws) => Ok(Some(HomeReport {
+                path: ws.projects_dir.clone(),
+                name: ws
+                    .active_context
+                    .clone()
+                    .unwrap_or_else(|| "unknown".to_string()),
+                is_new: false,
+                already_registered: true,
+            })),
             Err(_) => Ok(None),
         }
     }

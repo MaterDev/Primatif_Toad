@@ -1,11 +1,11 @@
 use colored::*;
+use indicatif::{ProgressBar, ProgressStyle};
+use std::time::Duration;
 use toad_core::{
     AnalyticsReport, BatchCleanReport, BatchOperationReport, MultiRepoGitReport,
     MultiRepoStatusReport, ProgressReporter, SearchResult, StatusReport, VcsStatus,
 };
 use toad_ops::stats::format_size;
-use indicatif::{ProgressBar, ProgressStyle};
-use std::time::Duration;
 
 pub struct IndicatifReporter {
     pub pb: ProgressBar,
@@ -15,7 +15,8 @@ impl IndicatifReporter {
     pub fn spinner() -> Result<Self, anyhow::Error> {
         let pb = ProgressBar::new_spinner();
         pb.set_style(
-            ProgressStyle::default_spinner().template("{spinner:.green} [{elapsed_precise}] {msg}")?,
+            ProgressStyle::default_spinner()
+                .template("{spinner:.green} [{elapsed_precise}] {msg}")?,
         );
         pb.enable_steady_tick(Duration::from_millis(100));
         Ok(Self { pb })
@@ -101,10 +102,7 @@ pub fn format_home_report(report: Option<HomeReport>) {
             }
         }
         None => {
-            println!(
-                "{} No Toad home anchored.",
-                "ORPHANED:".red().bold()
-            );
+            println!("{} No Toad home anchored.", "ORPHANED:".red().bold());
             println!("Use 'toad home <path>' to anchor this system.");
         }
     }

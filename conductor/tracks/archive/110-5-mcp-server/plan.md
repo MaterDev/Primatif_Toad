@@ -1,8 +1,8 @@
 # Implementation Plan: MCP Server Mode
 
-> **Spec:** `conductor/tracks/110-5-mcp-server/spec.md`
-> **Evolution:** `docs/releases/v1.1.0/evolution.md` (§ Phase 3.5)
-> **Tasks:** `docs/releases/v1.1.0/tasks.md` (§ Phase 3.5)
+> **Spec:** `conductor/tracks/110-5-mcp-server/spec.md` **Evolution:**
+> `docs/releases/v1.1.0/evolution.md` (§ Phase 3.5) **Tasks:**
+> `docs/releases/v1.1.0/tasks.md` (§ Phase 3.5)
 
 ---
 
@@ -18,7 +18,9 @@ an empty server that responds to `initialize`.
       version, capabilities (`enable_tools()`), and `instructions` string
 - [x] Create `src/errors.rs`: `toad_error_to_mcp()` mapping function
 - [x] Verify: `cargo build -p toad-mcp` compiles
-- [x] Verify: `echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"0.1"}}}' | cargo run -p toad-mcp` returns valid initialize response
+- [x] Verify:
+      `echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"0.1"}}}' | cargo run -p toad-mcp`
+      returns valid initialize response
 
 **Key patterns (from rmcp SDK):**
 
@@ -113,8 +115,8 @@ async fn list_projects(
 **Goal:** Ensure graceful behavior when workspace is missing, registry is empty,
 or projects don't match filters.
 
-- [x] Handle `Workspace::discover()` failure at startup with clear error
-      message to stderr (per MCP stdio spec: stderr is for logging)
+- [x] Handle `Workspace::discover()` failure at startup with clear error message
+      to stderr (per MCP stdio spec: stderr is for logging)
 - [x] Map `ToadError` variants to appropriate MCP error codes in `errors.rs`
 - [x] Return `CallToolResult::error()` (not protocol errors) for tool-level
       failures like "project not found" (per SEP-1303)
@@ -158,7 +160,8 @@ or projects don't match filters.
 - [x] Ask AI agent: "Which projects have dirty git status?" → verify
       `get_ecosystem_status` called
 - [x] Confirm all responses are well-formed and useful
-- [x] Added Context-Awareness tools (`get_active_context`, `list_contexts`, `switch_context`)
+- [x] Added Context-Awareness tools (`get_active_context`, `list_contexts`,
+      `switch_context`)
 
 ---
 
@@ -168,7 +171,8 @@ or projects don't match filters.
       `Deserialize + JsonSchema`, all responses are serialized core types
 - [x] **M-2: Layered Output Strategy** — MCP is the machine layer; CLI is the
       human layer; both consume the same library functions
-- [x] **M-3: Idempotent Discovery** — all tools are read-only (except context switch), no side effects
+- [x] **M-3: Idempotent Discovery** — all tools are read-only (except context
+      switch), no side effects
 - [x] **M-4: Data-Service Architecture** — `toad-mcp` is a service consumer of
       the library crates, proving the architecture works beyond the CLI
 
@@ -183,5 +187,5 @@ These are enabled by this track but NOT implemented here:
 - [ ] **Prompts:** "Analyze ecosystem", "Plan migration from A to B"
 - [ ] **Write tools:** `sync_context`, `tag_project`, `run_batch`
 - [ ] **Streamable HTTP:** For remote/dashboard access
-- [ ] **Phase 5 tools:** `get_project_dna`, `find_pattern`,
-      `compare_projects`, `generate_situation_report`
+- [ ] **Phase 5 tools:** `get_project_dna`, `find_pattern`, `compare_projects`,
+      `generate_situation_report`

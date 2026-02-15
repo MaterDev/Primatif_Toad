@@ -1,6 +1,7 @@
 [workspace]
 members = [
-  "bin/toad", "bin/toad-mcp",
+  "bin/toad",
+  "bin/toad-mcp",
   "crates/toad-core",
   "crates/toad-discovery",
   "crates/toad-git",

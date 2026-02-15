@@ -47,8 +47,8 @@ Documentation and generated metadata are the "Long-term Memory" for AI agents.
 ## 5. Licensing & Architecture Boundaries
 
 Toad follows a strict "Open Core" boundary to protect its intelligence while
-enabling an open-source ecosystem. All BUSL-1.1 crates convert to MIT after
-8 years (Change Date: 2034-02-07).
+enabling an open-source ecosystem. All BUSL-1.1 crates convert to MIT after 8
+years (Change Date: 2034-02-07).
 
 - **MIT (Open):** `toad-core`, `toad-scaffold`, `bin/toad`.
 - **BUSL-1.1 (Source-Available):** `toad-discovery`, `toad-git`,

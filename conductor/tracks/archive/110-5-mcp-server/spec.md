@@ -16,8 +16,7 @@ without touching the filesystem directly.
 - **MCP Spec:** <https://modelcontextprotocol.io/specification/2025-11-25>
 - **Rust SDK:** <https://github.com/modelcontextprotocol/rust-sdk> (`rmcp`
   crate)
-- **Best Practices:**
-  <https://modelcontextprotocol.info/docs/best-practices/>
+- **Best Practices:** <https://modelcontextprotocol.info/docs/best-practices/>
 
 ---
 
@@ -44,8 +43,8 @@ implement **stdio first** because:
 - stdio is simpler: no HTTP server, no port management, no CORS/Origin
   validation
 - The client launches `toad-mcp` as a subprocess — zero configuration
-- Streamable HTTP can be added later as a second transport without changing
-  tool logic
+- Streamable HTTP can be added later as a second transport without changing tool
+  logic
 
 ### AD-3: Tools-First, Resources Later
 
@@ -94,8 +93,7 @@ projects, or generate reports — none mutate state. This satisfies mandate M-3
 Tool errors use the MCP `ErrorData` type with appropriate JSON-RPC error codes:
 
 - `-32602` (Invalid params) — bad tool arguments
-- `-32603` (Internal error) — `ToadError` variants mapped to structured
-  messages
+- `-32603` (Internal error) — `ToadError` variants mapped to structured messages
 - Tool execution errors return `CallToolResult` with `is_error: true` and a
   human-readable message, per MCP spec recommendation (SEP-1303)
 
@@ -103,8 +101,8 @@ Tool errors use the MCP `ErrorData` type with appropriate JSON-RPC error codes:
 
 The MCP `initialize` response includes an `instructions` field — a natural
 language description of what the server does. This is critical for AI agents to
-understand the server's purpose. Ours will describe Toad as an ecosystem
-context oracle and list available tools with usage hints.
+understand the server's purpose. Ours will describe Toad as an ecosystem context
+oracle and list available tools with usage hints.
 
 ---
 
@@ -114,13 +112,13 @@ context oracle and list available tools with usage hints.
 
 **Purpose:** Return a filtered list of projects in the ecosystem.
 
-| Parameter    | Type              | Required | Description                        |
-| :----------- | :---------------- | :------- | :--------------------------------- |
-| `query`      | `string`          | No       | Filter by project name (substring) |
-| `tag`        | `string`          | No       | Filter by tag (e.g., `#backend`)   |
-| `stack`      | `string`          | No       | Filter by stack name               |
-| `activity`   | `string`          | No       | Filter by activity tier            |
-| `vcs_status` | `string`          | No       | Filter by VCS status               |
+| Parameter    | Type     | Required | Description                        |
+| :----------- | :------- | :------- | :--------------------------------- |
+| `query`      | `string` | No       | Filter by project name (substring) |
+| `tag`        | `string` | No       | Filter by tag (e.g., `#backend`)   |
+| `stack`      | `string` | No       | Filter by stack name               |
+| `activity`   | `string` | No       | Filter by activity tier            |
+| `vcs_status` | `string` | No       | Filter by VCS status               |
 
 **Returns:** JSON array of `ProjectDetail` objects (name, stack, activity, tags,
 path, essence, vcs_status, taxonomy, submodules).
@@ -132,9 +130,9 @@ projects.
 
 **Purpose:** Return full context for a single project.
 
-| Parameter | Type     | Required | Description          |
-| :-------- | :------- | :------- | :------------------- |
-| `name`    | `string` | Yes      | Exact project name   |
+| Parameter | Type     | Required | Description        |
+| :-------- | :------- | :------- | :----------------- |
+| `name`    | `string` | Yes      | Exact project name |
 
 **Returns:** Single `ProjectDetail` JSON object with all fields, plus the
 project's `CONTEXT.md` content if available.
@@ -146,10 +144,10 @@ project's `CONTEXT.md` content if available.
 
 **Purpose:** Semantic search across project names, essence, tags, and taxonomy.
 
-| Parameter | Type     | Required | Description              |
-| :-------- | :------- | :------- | :----------------------- |
-| `query`   | `string` | Yes      | Search term              |
-| `tag`     | `string` | No       | Narrow search by tag     |
+| Parameter | Type     | Required | Description          |
+| :-------- | :------- | :------- | :------------------- |
+| `query`   | `string` | Yes      | Search term          |
+| `tag`     | `string` | No       | Narrow search by tag |
 
 **Returns:** `SearchResult` JSON with matched projects, match reasons, and
 relevance context.
@@ -160,8 +158,8 @@ relevance context.
 
 **Purpose:** Return the system-prompt-tier overview of the entire ecosystem.
 
-| Parameter     | Type      | Required | Description                    |
-| :------------ | :-------- | :------- | :----------------------------- |
+| Parameter     | Type      | Required | Description                      |
+| :------------ | :-------- | :------- | :------------------------------- |
 | `token_limit` | `integer` | No       | Max tokens (default from config) |
 
 **Returns:** The `SYSTEM_PROMPT.md` content as text, truncated to token limit.
@@ -234,8 +232,8 @@ The MCP server is configured in the client's MCP settings file:
 }
 ```
 
-If `toad-mcp` is installed globally (via `cargo install` or the install
-script), no path is needed. Otherwise, use the full path to the binary.
+If `toad-mcp` is installed globally (via `cargo install` or the install script),
+no path is needed. Otherwise, use the full path to the binary.
 
 ---
 

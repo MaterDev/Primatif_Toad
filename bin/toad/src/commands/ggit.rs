@@ -50,7 +50,8 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace) -> Result<()> {
                     && !submodule_failed
                     && toad_git::commit::is_dirty(&workspace.projects_dir)?
                 {
-                    let res = toad_git::commit::commit(&workspace.projects_dir, message, "Hub Root")?;
+                    let res =
+                        toad_git::commit::commit(&workspace.projects_dir, message, "Hub Root")?;
                     report.results.push(res);
                 }
             }

@@ -142,7 +142,7 @@ fn test_reveal_cached() -> Result<(), Box<dyn std::error::Error>> {
     let registry_path = config_dir.join("contexts/default/registry.json");
     // Ensure dir exists before trying to read it
     fs::create_dir_all(registry_path.parent().unwrap())?;
-    
+
     let mut registry_json = if registry_path.exists() {
         serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&registry_path)?)?
     } else {

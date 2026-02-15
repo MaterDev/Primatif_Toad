@@ -1,6 +1,8 @@
 # Toad MCP Server
 
-Toad can be used as a **live context oracle** via the Model Context Protocol (MCP). This allows AI agents in compatible editors (Windsurf, Cursor, Claude Desktop) to query your ecosystem directly.
+Toad can be used as a **live context oracle** via the Model Context Protocol
+(MCP). This allows AI agents in compatible editors (Windsurf, Cursor, Claude
+Desktop) to query your ecosystem directly.
 
 ## Installation
 
@@ -15,6 +17,7 @@ cargo install --path bin/toad-mcp
 Add the following to your editor's MCP settings:
 
 ### Windsurf
+
 Open `~/.codeium/windsurf/mcp_config.json` and add:
 
 ```json
@@ -31,12 +34,15 @@ Open `~/.codeium/windsurf/mcp_config.json` and add:
 ```
 
 ### Cursor
+
 Open Cursor Settings -> MCP and add a new server:
+
 - **Name:** `toad`
 - **Type:** `command`
 - **Command:** `toad-mcp`
 
 ### Claude Desktop
+
 Open `~/Library/Application Support/Claude/claude_desktop_config.json` and add:
 
 ```json
@@ -57,7 +63,8 @@ The following tools are exposed by the server:
    - Params: `query`, `tag`, `stack`, `activity`, `vcs_status`.
 2. **`get_project_detail`**: Returns full context for a single project by name.
    - Params: `name` (exact).
-3. **`search_projects`**: Semantic search across project names, essence, and tags.
+3. **`search_projects`**: Semantic search across project names, essence, and
+   tags.
    - Params: `query`, `tag`.
 4. **`get_ecosystem_summary`**: Returns the `SYSTEM_PROMPT.md` overview.
    - Params: `token_limit`.
@@ -68,6 +75,9 @@ The following tools are exposed by the server:
 
 ## Troubleshooting
 
-- **Logs:** MCP server logs to `stderr`. Most clients capture these in their output panels.
-- **Initialization:** Ensure you have run `toad home <path>` at least once to initialize the global configuration.
-- **Staleness:** AI agents will see a "Context is stale" warning if the physical files have changed since the last `toad manifest` run.
+- **Logs:** MCP server logs to `stderr`. Most clients capture these in their
+  output panels.
+- **Initialization:** Ensure you have run `toad home <path>` at least once to
+  initialize the global configuration.
+- **Staleness:** AI agents will see a "Context is stale" warning if the physical
+  files have changed since the last `toad manifest` run.

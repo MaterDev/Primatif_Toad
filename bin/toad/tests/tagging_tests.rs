@@ -85,7 +85,7 @@ fn test_tag_harvest() -> Result<(), Box<dyn std::error::Error>> {
     let dir = tempdir()?;
     let config_dir = dir.path().join(".toad");
     fs::create_dir_all(&config_dir)?;
-    
+
     let projects_dir = dir.path().join("projects");
     fs::create_dir(&projects_dir)?;
 

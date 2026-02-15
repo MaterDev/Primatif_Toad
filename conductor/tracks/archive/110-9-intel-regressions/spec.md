@@ -2,11 +2,14 @@
 
 ## Overview
 
-Restore critical logic and fix regressions in the intelligence layer (`toad-git`, `toad-ops`, `toad-discovery`, `toad-manifest`) identified during the v1.1.0 PR review.
+Restore critical logic and fix regressions in the intelligence layer
+(`toad-git`, `toad-ops`, `toad-discovery`, `toad-manifest`) identified during
+the v1.1.0 PR review.
 
 ## Sources
 
-- **Review Findings:** `docs/releases/v1.1.0/pr-review.md` (§ Phase 2: Intelligence Layer)
+- **Review Findings:** `docs/releases/v1.1.0/pr-review.md` (§ Phase 2:
+  Intelligence Layer)
 
 ## Requirements
 
@@ -15,7 +18,8 @@ Restore critical logic and fix regressions in the intelligence layer (`toad-git`
    - Fix `VcsStatus` mapping for merge conflicts.
    - Restore proper dirty-tree detection in `check_status`.
 2. **Operational Safety:**
-   - Replace manual busy-loop timeout with the `wait-timeout` crate in `run_in_dir`.
+   - Replace manual busy-loop timeout with the `wait-timeout` crate in
+     `run_in_dir`.
    - Restore full vendor support and custom mapping in `distribute_skills`.
    - Fix score underflow in `compare_projects`.
 3. **Discovery Accuracy:**

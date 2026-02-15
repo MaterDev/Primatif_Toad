@@ -3,6 +3,7 @@
 ## Tasks
 
 ### VCS & Git (toad-git)
+
 - [x] **IR-1: Restore Preflight Checks**
   - Implement unpushed commit detection.
   - Implement SHA alignment detection.
@@ -13,6 +14,7 @@
   - Restore `has_unmerged_changes` to check upstream divergence.
 
 ### Operations (toad-ops)
+
 - [x] **IR-4: Fix Timeout Regression**
   - Re-integrate `wait-timeout` crate.
   - Remove manual busy-loop in `run_in_dir`.
@@ -23,10 +25,12 @@
   - Add underflow protection to `compare_projects` score.
 
 ### Discovery & Manifest (toad-discovery, toad-manifest)
+
 - [x] **IR-7: Accurate DNA Detection**
   - Fix path building for submodule DNA derived from `projects/` dir.
 - [x] **IR-8: Fix Hub/Pond Detection**
-  - Ensure correct classification when working in a Hub root with a `projects/` folder.
+  - Ensure correct classification when working in a Hub root with a `projects/`
+    folder.
 - [x] **IR-9: Eliminate Duplicate Scan Results**
   - Fix double-registration of submodules in `scan_all_projects`.
 - [x] **IR-10: Deep-Dive CONTEXT.md**

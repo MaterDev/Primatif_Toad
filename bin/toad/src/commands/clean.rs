@@ -1,6 +1,6 @@
 use crate::commands::utils::{normalize_tag, resolve_projects};
 use anyhow::Result;
-use toad_core::{Workspace, BatchCleanReport, ProjectDetail, ProgressReporter};
+use toad_core::{BatchCleanReport, ProgressReporter, ProjectDetail, Workspace};
 use toad_ops::clean::execute_batch_clean;
 
 pub fn handle(
@@ -38,12 +38,15 @@ pub fn handle(
         .collect();
 
     if targets.is_empty() {
-        return Ok((Vec::new(), BatchCleanReport {
-            results: Vec::new(),
-            total_reclaimed: 0,
-            success_count: 0,
-            fail_count: 0,
-        }));
+        return Ok((
+            Vec::new(),
+            BatchCleanReport {
+                results: Vec::new(),
+                total_reclaimed: 0,
+                success_count: 0,
+                fail_count: 0,
+            },
+        ));
     }
 
     let report = execute_batch_clean(&targets, reporter);
