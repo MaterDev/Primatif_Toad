@@ -99,7 +99,7 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.0 Synthesis** _Link:
       [./tracks/110-7-synthesis/](./tracks/110-7-synthesis/)_
 
-- [ ] **Track: v1.1.0 Core Hardening** _Link:
+- [x] **Track: v1.1.0 Core Hardening** _Link:
       [./tracks/110-8-core-hardening/](./tracks/110-8-core-hardening/)_
 
 - [ ] **Track: v1.1.0 Intelligence Regressions** _Link:
