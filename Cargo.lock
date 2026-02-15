@@ -1175,7 +1175,7 @@ dependencies = [
 
 [[package]]
 name = "toad"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -1201,7 +1201,7 @@ dependencies = [
 
 [[package]]
 name = "toad-core"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "dirs",
@@ -1215,7 +1215,7 @@ dependencies = [
 
 [[package]]
 name = "toad-discovery"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "filetime",
@@ -1231,7 +1231,7 @@ dependencies = [
 
 [[package]]
 name = "toad-git"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "tempfile",
@@ -1240,7 +1240,7 @@ dependencies = [
 
 [[package]]
 name = "toad-manifest"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "toad-core",
 ]
@@ -1267,7 +1267,7 @@ dependencies = [
 
 [[package]]
 name = "toad-ops"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1284,7 +1284,7 @@ dependencies = [
 
 [[package]]
 name = "toad-scaffold"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "tempfile",
