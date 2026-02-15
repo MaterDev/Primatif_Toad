@@ -105,7 +105,7 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.0 Intelligence Regressions** _Link:
       [./tracks/110-9-intel-regressions/](./tracks/110-9-intel-regressions/)_
 
-- [ ] **Track: v1.1.0 Interface Fixes** _Link:
+- [x] **Track: v1.1.0 Interface Fixes** _Link:
       [./tracks/110-10-interface-fixes/](./tracks/110-10-interface-fixes/)_
 
 ---
