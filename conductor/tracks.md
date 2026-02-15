@@ -59,54 +59,55 @@ detailed plan in its respective folder.
 ---
 
 - [x] **Track: v1.0.2 Licensing Migration** _Link:
-      [./tracks/archive/102-licensing/](./tracks/102-licensing/)_
+      [./tracks/archive/102-licensing/](./tracks/archive/102-licensing/)_
 
 - [x] **Track: v1.0.2 Multi-Repo Split** _Link:
-      [./tracks/102-multi-repo/](./tracks/102-multi-repo/)_
+      [./tracks/archive/102-multi-repo/](./tracks/archive/102-multi-repo/)_
+
 - [x] **Track: v1.0.2 Submodule Awareness** _Link:
-      [./tracks/102-submodule-aware/](./tracks/102-submodule-aware/)_
+      [./tracks/archive/102-submodule-aware/](./tracks/archive/102-submodule-aware/)_
 
 - [x] **Track: v1.0.2 Group-Git Orchestration** _Link:
-      [./tracks/archive/102-ggit/](./tracks/102-ggit/)_
+      [./tracks/archive/102-ggit/](./tracks/archive/102-ggit/)_
 
 - [x] **Track: v1.0.2 Custom Workflows** _Link:
-      [./tracks/archive/102-workflows/](./tracks/102-workflows/)_
+      [./tracks/archive/102-workflows/](./tracks/archive/102-workflows/)_
 
 - [x] **Track: v1.0.2 Governance & AI Navigation** _Link:
-      [./tracks/archive/102-governance/](./tracks/102-governance/)_
+      [./tracks/archive/102-governance/](./tracks/archive/102-governance/)_
 
 - [x] **Track: v1.1.0 Blockers** _Link:
-  [./tracks/110-0-blockers/](./tracks/110-0-blockers/)_
+  [./tracks/archive/110-0-blockers/](./tracks/archive/110-0-blockers/)_
 
 - [x] **Track: v1.1.0 Global Install** _Link:
-      [./tracks/110-1-global-install/](./tracks/110-1-global-install/)_
+      [./tracks/archive/110-1-global-install/](./tracks/archive/110-1-global-install/)_
 
 - [x] **Track: v1.1.0 Deep Extraction** _Link:
-      [./tracks/110-2-deep-extraction/](./tracks/110-2-deep-extraction/)_
+      [./tracks/archive/110-2-deep-extraction/](./tracks/archive/110-2-deep-extraction/)_
 
 - [x] **Track: v1.1.0 Integrity** _Link:
-      [./tracks/110-3-integrity/](./tracks/110-3-integrity/)_
+      [./tracks/archive/110-3-integrity/](./tracks/archive/110-3-integrity/)_
 
 - [x] **Track: v1.1.0 Agent Interface** _Link:
-      [./tracks/110-4-agent-interface/](./tracks/110-4-agent-interface/)_
+      [./tracks/archive/110-4-agent-interface/](./tracks/archive/110-4-agent-interface/)_
 
 - [x] **Track: v1.1.0 MCP Server** _Link:
-      [./tracks/110-5-mcp-server/](./tracks/110-5-mcp-server/)_
+      [./tracks/archive/110-5-mcp-server/](./tracks/archive/110-5-mcp-server/)_
 
 - [x] **Track: v1.1.0 Pattern Intel** _Link:
-      [./tracks/110-6-pattern-intel/](./tracks/110-6-pattern-intel/)_
+      [./tracks/archive/110-6-pattern-intel/](./tracks/archive/110-6-pattern-intel/)_
 
 - [x] **Track: v1.1.0 Synthesis** _Link:
-      [./tracks/110-7-synthesis/](./tracks/110-7-synthesis/)_
+      [./tracks/archive/110-7-synthesis/](./tracks/archive/110-7-synthesis/)_
 
 - [x] **Track: v1.1.0 Core Hardening** _Link:
-      [./tracks/110-8-core-hardening/](./tracks/110-8-core-hardening/)_
+      [./tracks/archive/110-8-core-hardening/](./tracks/archive/110-8-core-hardening/)_
 
 - [x] **Track: v1.1.0 Intelligence Regressions** _Link:
-      [./tracks/110-9-intel-regressions/](./tracks/110-9-intel-regressions/)_
+      [./tracks/archive/110-9-intel-regressions/](./tracks/archive/110-9-intel-regressions/)_
 
 - [x] **Track: v1.1.0 Interface Fixes** _Link:
-      [./tracks/110-10-interface-fixes/](./tracks/110-10-interface-fixes/)_
+      [./tracks/archive/110-10-interface-fixes/](./tracks/archive/110-10-interface-fixes/)_
 
 ---
 
