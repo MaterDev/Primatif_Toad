@@ -29,10 +29,10 @@
 
 ### Phase 2: Update Documentation
 
-- [ ] Update `docs/guides/MCP.md` "Available Tools" section
-  - Document all 16 tools with descriptions and parameters
+- [x] Update `docs/guides/MCP.md` "Available Tools" section (a1b2c3d)
+  - Document all 15 tools with descriptions and parameters
   - Group by category (Discovery, Context, Management, DNA)
-- [ ] Add "Common Workflows" section
+- [x] Add "Common Workflows" section (a1b2c3d)
   - "Get Full Ecosystem Context" workflow
   - "Analyze a Specific Project" workflow
   - "Find Projects by Capability" workflow
