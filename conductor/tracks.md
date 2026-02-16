@@ -111,6 +111,32 @@ detailed plan in its respective folder.
 
 ---
 
+- [ ] **Track: v1.1.0 MCP Enhancements** _Link:
+      [./tracks/111-mcp-enhancements/](./tracks/111-mcp-enhancements/)_
+
+- [ ] **Track: v1.1.0 ggit Fixes** _Link:
+      [./tracks/111-ggit-fixes/](./tracks/111-ggit-fixes/)_
+
+- [ ] **Track: v1.1.0 Doctor Command** _Link:
+      [./tracks/111-doctor-command/](./tracks/111-doctor-command/)_
+
+- [ ] **Track: v1.1.0 Skill Updates** _Link:
+      [./tracks/111-skill-updates/](./tracks/111-skill-updates/)_
+
+- [ ] **Track: v1.1.0 User Guide** _Link:
+      [./tracks/111-user-guide/](./tracks/111-user-guide/)_
+
+- [ ] **Track: v1.1.0 MCP CLI Bridge** _Link:
+      [./tracks/111-mcp-cli-bridge/](./tracks/111-mcp-cli-bridge/)_
+
+- [ ] **Track: v1.1.0 CI/CD & Release** _Link:
+      [./tracks/111-ci-cd-release/](./tracks/111-ci-cd-release/)_
+
+- [ ] **Track: v1.1.0 Dogfooding** _Link:
+      [./tracks/111-dogfooding/](./tracks/111-dogfooding/)_
+
+---
+
 - [x] **Track: Rust Context & Architecture Guide**
 
       _Link: [./tracks/archive/rust-guide_20260205/](./tracks/archive/rust-guide_20260205/)_
