@@ -2,7 +2,9 @@
 
 ## Overview
 
-Expose the full Toad CLI functionality through the MCP server, allowing AI agents to execute any Toad command via MCP tools. Dangerous operations (those requiring confirmation prompts) are excluded for safety.
+Expose the full Toad CLI functionality through the MCP server, allowing AI
+agents to execute any Toad command via MCP tools. Dangerous operations (those
+requiring confirmation prompts) are excluded for safety.
 
 ## Sources
 
@@ -15,6 +17,7 @@ Expose the full Toad CLI functionality through the MCP server, allowing AI agent
 ## Problem Statement
 
 The MCP server currently exposes only **read-only query tools**:
+
 - ✅ List/search projects
 - ✅ Get ecosystem status
 - ✅ Get project details
@@ -29,8 +32,10 @@ AI agents cannot perform actions, only query state.
 ## Goals
 
 1. **Expose Safe CLI Commands** — All read-only and low-risk operations
-2. **Exclude Dangerous Operations** — Commands that modify state without confirmation
-3. **Maintain Safety** — AI agents cannot accidentally delete data or run destructive commands
+2. **Exclude Dangerous Operations** — Commands that modify state without
+   confirmation
+3. **Maintain Safety** — AI agents cannot accidentally delete data or run
+   destructive commands
 4. **Preserve CLI Semantics** — MCP tools behave identically to CLI commands
 
 ---
@@ -48,6 +53,7 @@ AI agents cannot perform actions, only query state.
 ### AD-1: Safe vs. Dangerous Operations
 
 **Safe Operations (Expose via MCP):**
+
 - ✅ `toad reveal` — Search projects
 - ✅ `toad status` — Git status across repos
 - ✅ `toad stats` — Disk usage analytics
@@ -60,6 +66,7 @@ AI agents cannot perform actions, only query state.
 - ✅ `toad strategy list` — List stack strategies
 
 **Dangerous Operations (Exclude from MCP):**
+
 - ❌ `toad do` — Execute arbitrary shell commands
 - ❌ `toad clean` — Delete build artifacts
 - ❌ `toad tag --harvest` — Bulk tag assignment (safe but needs review)
@@ -73,22 +80,27 @@ AI agents cannot perform actions, only query state.
 - ❌ `toad cw run` — Execute custom workflows
 
 **Rationale:**
+
 - Commands that modify git state are excluded (AI shouldn't commit/push)
 - Commands that delete data are excluded (AI shouldn't clean/delete)
-- Commands that execute arbitrary code are excluded (AI shouldn't run shell commands)
+- Commands that execute arbitrary code are excluded (AI shouldn't run shell
+  commands)
 
 ### AD-2: Read-Only Git Operations
 
 Git **read** operations are safe:
+
 - `ggit status` — See what's changed
 - `ggit branches` — List branches
 
 Git **write** operations are dangerous:
+
 - `ggit commit/push/pull/sync/checkout` — Modify state
 
 ### AD-3: Context Management
 
 Context switching is **safe** because it only changes which registry is loaded:
+
 - ✅ `project list` — View contexts
 - ✅ `project switch` — Change active context
 - ❌ `project delete` — Dangerous (deletes cached data)
@@ -119,7 +131,9 @@ pub async fn sync_registry(&self, _params: Parameters<NoParams>) -> Result<CallT
 
 ### AD-5: No Confirmation Prompts
 
-All MCP tools are **non-interactive**. Commands that normally require `--yes` flag are either:
+All MCP tools are **non-interactive**. Commands that normally require `--yes`
+flag are either:
+
 1. **Excluded** (if dangerous)
 2. **Auto-confirmed** (if safe, like `tag --harvest`)
 
@@ -315,29 +329,29 @@ pub async fn generate_manifest(...)
 
 ## Safety Matrix
 
-| Command | MCP Tool | Safe? | Rationale |
-|---------|----------|-------|-----------|
-| `toad reveal` | ✅ `reveal_projects` | Yes | Read-only |
-| `toad status` | ✅ `get_git_status` | Yes | Read-only |
-| `toad stats` | ✅ `get_disk_stats` | Yes | Read-only |
-| `toad sync` | ✅ `sync_registry` | Yes | Updates cache only |
-| `toad manifest` | ✅ `generate_manifest` | Yes | Generates files in shadows/ |
-| `toad tag` | ✅ `tag_projects` | Yes | Additive only |
-| `toad untag` | ❌ | No | Removes data |
-| `toad do` | ❌ | No | Arbitrary code execution |
-| `toad clean` | ❌ | No | Deletes files |
-| `toad ggit status` | ✅ `get_git_status` | Yes | Read-only |
-| `toad ggit branches` | ✅ `list_branches` | Yes | Read-only |
-| `toad ggit commit` | ❌ | No | Modifies git state |
-| `toad ggit push` | ❌ | No | Modifies remote |
-| `toad ggit pull` | ❌ | No | Modifies local |
-| `toad ggit sync` | ❌ | No | Modifies submodules |
-| `toad ggit checkout` | ❌ | No | Changes branches |
-| `toad project list` | ✅ (exists) | Yes | Read-only |
-| `toad project switch` | ✅ (exists) | Yes | Changes config only |
-| `toad project register` | ✅ `register_context` | Yes | Creates config |
-| `toad project delete` | ❌ | No | Deletes data |
-| `toad cw run` | ❌ | No | Arbitrary code execution |
+| Command                 | MCP Tool               | Safe? | Rationale                   |
+| ----------------------- | ---------------------- | ----- | --------------------------- |
+| `toad reveal`           | ✅ `reveal_projects`   | Yes   | Read-only                   |
+| `toad status`           | ✅ `get_git_status`    | Yes   | Read-only                   |
+| `toad stats`            | ✅ `get_disk_stats`    | Yes   | Read-only                   |
+| `toad sync`             | ✅ `sync_registry`     | Yes   | Updates cache only          |
+| `toad manifest`         | ✅ `generate_manifest` | Yes   | Generates files in shadows/ |
+| `toad tag`              | ✅ `tag_projects`      | Yes   | Additive only               |
+| `toad untag`            | ❌                     | No    | Removes data                |
+| `toad do`               | ❌                     | No    | Arbitrary code execution    |
+| `toad clean`            | ❌                     | No    | Deletes files               |
+| `toad ggit status`      | ✅ `get_git_status`    | Yes   | Read-only                   |
+| `toad ggit branches`    | ✅ `list_branches`     | Yes   | Read-only                   |
+| `toad ggit commit`      | ❌                     | No    | Modifies git state          |
+| `toad ggit push`        | ❌                     | No    | Modifies remote             |
+| `toad ggit pull`        | ❌                     | No    | Modifies local              |
+| `toad ggit sync`        | ❌                     | No    | Modifies submodules         |
+| `toad ggit checkout`    | ❌                     | No    | Changes branches            |
+| `toad project list`     | ✅ (exists)            | Yes   | Read-only                   |
+| `toad project switch`   | ✅ (exists)            | Yes   | Changes config only         |
+| `toad project register` | ✅ `register_context`  | Yes   | Creates config              |
+| `toad project delete`   | ❌                     | No    | Deletes data                |
+| `toad cw run`           | ❌                     | No    | Arbitrary code execution    |
 
 ---
 
@@ -364,13 +378,13 @@ pub async fn generate_manifest(...)
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
+| Risk                                   | Mitigation                                |
+| -------------------------------------- | ----------------------------------------- |
 | AI accidentally runs dangerous command | Exclude all dangerous operations from MCP |
-| AI bypasses safety via `do` command | `do` is explicitly excluded |
-| AI modifies git state | All git write operations excluded |
-| AI deletes data | `clean` and `delete` excluded |
-| Parameter validation | Use JsonSchema for strict validation |
+| AI bypasses safety via `do` command    | `do` is explicitly excluded               |
+| AI modifies git state                  | All git write operations excluded         |
+| AI deletes data                        | `clean` and `delete` excluded             |
+| Parameter validation                   | Use JsonSchema for strict validation      |
 
 ---
 

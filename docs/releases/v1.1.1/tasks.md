@@ -1,6 +1,7 @@
 # v1.1.1 "Polish & Insights" — Task Breakdown
 
-> Spec-driven task list derived from [`docs/releases/v1.1.1/evolution.md`](./evolution.md).
+> Spec-driven task list derived from
+> [`docs/releases/v1.1.1/evolution.md`](./evolution.md).
 
 ---
 

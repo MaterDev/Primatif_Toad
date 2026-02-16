@@ -30,6 +30,7 @@ just qa
 ```
 
 This runs:
+
 - `cargo test --workspace`
 - `cargo clippy --workspace -- -D warnings`
 - `cargo fmt --all -- --check`
@@ -40,6 +41,7 @@ This runs:
 ## CI/CD
 
 All PRs must pass:
+
 - ✅ Tests on Ubuntu and macOS
 - ✅ Clippy with no warnings
 - ✅ Formatting checks

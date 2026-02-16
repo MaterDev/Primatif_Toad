@@ -2,7 +2,10 @@
 
 ## Overview
 
-Fix critical bug in `ggit` commands where submodule operations use `workspace.projects_dir.join(&sub.path)` instead of `p.path.join(&sub.path)`, causing git commands to target the wrong directory for projects outside the hub root.
+Fix critical bug in `ggit` commands where submodule operations use
+`workspace.projects_dir.join(&sub.path)` instead of `p.path.join(&sub.path)`,
+causing git commands to target the wrong directory for projects outside the hub
+root.
 
 ## Sources
 
@@ -17,12 +20,15 @@ Fix critical bug in `ggit` commands where submodule operations use `workspace.pr
 Three `ggit` commands build submodule paths incorrectly:
 
 1. **`ggit checkout`** (L121) — Uses `workspace.projects_dir.join(&sub.path)`
-2. **`ggit sync`** (L174) — Uses `p.path.join(&sub.path)` in preflight but `workspace.projects_dir.join(&sub.path)` elsewhere
+2. **`ggit sync`** (L174) — Uses `p.path.join(&sub.path)` in preflight but
+   `workspace.projects_dir.join(&sub.path)` elsewhere
 3. **`ggit branches`** (L273) — Uses `p.path.join(&sub.path)` (correct!)
 
 **Impact:**
+
 - For projects in the hub root, this works by accident
-- For projects outside the hub (e.g., registered contexts), git commands fail or target wrong repos
+- For projects outside the hub (e.g., registered contexts), git commands fail or
+  target wrong repos
 - This violates the "generic multi-repo orchestration" principle
 
 ---
@@ -30,7 +36,9 @@ Three `ggit` commands build submodule paths incorrectly:
 ## Root Cause
 
 The bug stems from confusion between:
-- `workspace.projects_dir` — The hub root (e.g., `/Users/jake/Code/Primatif_Toad`)
+
+- `workspace.projects_dir` — The hub root (e.g.,
+  `/Users/jake/Code/Primatif_Toad`)
 - `p.path` — The actual project path (e.g., `/Users/jake/Code/other-project`)
 
 Submodules are **relative to their parent project**, not the workspace root.
@@ -145,16 +153,17 @@ for sub in &p.submodules {
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
-| Breaking existing workflows | Commands already broken for non-hub projects |
-| Regression in hub projects | Manual testing on Primatif_Toad itself |
+| Risk                         | Mitigation                                                        |
+| ---------------------------- | ----------------------------------------------------------------- |
+| Breaking existing workflows  | Commands already broken for non-hub projects                      |
+| Regression in hub projects   | Manual testing on Primatif_Toad itself                            |
 | Path canonicalization issues | Use `p.path` as-is (already canonicalized by workspace discovery) |
 
 ---
 
 ## Integration Points
 
-- **Depends on:** `toad_git::branch::checkout`, `toad_git::sync::preflight_check`
+- **Depends on:** `toad_git::branch::checkout`,
+  `toad_git::sync::preflight_check`
 - **Consumed by:** `bin/toad` CLI
 - **Testing:** Manual verification on hub + external projects

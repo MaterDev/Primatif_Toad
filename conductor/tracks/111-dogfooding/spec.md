@@ -2,7 +2,10 @@
 
 ## Overview
 
-Use Toad to improve Toad's own development workflow. Identify and implement features that would make developing Toad itself easier, faster, and more reliable. This is critical for long-term maintainability and developer experience.
+Use Toad to improve Toad's own development workflow. Identify and implement
+features that would make developing Toad itself easier, faster, and more
+reliable. This is critical for long-term maintainability and developer
+experience.
 
 ## Sources
 
@@ -14,16 +17,19 @@ Use Toad to improve Toad's own development workflow. Identify and implement feat
 
 ## Problem Statement
 
-**Opportunity:** Toad is not fully using its own features to improve its development workflow.
+**Opportunity:** Toad is not fully using its own features to improve its
+development workflow.
 
 Current gaps:
+
 - ❌ Toad doesn't use its own MCP server for development
 - ❌ No tags on Toad's own submodules
 - ❌ No custom workflows registered for common tasks
 - ❌ Conductor tracks not integrated with Toad commands
 - ❌ No automated context refresh in git hooks
 
-**Opportunity:** By dogfooding Toad's features, we can identify UX issues and missing functionality that real users will encounter.
+**Opportunity:** By dogfooding Toad's features, we can identify UX issues and
+missing functionality that real users will encounter.
 
 ---
 
@@ -48,7 +54,9 @@ Current gaps:
 
 ### AD-1: MCP Configuration
 
-Add Toad's own MCP server to Windsurf/Cursor config for developing Toad. This lets us:
+Add Toad's own MCP server to Windsurf/Cursor config for developing Toad. This
+lets us:
+
 - Query Toad's ecosystem while coding
 - Test MCP tools in real development
 - Identify UX issues with MCP
@@ -56,6 +64,7 @@ Add Toad's own MCP server to Windsurf/Cursor config for developing Toad. This le
 ### AD-2: Taxonomy System
 
 Apply tags to Toad's submodules:
+
 - `#core` — toad-core (foundation)
 - `#intelligence` — toad-discovery, toad-manifest
 - `#orchestration` — toad-git, toad-ops
@@ -65,6 +74,7 @@ Apply tags to Toad's submodules:
 ### AD-3: Custom Workflows
 
 Register common development tasks as workflows:
+
 - `toad cw run qa` → `just qa`
 - `toad cw run release-check` → Pre-release verification
 - `toad cw run sync-submodules` → `ggit sync` wrapper
@@ -73,6 +83,7 @@ Register common development tasks as workflows:
 ### AD-4: Conductor Integration
 
 Make conductor tracks discoverable:
+
 - Add `toad track list` command (or use `toad reveal`)
 - Add `toad track show <name>` command
 - Generate track index in manifest
@@ -80,11 +91,12 @@ Make conductor tracks discoverable:
 ### AD-5: Git Hooks
 
 Add post-commit hook to refresh context:
-```bash
+
+`````bash
 #!/bin/bash
 # .git/hooks/post-commit
 toad manifest --quiet
-```
+```json
 
 ---
 
@@ -112,7 +124,7 @@ toad tag bin/toad-mcp --tag interface --yes
 # Verify
 toad status --tag core
 toad status --tag intelligence
-```
+```json
 
 ### Phase 2: Register Workflows (10 min)
 
@@ -124,7 +136,7 @@ set -e
 echo "🐸 Running full QA suite..."
 just qa
 echo "✅ QA Complete"
-```
+```json
 
 **File:** `scripts/workflows/release-check.sh`
 
@@ -158,7 +170,7 @@ echo "Checking manifest freshness..."
 toad manifest --check
 
 echo "✅ Release check passed"
-```
+```json
 
 **File:** `scripts/workflows/update-docs.sh`
 
@@ -177,7 +189,7 @@ toad skill sync
 toad manifest
 
 echo "✅ Documentation updated"
-```
+```json
 
 Register workflows:
 
@@ -185,7 +197,7 @@ Register workflows:
 toad cw register qa ./scripts/workflows/qa.sh
 toad cw register release-check ./scripts/workflows/release-check.sh
 toad cw register update-docs ./scripts/workflows/update-docs.sh
-```
+```json
 
 ### Phase 3: Add Git Hook (5 min)
 
@@ -200,7 +212,7 @@ if command -v toad &> /dev/null; then
     # Run quietly to avoid noise
     toad manifest --quiet 2>/dev/null || true
 fi
-```
+```json
 
 Update `Justfile` to install post-commit hook:
 
@@ -211,7 +223,7 @@ setup-hooks:
     @ln -sf ../../scripts/git-hooks/pre-push .git/hooks/pre-push
     @ln -sf ../../scripts/git-hooks/post-commit .git/hooks/post-commit
     @echo "✅ Git hooks installed."
-```
+```json
 
 ### Phase 4: MCP Configuration (5 min)
 
@@ -228,7 +240,7 @@ setup-hooks:
     }
   }
 }
-```
+```json
 
 ### Phase 5: Conductor Integration (15 min)
 
@@ -241,7 +253,7 @@ Add track discovery to Toad:
 toad reveal track
 
 # This works because tracks are in conductor/tracks/
-```
+```json
 
 **Option 2:** Add dedicated command (future)
 
@@ -256,11 +268,11 @@ enum TrackCommand {
     List,
     Show { name: String },
 }
-```
+```json
 
 For now, document the pattern in README:
 
-```markdown
+````markdown
 ## Development Workflow
 
 ### Finding Conductor Tracks
@@ -274,9 +286,10 @@ toad reveal 111-mcp
 
 # View track spec
 cat conductor/tracks/111-mcp-enhancements/spec.md
-```
-```
+```json
+`````
 
+````json
 ---
 
 ## Success Criteria
@@ -326,3 +339,5 @@ These become future tracks or bug fixes.
 - Auto-tag on project creation
 - Workflow templates
 - Context-aware git commit messages
+```json
+````

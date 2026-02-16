@@ -2,7 +2,9 @@
 
 ## Overview
 
-Add GitHub Actions CI/CD pipeline and release automation to ensure code quality, prevent regressions, and streamline the v1.1.0 release process. Critical for production readiness and future development velocity.
+Add GitHub Actions CI/CD pipeline and release automation to ensure code quality,
+prevent regressions, and streamline the v1.1.0 release process. Critical for
+production readiness and future development velocity.
 
 ## Sources
 
@@ -17,13 +19,15 @@ Add GitHub Actions CI/CD pipeline and release automation to ensure code quality,
 **Critical Gap:** Toad has no automated CI/CD pipeline.
 
 Current issues:
+
 - ❌ No automated testing on PRs
 - ❌ No automated quality checks (clippy, fmt, markdownlint)
 - ❌ No automated license boundary verification
 - ❌ No release automation
 - ❌ Manual verification required for every change
 
-**Risk:** Without CI/CD, regressions can slip into production, and releases require manual coordination across 8 repositories.
+**Risk:** Without CI/CD, regressions can slip into production, and releases
+require manual coordination across 8 repositories.
 
 ---
 
@@ -50,6 +54,7 @@ Current issues:
 ### AD-1: GitHub Actions
 
 Use GitHub Actions for CI/CD because:
+
 - Native GitHub integration
 - Free for public repos
 - Mature Rust ecosystem support
@@ -58,6 +63,7 @@ Use GitHub Actions for CI/CD because:
 ### AD-2: Multi-Job Pipeline
 
 Separate jobs for different concerns:
+
 1. **Test** — Run `cargo test --workspace`
 2. **Lint** — Run clippy, rustfmt, markdownlint
 3. **License** — Run `scripts/check_license_boundary.sh`
@@ -66,6 +72,7 @@ Separate jobs for different concerns:
 ### AD-3: Matrix Testing
 
 Test on multiple platforms:
+
 - Ubuntu (primary)
 - macOS (secondary)
 - Windows (optional, future)
@@ -73,6 +80,7 @@ Test on multiple platforms:
 ### AD-4: Release Workflow
 
 Separate workflow for releases:
+
 - Triggered by version tags (`v*`)
 - Builds release binaries
 - Creates GitHub release
@@ -86,7 +94,7 @@ Separate workflow for releases:
 
 **File:** `.github/workflows/ci.yml`
 
-```yaml
+`````yaml
 name: CI
 
 on:
@@ -198,7 +206,7 @@ jobs:
       
       - name: Build MCP server
         run: cargo build -p toad-mcp --verbose
-```
+```json
 
 ### Phase 2: Create Release Workflow (15 min)
 
@@ -278,7 +286,7 @@ jobs:
           asset_path: target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
           asset_content_type: application/octet-stream
-```
+```json
 
 ### Phase 3: Add Status Badges to README (5 min)
 
@@ -290,13 +298,13 @@ Add badges after the version badge:
 [![Version: v1.1.0](https://img.shields.io/badge/version-v1.1.0-green.svg)](Cargo.toml)
 [![CI](https://github.com/Primatif/Primatif_Toad/workflows/CI/badge.svg)](https://github.com/Primatif/Primatif_Toad/actions)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
-```
+```json
 
 ### Phase 4: Add CONTRIBUTING.md (10 min)
 
 **File:** `CONTRIBUTING.md`
 
-```markdown
+````markdown
 # Contributing to Toad
 
 ## Development Setup
@@ -305,14 +313,17 @@ Add badges after the version badge:
    ```bash
    git clone --recursive https://github.com/Primatif/Primatif_Toad.git
    cd Primatif_Toad
-   ```
+`````
 
-2. Run setup:
+`````yaml
+1. Run setup:
+
    ```bash
    just setup
    ```
 
-3. Install Toad:
+2. Install Toad:
+
    ```bash
    just install
    ```
@@ -323,9 +334,10 @@ Run the full QA suite:
 
 ```bash
 just qa
-```
+```json
 
 This runs:
+
 - `cargo test --workspace`
 - `cargo clippy --workspace -- -D warnings`
 - `cargo fmt --all -- --check`
@@ -336,6 +348,7 @@ This runs:
 ## CI/CD
 
 All PRs must pass:
+
 - ✅ Tests on Ubuntu and macOS
 - ✅ Clippy with no warnings
 - ✅ Formatting checks
@@ -345,8 +358,8 @@ All PRs must pass:
 ## License
 
 See [LICENSE](LICENSE) for details on the MIT/BUSL-1.1 dual licensing model.
-```
 
+```json
 ---
 
 ## Success Criteria
@@ -386,3 +399,6 @@ See [LICENSE](LICENSE) for details on the MIT/BUSL-1.1 dual licensing model.
 - Performance benchmarking
 - Security scanning (cargo-audit)
 - Coverage reporting
+```json
+````yaml
+`````

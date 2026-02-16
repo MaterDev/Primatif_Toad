@@ -2,16 +2,23 @@
 
 ## Vision
 
-v1.1.1 is a **polish and enhancement release** that addresses gaps identified during v1.1.0 development and adds powerful analytics capabilities. This release focuses on production readiness, developer experience, and deeper ecosystem insights.
+v1.1.1 is a **polish and enhancement release** that addresses gaps identified
+during v1.1.0 development and adds powerful analytics capabilities. This release
+focuses on production readiness, developer experience, and deeper ecosystem
+insights.
 
 ---
 
 ## Core Objectives
 
-1. **Production Infrastructure** — Add CI/CD pipeline for automated testing and releases
-2. **Rich Analytics** — Provide dependency analysis, velocity metrics, and health scoring
-3. **Enhanced MCP** — Complete MCP tool surface with CLI bridge and better descriptions
-4. **Developer Experience** — Add `toad doctor` health checks and comprehensive user guide
+1. **Production Infrastructure** — Add CI/CD pipeline for automated testing and
+   releases
+2. **Rich Analytics** — Provide dependency analysis, velocity metrics, and
+   health scoring
+3. **Enhanced MCP** — Complete MCP tool surface with CLI bridge and better
+   descriptions
+4. **Developer Experience** — Add `toad doctor` health checks and comprehensive
+   user guide
 5. **Dogfooding** — Use Toad's own features to improve Toad development
 6. **Content Accuracy** — Update AI skills and documentation for v1.1.0 features
 
@@ -33,6 +40,7 @@ v1.1.1 is a **polish and enhancement release** that addresses gaps identified du
 **Problem:** v1.1.0 has no CI/CD, making releases manual and error-prone.
 
 **Solution:**
+
 - GitHub Actions CI pipeline (test, lint, license checks)
 - Automated release workflow with multi-platform binaries
 - CONTRIBUTING.md for contributors
@@ -45,6 +53,7 @@ v1.1.1 is a **polish and enhancement release** that addresses gaps identified du
 **Problem:** Current analytics are basic (disk usage, git status only).
 
 **Solution:**
+
 - Dependency graph analysis
 - Development velocity metrics
 - Technical debt indicators
@@ -60,6 +69,7 @@ v1.1.1 is a **polish and enhancement release** that addresses gaps identified du
 **Problem:** MCP server is functional but incomplete.
 
 **Solution:**
+
 - Enhanced tool descriptions with usage hints
 - New tools: `get_atlas`, `get_manifest`, `get_project_context`
 - CLI bridge: expose safe CLI commands via MCP
@@ -73,6 +83,7 @@ v1.1.1 is a **polish and enhancement release** that addresses gaps identified du
 **Problem:** Troubleshooting Toad issues requires manual investigation.
 
 **Solution:**
+
 - `toad doctor` command for health checks
 - Comprehensive USER_GUIDE.md
 - Updated skills with v1.1.0 features
@@ -85,6 +96,7 @@ v1.1.1 is a **polish and enhancement release** that addresses gaps identified du
 **Problem:** Toad doesn't use its own features for development.
 
 **Solution:**
+
 - Tag Toad's submodules with taxonomy
 - Register common workflows as `toad cw` commands
 - Configure MCP for Toad development
@@ -99,7 +111,8 @@ v1.1.1 is a **polish and enhancement release** that addresses gaps identified du
 ### Analytics Architecture
 
 **Data Flow:**
-```
+
+````json
 Git History + Project Files
     ↓
 Analysis Functions (toad-ops)
@@ -107,9 +120,10 @@ Analysis Functions (toad-ops)
 Structured Reports (toad-core types)
     ↓
 CLI Formatting (bin/toad) + MCP Tools (bin/toad-mcp)
-```
+```json
 
 **Key Types:**
+
 ```rust
 pub struct DependencyGraph {
     pub nodes: Vec<ProjectNode>,
@@ -126,11 +140,12 @@ pub struct HealthScore {
     pub deps_score: u8,
     pub quality_score: u8,
 }
-```
+```json
 
 ### CI/CD Architecture
 
 **Workflows:**
+
 1. **CI Pipeline** — Runs on every PR and push
    - Test matrix (Ubuntu, macOS)
    - Lint checks (clippy, rustfmt, markdownlint)
@@ -145,6 +160,7 @@ pub struct HealthScore {
 ### MCP Enhancements
 
 **New Tools:**
+
 - `get_atlas` — Direct access to ATLAS.json
 - `get_manifest` — Direct access to MANIFEST.md
 - `get_project_context` — Direct access to CONTEXT.md
@@ -153,8 +169,8 @@ pub struct HealthScore {
 - `sync_registry` — Rebuild cache
 - `tag_projects` — Apply taxonomy
 
-**Enhanced Descriptions:**
-All tools get usage hints, "what comes next" guidance, and alternative suggestions.
+**Enhanced Descriptions:** All tools get usage hints, "what comes next"
+guidance, and alternative suggestions.
 
 ---
 
@@ -172,24 +188,26 @@ All tools get usage hints, "what comes next" guidance, and alternative suggestio
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
-| CI takes too long | Use cargo caching |
-| Analytics are slow | Optimize git queries, add caching |
-| MCP tools too complex | Keep parameter schemas simple |
-| Scope creep | Strict adherence to objectives |
+| Risk                  | Mitigation                        |
+| --------------------- | --------------------------------- |
+| CI takes too long     | Use cargo caching                 |
+| Analytics are slow    | Optimize git queries, add caching |
+| MCP tools too complex | Keep parameter schemas simple     |
+| Scope creep           | Strict adherence to objectives    |
 
 ---
 
 ## Strategic Positioning
 
 v1.1.1 is a **consolidation release** that:
+
 - Solidifies v1.1.0's foundation
 - Adds production-grade infrastructure
 - Provides deeper insights for power users
 - Sets the stage for v1.2.0 (external integrations)
 
 **After v1.1.1:**
+
 - Toad is production-ready with CI/CD
 - Analytics provide actionable insights
 - MCP is feature-complete
@@ -207,3 +225,4 @@ v1.1.1 is a **consolidation release** that:
 - Plugin system for custom analytics
 - Multi-workspace support
 - Cloud sync for context
+````

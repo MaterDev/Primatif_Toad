@@ -2,7 +2,10 @@
 
 ## Overview
 
-Expand Toad's analytics capabilities to provide deeper insights into ecosystem health, development velocity, technical debt, and project relationships. These analytics help developers make data-driven decisions about where to focus effort.
+Expand Toad's analytics capabilities to provide deeper insights into ecosystem
+health, development velocity, technical debt, and project relationships. These
+analytics help developers make data-driven decisions about where to focus
+effort.
 
 ## Sources
 
@@ -15,6 +18,7 @@ Expand Toad's analytics capabilities to provide deeper insights into ecosystem h
 ## Problem Statement
 
 Current analytics are basic:
+
 - ✅ Disk usage and bloat detection
 - ✅ Git status and activity tiers
 - ❌ No dependency analysis
@@ -24,6 +28,7 @@ Current analytics are basic:
 - ❌ No historical trends
 
 **Opportunity:** Rich analytics would help developers understand:
+
 - Which projects are most critical (dependency graph)
 - Where technical debt is accumulating
 - Development velocity trends
@@ -56,6 +61,7 @@ Current analytics are basic:
 **Command:** `toad analyze deps`
 
 **What It Shows:**
+
 - Which projects depend on which crates
 - Dependency depth (how many layers)
 - Critical path projects (most depended upon)
@@ -63,7 +69,8 @@ Current analytics are basic:
 - Circular dependencies (if any)
 
 **Output:**
-```
+
+````json
 --- DEPENDENCY ANALYSIS ---
 
 Critical Path (Most Depended Upon):
@@ -81,9 +88,10 @@ Orphaned Projects:
   - docs (no code dependencies)
 
 Health: ✅ No circular dependencies detected
-```
+```json
 
 **Use Cases:**
+
 - Identify which crates are most critical
 - Plan refactoring (know impact radius)
 - Understand architecture at a glance
@@ -93,13 +101,15 @@ Health: ✅ No circular dependencies detected
 **Command:** `toad analyze velocity`
 
 **What It Shows:**
+
 - Commits per project (last 30 days)
 - Lines changed per project
 - Active contributors per project
 - Commit frequency trends
 
 **Output:**
-```
+
+```json
 --- DEVELOPMENT VELOCITY (Last 30 Days) ---
 
 Most Active Projects:
@@ -112,9 +122,10 @@ Stale Projects (No commits in 30 days):
   - assets (last commit: 120 days ago)
 
 Velocity Trend: ↗️ Increasing (15% more commits than previous 30 days)
-```
+```json
 
 **Use Cases:**
+
 - Identify abandoned projects
 - Track development momentum
 - Plan resource allocation
@@ -124,6 +135,7 @@ Velocity Trend: ↗️ Increasing (15% more commits than previous 30 days)
 **Command:** `toad analyze debt`
 
 **What It Shows:**
+
 - TODO/FIXME/HACK comments count
 - Test coverage gaps
 - Outdated dependencies
@@ -131,7 +143,8 @@ Velocity Trend: ↗️ Increasing (15% more commits than previous 30 days)
 - Duplicate code patterns
 
 **Output:**
-```
+
+```json
 --- TECHNICAL DEBT ANALYSIS ---
 
 Code Smells:
@@ -154,9 +167,10 @@ Outdated Dependencies:
   - serde: 1.0.195 (latest: 1.0.197)
 
 Debt Score: 6.5/10 (Moderate)
-```
+```json
 
 **Use Cases:**
+
 - Prioritize cleanup work
 - Track debt accumulation
 - Identify refactoring candidates
@@ -166,11 +180,13 @@ Debt Score: 6.5/10 (Moderate)
 **Command:** `toad analyze health`
 
 **What It Shows:**
+
 - Composite health score (0-100)
 - Health factors breakdown
 - Recommendations for improvement
 
 **Scoring Factors:**
+
 - VCS cleanliness (20 points)
 - Test coverage (20 points)
 - Documentation presence (15 points)
@@ -179,7 +195,8 @@ Debt Score: 6.5/10 (Moderate)
 - Code quality (15 points)
 
 **Output:**
-```
+
+```json
 --- PROJECT HEALTH SCORES ---
 
 Excellent (90-100):
@@ -208,9 +225,10 @@ Recommendations:
   - Increase test coverage in toad-scaffold
   - Address TODOs in toad-git
   - Update dependencies in toad-ops
-```
+```json
 
 **Use Cases:**
+
 - Quick health check
 - Identify projects needing attention
 - Track improvement over time
@@ -220,13 +238,15 @@ Recommendations:
 **Command:** `toad analyze trends`
 
 **What It Shows:**
+
 - Health score changes over time
 - Disk usage trends
 - Activity trends
 - Dependency changes
 
 **Output:**
-```
+
+```json
 --- ECOSYSTEM TRENDS (Last 90 Days) ---
 
 Health Trend: ↗️ Improving
@@ -248,9 +268,10 @@ Dependency Changes:
   - Added: tokio, rmcp, schemars
   - Updated: clap (4.4 → 4.5), serde (1.0.190 → 1.0.195)
   - Removed: wait-timeout
-```
+```json
 
 **Use Cases:**
+
 - Track ecosystem evolution
 - Identify concerning trends
 - Celebrate improvements
@@ -260,13 +281,15 @@ Dependency Changes:
 **Command:** `toad analyze patterns`
 
 **What It Shows:**
+
 - Common code patterns across projects
 - Shared dependencies
 - Architectural consistency
 - Naming conventions
 
 **Output:**
-```
+
+```json
 --- CROSS-PROJECT PATTERNS ---
 
 Common Dependencies:
@@ -287,9 +310,10 @@ Architectural Consistency:
   ✅ Clear separation: core → discovery/git/ops → bin
   ✅ No circular dependencies
   ✅ License boundaries respected
-```
+```json
 
 **Use Cases:**
+
 - Ensure consistency
 - Identify outliers
 - Guide new development
@@ -299,13 +323,15 @@ Architectural Consistency:
 **Command:** `toad analyze submodules`
 
 **What It Shows:**
+
 - Submodule alignment status
 - Commit drift analysis
 - Update frequency
 - Branch consistency
 
 **Output:**
-```
+
+```json
 --- SUBMODULE HEALTH ANALYSIS ---
 
 Alignment Status:
@@ -327,9 +353,10 @@ Update Frequency:
 Branch Consistency:
   ✅ All on 'dev' branch
   ✅ No detached HEADs
-```
+```json
 
 **Use Cases:**
+
 - Monitor submodule health
 - Identify sync issues
 - Plan alignment operations
@@ -374,7 +401,7 @@ pub struct HealthScore {
     pub deps_score: u8,
     pub quality_score: u8,
 }
-```
+```json
 
 ### Phase 2: Analysis Functions (toad-ops)
 
@@ -386,7 +413,7 @@ pub fn analyze_velocity(workspace: &Workspace, days: u32) -> ToadResult<Velocity
 pub fn analyze_debt(workspace: &Workspace) -> ToadResult<DebtIndicators>;
 pub fn calculate_health_score(project: &ProjectDetail) -> ToadResult<HealthScore>;
 pub fn analyze_trends(workspace: &Workspace, days: u32) -> ToadResult<TrendReport>;
-```
+```json
 
 ### Phase 3: CLI Commands (bin/toad)
 
@@ -407,7 +434,7 @@ enum AnalyzeCommand {
     Patterns,
     Submodules,
 }
-```
+```json
 
 ### Phase 4: MCP Integration
 
@@ -434,7 +461,7 @@ pub async fn analyze_patterns(...) -> Result<CallToolResult, McpError>
 
 #[tool(description = "Analyze submodule health and alignment. Shows alignment status, commit drift, update frequency, and branch consistency.")]
 pub async fn analyze_submodules(...) -> Result<CallToolResult, McpError>
-```
+```json
 
 **Parameter Schemas:**
 
@@ -470,7 +497,7 @@ pub struct AnalyzeTrendsParams {
     /// Number of days to analyze (default: 90)
     pub days: Option<u32>,
 }
-```
+```json
 
 ---
 
@@ -501,3 +528,4 @@ pub struct AnalyzeTrendsParams {
 - Export to visualization tools
 - Integration with GitHub API for richer data
 - Custom scoring formulas
+````

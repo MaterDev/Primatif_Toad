@@ -2,7 +2,9 @@
 
 ## Overview
 
-Add a comprehensive health-check command that verifies the Toad installation, workspace configuration, and ecosystem state. This command helps developers troubleshoot issues and verify their setup is correct.
+Add a comprehensive health-check command that verifies the Toad installation,
+workspace configuration, and ecosystem state. This command helps developers
+troubleshoot issues and verify their setup is correct.
 
 ## Sources
 
@@ -31,11 +33,13 @@ Add a comprehensive health-check command that verifies the Toad installation, wo
 
 ### AD-1: Read-Only Diagnostic
 
-`toad doctor` performs **read-only checks** and never modifies state. It reports problems and suggests commands to fix them.
+`toad doctor` performs **read-only checks** and never modifies state. It reports
+problems and suggests commands to fix them.
 
 ### AD-2: Categorized Checks
 
 Group checks into categories:
+
 1. **Installation** — Binary paths, versions
 2. **Workspace** — Discovery, fingerprints, registry
 3. **Git** — Remote connectivity, submodule status
@@ -45,6 +49,7 @@ Group checks into categories:
 ### AD-3: Traffic Light Output
 
 Use colored status indicators:
+
 - ✅ Green — Check passed
 - ⚠️ Yellow — Warning (non-critical)
 - ❌ Red — Error (needs attention)
@@ -303,6 +308,7 @@ pub async fn run_health_check(
 ```
 
 **Use Cases for AI Agents:**
+
 - Troubleshoot user issues automatically
 - Verify Toad setup before operations
 - Provide diagnostic context for errors
