@@ -40,17 +40,17 @@
 
 ### Phase 3: Testing
 
-- [ ] Build: `cargo build -p toad-mcp`
-- [ ] Test `get_atlas` via MCP client
-- [ ] Test `get_manifest` via MCP client
-- [ ] Test `get_project_context` via MCP client
-- [ ] Verify error messages for missing artifacts
+- [x] Build: `cargo build -p toad-mcp` (d095921)
+- [x] Test `get_atlas` via MCP client (d095921)
+- [x] Test `get_manifest` via MCP client (d095921)
+- [x] Test `get_project_context` via MCP client (d095921)
+- [x] Verify error messages for missing artifacts (d095921)
 
 ---
 
 ## Acceptance Criteria
 
-- All three new tools compile and run
-- Documentation is complete and accurate
-- Error messages guide users to run `toad manifest`
-- MCP guide includes practical workflow examples
+- [x] All three new tools compile and run
+- [x] Documentation is complete and accurate
+- [x] Error messages guide users to run `toad manifest`
+- [x] MCP guide includes practical workflow examples
