@@ -135,6 +135,9 @@ detailed plan in its respective folder.
 - [ ] **Track: v1.1.0 Dogfooding** _Link:
       [./tracks/111-dogfooding/](./tracks/111-dogfooding/)_
 
+- [x] **Track: v1.1.1 ggit Submodule Path Fixes** _Link:
+      [./tracks/archive/111-ggit-fixes/](./tracks/archive/111-ggit-fixes/)_
+
 ---
 
 - [x] **Track: Rust Context & Architecture Guide**

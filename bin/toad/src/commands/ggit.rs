@@ -176,7 +176,7 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace) -> Result<()> {
                         &sub_path,
                         &format!("{} > {}", p.name, sub.name),
                         Some(&p.path),
-                        Some(&sub.path),
+                        Some(&sub_path),
                     )?;
                     if !sub_res.issues.is_empty() {
                         any_issues = true;
