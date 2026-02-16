@@ -16,13 +16,13 @@
 
 ### Phase 1: Add Missing Tools
 
-- [ ] Add `get_atlas` tool to `bin/toad-mcp/src/server.rs`
+- [x] Add `get_atlas` tool to `bin/toad-mcp/src/server.rs` (f9a8b7c)
   - Reads `workspace.atlas_path()`
   - Returns JSON content or helpful error
-- [ ] Add `get_manifest` tool
+- [x] Add `get_manifest` tool (f9a8b7c)
   - Reads `workspace.manifest_path()`
   - Returns Markdown content or helpful error
-- [ ] Add `get_project_context` tool
+- [x] Add `get_project_context` tool (f9a8b7c)
   - Takes `name` parameter
   - Reads `workspace.shadows_dir/{name}/CONTEXT.md`
   - Returns Markdown content or helpful error
