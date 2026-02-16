@@ -65,13 +65,17 @@ Tools for exploring the ecosystem and finding projects.
 
 1. **`list_projects`**: Returns basic metadata for all projects.
    - **Params:** `query`, `tag`, `stack`, `activity`, `vcs_status`.
-2. **`search_projects`**: Ranked semantic search across names, essence (READMEs), and tags.
+2. **`search_projects`**: Ranked semantic search across names, essence
+   (READMEs), and tags.
    - **Params:** `query` (term), `tag` (filter).
-3. **`search_projects_by_dna`**: Find projects by architectural patterns (roles, capabilities).
+3. **`search_projects_by_dna`**: Find projects by architectural patterns (roles,
+   capabilities).
    - **Params:** `query` (pattern), `tag`.
-4. **`get_ecosystem_summary`**: High-level token-budgeted overview of all projects.
+4. **`get_ecosystem_summary`**: High-level token-budgeted overview of all
+   projects.
    - **Params:** `token_limit`.
-5. **`get_ecosystem_status`**: Global health report showing VCS state and activity tiers.
+5. **`get_ecosystem_status`**: Global health report showing VCS state and
+   activity tiers.
    - **Params:** `query`, `tag`.
 
 ### 🧠 Context Tools
@@ -80,7 +84,8 @@ Tools for deep-diving into project architecture and implementation.
 
 1. **`get_project_detail`**: Full metadata for a specific project.
    - **Params:** `name` (exact).
-2. **`get_project_dna`**: Structural patterns only (roles, capabilities, patterns).
+2. **`get_project_dna`**: Structural patterns only (roles, capabilities,
+   patterns).
    - **Params:** `name`.
 3. **`get_project_context`**: Direct access to the project's `CONTEXT.md`.
    - **Params:** `name`.
