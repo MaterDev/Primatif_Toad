@@ -112,7 +112,7 @@ detailed plan in its respective folder.
 ---
 
 - [x] **Track: v1.1.0 MCP Enhancements** _Link:
-      [./tracks/111-mcp-enhancements/](./tracks/111-mcp-enhancements/)_
+      [./tracks/archive/111-mcp-enhancements/](./tracks/archive/111-mcp-enhancements/)_
 
 - [ ] **Track: v1.1.0 Dogfooding** _Link:
       [./tracks/111-dogfooding/](./tracks/111-dogfooding/)_
