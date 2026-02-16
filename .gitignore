@@ -2,6 +2,9 @@
 # Per-context artifacts (shadows, registry, tags) now live in ~/.toad/contexts/,
 # so the workspace root no longer needs a whitelist boundary.
 
+# Node tooling
+node_modules/
+
 # Build artifacts
 target/
 **/*.rs.bk

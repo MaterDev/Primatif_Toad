@@ -1,0 +1,17 @@
+{
+  "config": {
+    "extends": ".markdownlint.json"
+  },
+  "globs": [
+    "**/*.md",
+    ".gemini/**/*.md"
+  ],
+  "ignores": [
+    "**/node_modules/**",
+    "target/**",
+    "projects/**",
+    "shadows/**",
+    ".windsurf/**",
+    ".git/**"
+  ]
+}

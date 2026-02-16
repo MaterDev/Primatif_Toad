@@ -66,8 +66,7 @@ check: lint test
 fix:
     cargo clippy --workspace --fix --allow-dirty --allow-staged
     just fmt
-    @command -v markdownlint > /dev/null || (echo "❌ ERROR: markdownlint-cli is NOT installed. Install with 'npm install -g markdownlint-cli'" && exit 1)
-    markdownlint "**/*.md" --fix
+    npm run fix:md
 
 # Format code and docs
 fmt: fmt-rust fmt-misc
@@ -83,8 +82,7 @@ fmt-misc:
 # Lint Rust code (Clippy) and Markdown
 lint:
     cargo clippy --workspace -- -D warnings
-    @command -v markdownlint > /dev/null || (echo "❌ ERROR: markdownlint-cli is NOT installed. Install with 'npm install -g markdownlint-cli'" && exit 1)
-    markdownlint "**/*.md"
+    npm run lint:md
 
 # Run code coverage (requires cargo-tarpaulin)
 coverage:

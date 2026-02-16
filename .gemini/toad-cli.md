@@ -43,4 +43,3 @@ Options:
 - **`toad manifest`**: The most important command for AI agents. Run this to refresh your architectural vision and command knowledge.
 - **`toad ggit status`**: Use this to get a peer-level view of all submodules and projects.
 - **`toad ggit commit -m "msg" --cascade`**: Use this to commit submodules and the parent project in one atomic transaction.
-

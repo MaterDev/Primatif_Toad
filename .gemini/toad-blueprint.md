@@ -36,4 +36,3 @@
 
 - **Quality Gates:** Use the provided task runner (e.g., `Justfile`, `Makefile`, `npm scripts`) to verify changes.
 - **Context Preservation:** Always run `toad manifest` after architectural changes to keep AI memory synchronized.
-

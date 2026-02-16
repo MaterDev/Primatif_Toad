@@ -68,10 +68,16 @@ jobs:
       - name: Check dprint
         uses: dprint/check@v2.3
 
-      - name: Check markdown
-        uses: davidanson/markdownlint-cli2-action@v16
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          globs: "**/*.md"
+          node-version: "20"
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Check markdown
+        run: npm run lint:md
 
   license:
     name: License Boundary Check
