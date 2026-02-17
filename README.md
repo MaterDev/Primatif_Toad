@@ -3,6 +3,7 @@
 [![Toad Project Lifecycle](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.gif)](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.mp4)
 
 ### Toad Control CLI
+
 The modular meta-engineering platform.
 
 [![Version: v1.1.1](https://img.shields.io/badge/version-v1.1.1-green.svg)](Cargo.toml)
@@ -19,13 +20,6 @@ The modular meta-engineering platform.
 ---
 </div>
 
-Toad is a High-Performance Local-Ops Platform designed to manage a vast ecosystem of independent projects. It provides a multi-threaded administrative layer for orchestrating workspaces, performing data-driven analytics, and enforcing safety guardrails across dozens of repositories.
-
-With the **v1.1.x "Deep Croak"** release, Toad transforms into a portable, AI-native **Context Oracle**, providing AI agents with zero-latency vision across complex multi-repo environments via the Model Context Protocol (MCP) and deep structural DNA mapping.
-
-> [!CAUTION]
-> **Toad is a powerful meta-engineering tool.** Commands execute across multiple independent repositories simultaneously. Misuse can lead to significant data loss. Always verify your targets and commands before execution.
-
 ## 💖 Support the Pond
 
 If Toad has helped you manage your ecosystem or made your AI agents smarter, consider supporting its development!
@@ -40,9 +34,14 @@ For comprehensive instructions on mastering Toad, refer to the **[USER GUIDE](./
 
 Local-Ops is the discipline of managing local development environments at scale.
 
+Toad is a High-Performance Local-Ops Platform designed to manage a vast ecosystem of independent projects. It provides a multi-threaded administrative layer for orchestrating workspaces, performing data-driven analytics, and enforcing safety guardrails across dozens of repositories.
+
 By centralizing observability and orchestration, Local-Ops solves the critical problems of maintenance drift and resource bloat. It provides a "bird's-eye view" through visual health analytics and parallel command dispatching, allowing a single developer to perform ecosystem-wide tasks—like security patching, artifact cleaning, or AI context synchronization—in seconds rather than hours.
 
 Ultimately, Local-Ops bridges the gap between raw code and developer productivity, ensuring that a massive portfolio of work remains a live asset rather than an unmanageable burden of technical debt.
+
+> [!CAUTION]
+> **Toad is a powerful meta-engineering tool.** Commands execute across multiple independent repositories simultaneously. Misuse can lead to significant data loss. Always verify your targets and commands before execution.
 
 ## 🐸 Quick Start
 
@@ -156,9 +155,9 @@ See the [Stack Support Plugins Guide](docs/guides/PLUGINS.md) for more details.
 > [!IMPORTANT] **Context Steering:** The `toad home` command updates the global
 > system pointer. All subsequent CLI calls will target the projects and metadata
 > in the newly anchored directory.
-
-- `toad home .`: Anchor the current directory as your system-wide Toad home.
-- `toad home [path]`: View or set the global workspace pointer manually.
+>
+> - `toad home .`: Anchor the current directory as your system-wide Toad home.
+> - `toad home [path]`: View or set the global workspace pointer manually.
 
 ---
 
