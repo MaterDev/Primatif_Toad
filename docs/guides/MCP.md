@@ -47,8 +47,8 @@ Notes:
 
 - `command` must resolve on your `PATH` (usually via `~/.cargo/bin`). If it does
   not, use the full path to the `toad-mcp` binary.
-- `TOAD_HOME` is optional if you have already anchored your workspace with `toad
-  home <path>`.
+- `TOAD_HOME` is optional if you have already anchored your workspace with
+  `toad home <path>`.
 
 Editor-specific examples:
 
