@@ -13,6 +13,7 @@ The modular meta-engineering platform.
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Maintenance: Actively Developed](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)](https://github.com/Primatif/Primatif_Toad/pulse)
 [![MCP: Supported](https://img.shields.io/badge/MCP-Supported-blue.svg)](docs/guides/MCP.md)
+[![Buy Me a Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/aryehthelid)
 [![GitHub Stars](https://img.shields.io/github/stars/Primatif/Primatif_Toad.svg)](https://github.com/Primatif/Primatif_Toad/stargazers)
 
 ---
