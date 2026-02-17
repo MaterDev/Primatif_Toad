@@ -27,7 +27,7 @@ detailed plan in its respective folder.
       [./tracks/archive/bulk-op-safety/](./tracks/archive/bulk-op-safety/)_
 
 - [x] **Track: Ecosystem Analytics (Insights)** _Link:
-      [./tracks/archive/ecosystem-analytics/](./tracks/ecosystem-analytics/)_
+      [./tracks/archive/111-analytics-enhancements/](./tracks/archive/111-analytics-enhancements/)_
 
 - [x] **Track: Toad Tag (Taxonomy)** _Link:
       [./tracks/archive/toad-tag/](./tracks/archive/toad-tag/)_
@@ -132,8 +132,8 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.1 CI/CD & Release Automation** _Link:
       [./tracks/archive/111-ci-cd-release/](./tracks/archive/111-ci-cd-release/)_
 
-- [ ] **Track: Analytics Refinements (Hardening)** _Link:
-      [./tracks/111-analytics-refinements/](./tracks/111-analytics-refinements/)_
+- [x] **Track: Analytics Refinements (Hardening)** _Link:
+      [./tracks/archive/111-analytics-refinements/](./tracks/archive/111-analytics-refinements/)_
 
 ---
 
