@@ -2,7 +2,7 @@
 
 [![Toad Project Lifecycle](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.gif)](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.mp4)
 
-### Toad Control CLI
+### Toad CLI
 
 The modular meta-engineering platform.
 
