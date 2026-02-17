@@ -114,6 +114,9 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.0 MCP Enhancements** _Link:
       [./tracks/archive/111-mcp-enhancements/](./tracks/archive/111-mcp-enhancements/)_
 
+- [x] **Track: v1.1.0 MCP CLI Bridge** _Link:
+      [./tracks/archive/111-mcp-cli-bridge/](./tracks/archive/111-mcp-cli-bridge/)_
+
 - [ ] **Track: v1.1.0 Dogfooding** _Link:
       [./tracks/111-dogfooding/](./tracks/111-dogfooding/)_
 
