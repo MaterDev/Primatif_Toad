@@ -501,6 +501,9 @@ fn main() -> Result<()> {
         Commands::Doctor => {
             commands::doctor::handle()?;
         }
+        Commands::Analyze { subcommand } => {
+            commands::analyze::handle(&workspace, subcommand, cli.json)?;
+        }
         Commands::Context {
             task,
             inspire,

@@ -132,6 +132,9 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.1 CI/CD & Release Automation** _Link:
       [./tracks/archive/111-ci-cd-release/](./tracks/archive/111-ci-cd-release/)_
 
+- [ ] **Track: Analytics Refinements (Hardening)** _Link:
+      [./tracks/111-analytics-refinements/](./tracks/111-analytics-refinements/)_
+
 ---
 
 - [x] **Track: Rust Context & Architecture Guide**

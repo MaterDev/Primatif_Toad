@@ -1,3 +1,4 @@
+pub mod analyze;
 pub mod clean;
 pub mod context;
 pub mod create;

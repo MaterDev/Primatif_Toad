@@ -202,6 +202,11 @@ pub enum Commands {
     },
     /// Run health checks and diagnose issues
     Doctor,
+    /// Advanced ecosystem insights and deep analytics
+    Analyze {
+        #[command(subcommand)]
+        subcommand: AnalyzeCommand,
+    },
     /// Initialize full context (sync, manifest, tiered prompts)
     InitContext {
         /// Force full re-scan
@@ -246,6 +251,43 @@ pub enum Commands {
     List,
     /// Display version information and the Toad banner
     Version,
+}
+
+#[derive(Subcommand)]
+pub enum AnalyzeCommand {
+    /// Analyze project dependencies and critical path
+    Deps {
+        /// Optional query to filter projects
+        query: Option<String>,
+    },
+    /// Track development velocity and activity metrics
+    Velocity {
+        /// Number of days to analyze (default: 30)
+        #[arg(long, default_value = "30")]
+        days: u32,
+        /// Optional query to filter projects
+        query: Option<String>,
+    },
+    /// Identify technical debt and code smells
+    Debt {
+        /// Optional query to filter projects
+        query: Option<String>,
+    },
+    /// Calculate composite project health scores
+    Health {
+        /// Optional query to filter projects
+        query: Option<String>,
+    },
+    /// Analyze historical trends over time
+    Trends {
+        /// Number of days to analyze (default: 90)
+        #[arg(long, default_value = "90")]
+        days: u32,
+    },
+    /// Analyze cross-project patterns and consistency
+    Patterns,
+    /// Analyze submodule health and alignment
+    Submodules,
 }
 
 #[derive(Subcommand)]
