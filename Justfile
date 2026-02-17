@@ -85,7 +85,7 @@ fmt-misc:
 
 # Lint Rust code (Clippy) and Markdown
 lint:
-    cargo clippy --workspace -- -D warnings
+    cargo clippy --workspace --all-targets -- -D warnings
     npm run lint:md
 
 # Run code coverage (requires cargo-tarpaulin)

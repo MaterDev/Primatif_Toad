@@ -11,7 +11,7 @@
 
 | Component | Stack | Role | Dependencies |
 | :--- | :--- | :--- | :--- |
-| **`Primatif_Toad`** | `NodeJS` | Root | `scripts` |
+| **`Primatif_Toad`** | `Rust` | Root | `scripts` |
 | &nbsp;&nbsp;└─ `crates/toad-core` | `Rust` | Extension | - |
 | &nbsp;&nbsp;└─ `crates/toad-scaffold` | `Rust` | Extension | `toad-git`, `toad-core` |
 | &nbsp;&nbsp;└─ `crates/toad-discovery` | `Rust` | Extension | `toad-ops`, `toad-git`, `toad-core` |
@@ -46,7 +46,7 @@
 
 ### CLI
 
-- **Primatif_Toad** (NodeJS)
+- **Primatif_Toad** (Rust)
 
 ### Data Layer
 
@@ -60,8 +60,7 @@
 ## 📊 Stack Distribution
 
 - **Generic**: 8 projects
-- **Rust**: 7 projects
-- **NodeJS**: 1 projects
+- **Rust**: 8 projects
 
 ## 🌊 Logical Flows
 
