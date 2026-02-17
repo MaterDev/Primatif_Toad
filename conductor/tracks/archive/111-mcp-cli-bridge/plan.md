@@ -19,7 +19,8 @@
 - [x] Add `reveal_projects` tool to `bin/toad-mcp/src/server.rs` (d095921)
   - Delegates to `toad_discovery::find_projects`
   - Parameters: query, tag
-- [x] Add `get_git_status` tool (if not already covered by existing tools) (d095921)
+- [x] Add `get_git_status` tool (if not already covered by existing tools)
+      (d095921)
   - Delegates to `toad_git::generate_multi_repo_status`
   - Parameters: query, tag
 - [x] Add `get_disk_stats` tool (d095921)

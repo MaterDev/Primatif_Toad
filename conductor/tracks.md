@@ -117,6 +117,9 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.0 MCP CLI Bridge** _Link:
       [./tracks/archive/111-mcp-cli-bridge/](./tracks/archive/111-mcp-cli-bridge/)_
 
+- [x] **Track: v1.1.0 Toad Doctor Command** _Link:
+      [./tracks/archive/111-doctor-command/](./tracks/archive/111-doctor-command/)_
+
 - [ ] **Track: v1.1.0 Dogfooding** _Link:
       [./tracks/111-dogfooding/](./tracks/111-dogfooding/)_
 

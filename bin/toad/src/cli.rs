@@ -200,6 +200,8 @@ pub enum Commands {
         #[arg(long)]
         check: bool,
     },
+    /// Run health checks and diagnose issues
+    Doctor,
     /// Initialize full context (sync, manifest, tiered prompts)
     InitContext {
         /// Force full re-scan

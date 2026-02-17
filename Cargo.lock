@@ -1260,6 +1260,7 @@ dependencies = [
  "tempfile",
  "toad-core",
  "toad-discovery",
+ "toad-git",
  "toad-manifest",
  "toad-ops",
  "tokio",

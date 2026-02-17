@@ -494,6 +494,9 @@ fn main() -> Result<()> {
         Commands::Manifest { json, check } => {
             commands::manifest::handle(&workspace, *json, *check, false, None)?;
         }
+        Commands::Doctor => {
+            commands::doctor::handle()?;
+        }
         Commands::Context {
             task,
             inspire,

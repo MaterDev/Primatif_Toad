@@ -4,6 +4,7 @@ pub mod create;
 pub mod cw;
 pub mod do_cmd;
 pub mod docs;
+pub mod doctor;
 pub mod ggit;
 pub mod home;
 pub mod init_context;
