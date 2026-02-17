@@ -3,12 +3,17 @@
 [![Toad Project Lifecycle](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.gif)](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.mp4)
 
 ### Toad Control CLI
-
 The modular meta-engineering platform.
 
 [![Version: v1.1.1](https://img.shields.io/badge/version-v1.1.1-green.svg)](Cargo.toml)
 [![CI](https://github.com/Primatif/Primatif_Toad/actions/workflows/ci.yml/badge.svg)](https://github.com/Primatif/Primatif_Toad/actions/workflows/ci.yml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
+[![MSRV: 1.85+](https://img.shields.io/badge/MSRV-1.85+-orange.svg)](Cargo.toml)
+<br />
+[![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)](LICENSE)
+[![Maintenance: Actively Developed](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)](https://github.com/Primatif/Primatif_Toad/pulse)
+[![MCP: Supported](https://img.shields.io/badge/MCP-Supported-blue.svg)](docs/guides/MCP.md)
+[![GitHub Stars](https://img.shields.io/github/stars/Primatif/Primatif_Toad.svg)](https://github.com/Primatif/Primatif_Toad/stargazers)
 
 ---
 </div>
