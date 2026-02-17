@@ -120,6 +120,9 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.0 Toad Doctor Command** _Link:
       [./tracks/archive/111-doctor-command/](./tracks/archive/111-doctor-command/)_
 
+- [x] **Track: v1.1.1 Post-Release Hardening** _Link:
+      [./tracks/archive/111-post-release-hardening/](./tracks/archive/111-post-release-hardening/)_
+
 - [ ] **Track: v1.1.0 Dogfooding** _Link:
       [./tracks/111-dogfooding/](./tracks/111-dogfooding/)_
 
