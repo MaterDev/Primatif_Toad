@@ -135,6 +135,10 @@ detailed plan in its respective folder.
 - [x] **Track: Analytics Refinements (Hardening)** _Link:
       [./tracks/archive/111-analytics-refinements/](./tracks/archive/111-analytics-refinements/)_
 
+- [x] **Track: Skill Updates** _Link: [./tracks/111-skill-updates/](./tracks/111-skill-updates/)_
+
+- [x] **Track: Integration Checklist** _Link: [./tracks/111-integration-checklist/](./tracks/111-integration-checklist/)_
+
 ---
 
 - [x] **Track: Rust Context & Architecture Guide**
