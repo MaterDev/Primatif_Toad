@@ -28,6 +28,10 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
             let help = cmd.render_help().to_string();
             let cli_skill = toad_manifest::generate_cli_skill(&help);
 
+            // 4. Generate MCP Tool Reference Skill
+            println!("Generating Toad MCP Tool Reference Skill...");
+            let mcp_skill = toad_manifest::generate_mcp_skill();
+
             // Distribution
             let mut distributed = false;
             if let Some(name) = &workspace.active_context {
@@ -41,6 +45,7 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
                             let skills = vec![
                                 ("toad-blueprint".to_string(), blueprint.clone()),
                                 ("toad-cli".to_string(), cli_skill.clone()),
+                                ("toad-mcp".to_string(), mcp_skill.clone()),
                             ];
                             let synced = toad_ops::workflow::distribute_skills(
                                 &workspace.projects_dir,
@@ -71,6 +76,14 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
                     "{} CLI reference skill updated at root: {:?}",
                     "SUCCESS:".green().bold(),
                     cli_path
+                );
+
+                let mcp_path = workspace.projects_dir.join("toad-mcp.md");
+                fs::write(&mcp_path, &mcp_skill)?;
+                println!(
+                    "{} MCP reference skill updated at root: {:?}",
+                    "SUCCESS:".green().bold(),
+                    mcp_path
                 );
             }
             println!(
@@ -104,6 +117,7 @@ pub fn handle(subcommand: &SkillCommand, workspace: &Workspace) -> Result<()> {
             println!("\n--- ACTIVE TOAD SKILLS ---");
             println!("- toad-blueprint: Architectural & dependency map.");
             println!("- toad-cli: High-density command reference.");
+            println!("- toad-mcp: Model Context Protocol tool reference.");
         }
     }
     Ok(())

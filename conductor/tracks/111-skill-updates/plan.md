@@ -16,15 +16,15 @@
 
 ### Phase 1: Enhance Blueprint Skill
 
-- [ ] Update `generate_blueprint` in `crates/toad-manifest/src/lib.rs`
-- [ ] Add "DNA Patterns" section grouping projects by role
-- [ ] Add "Stack Distribution" section showing project counts
-- [ ] Verify token truncation still works
+- [x] Update `generate_blueprint` in `crates/toad-manifest/src/lib.rs`
+- [x] Add "DNA Patterns" section grouping projects by role
+- [x] Add "Stack Distribution" section showing project counts
+- [x] Verify token truncation still works
 
 ### Phase 2: Improve CLI Reference
 
-- [ ] Update `generate_cli_skill` in `crates/toad-manifest/src/lib.rs`
-- [ ] Add "Common Patterns" section with categories:
+- [x] Update `generate_cli_skill` in `crates/toad-manifest/src/lib.rs`
+- [x] Add "Common Patterns" section with categories:
   - Discovery & Search
   - Multi-Repo Git
   - Context Engineering
@@ -32,24 +32,24 @@
 
 ### Phase 3: Add MCP Skill
 
-- [ ] Add `generate_mcp_skill` function to `crates/toad-manifest/src/lib.rs`
-- [ ] Document all 16 MCP tools grouped by category
-- [ ] Add "Common Workflows" section with examples
-- [ ] Export function in `lib.rs`
+- [x] Add `generate_mcp_skill` function to `crates/toad-manifest/src/lib.rs`
+- [x] Document all 16 MCP tools grouped by category
+- [x] Add "Common Workflows" section with examples
+- [x] Export function in `lib.rs`
 
 ### Phase 4: Update Skill Command
 
-- [ ] Update `bin/toad/src/commands/skill.rs`
-- [ ] Add MCP skill to generated skills list
-- [ ] Update distribution logic to include MCP skill
+- [x] Update `bin/toad/src/commands/skill.rs`
+- [x] Add MCP skill to generated skills list
+- [x] Update distribution logic to include MCP skill
 
 ### Phase 5: Testing
 
-- [ ] Build: `cargo build --workspace`
-- [ ] Run: `toad skill sync`
-- [ ] Verify three skills are generated
-- [ ] Check skills are distributed to AI vendors
-- [ ] Review content for accuracy
+- [x] Build: `cargo build --workspace`
+- [x] Run: `toad skill sync`
+- [x] Verify three skills are generated
+- [x] Check skills are distributed to AI vendors
+- [x] Review content for accuracy
 
 ---
 
