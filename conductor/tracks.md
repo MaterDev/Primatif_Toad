@@ -135,13 +135,14 @@ detailed plan in its respective folder.
 - [x] **Track: Analytics Refinements (Hardening)** _Link:
       [./tracks/archive/111-analytics-refinements/](./tracks/archive/111-analytics-refinements/)_
 
-- [x] **Track: Skill Updates** _Link: [./tracks/archive/111-skill-updates/](./tracks/archive/111-skill-updates/)_
+- [x] **Track: Skill Updates** _Link:
+      [./tracks/archive/111-skill-updates/](./tracks/archive/111-skill-updates/)_
 
+- [x] **Track: Integration Checklist** _Link:
+      [./tracks/archive/111-integration-checklist/](./tracks/archive/111-integration-checklist/)_
 
-
-- [x] **Track: Integration Checklist** _Link: [./tracks/archive/111-integration-checklist/](./tracks/archive/111-integration-checklist/)_
-
-
+- [x] **Track: User Guide Updates** _Link:
+      [./tracks/archive/111-user-guide/](./tracks/archive/111-user-guide/)_
 
 ---
 

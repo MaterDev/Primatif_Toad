@@ -6,7 +6,7 @@
 
 The modular meta-engineering platform.
 
-[![Version: v1.1.0](https://img.shields.io/badge/version-v1.1.0-green.svg)](Cargo.toml)
+[![Version: v1.1.0x](https://img.shields.io/badge/version-v1.1.0x-green.svg)](Cargo.toml)
 [![CI](https://github.com/Primatif/Primatif_Toad/actions/workflows/ci.yml/badge.svg)](https://github.com/Primatif/Primatif_Toad/actions/workflows/ci.yml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
 
@@ -15,10 +15,14 @@ The modular meta-engineering platform.
 
 Toad is a High-Performance Local-Ops Platform designed to manage a vast ecosystem of independent projects. It provides a multi-threaded administrative layer for orchestrating workspaces, performing data-driven analytics, and enforcing safety guardrails across dozens of repositories.
 
-With the **v1.1.1 "Polish & Insights"** release, Toad transforms into a portable, AI-native **Context Oracle**, providing AI agents with zero-latency vision across complex multi-repo environments via the Model Context Protocol (MCP) and deep structural DNA mapping.
+With the **v1.1.x "Deep Croak"** release, Toad transforms into a portable, AI-native **Context Oracle**, providing AI agents with zero-latency vision across complex multi-repo environments via the Model Context Protocol (MCP) and deep structural DNA mapping.
 
 > [!CAUTION]
 > **Toad is a powerful meta-engineering tool.** Commands execute across multiple independent repositories simultaneously. Misuse can lead to significant data loss. Always verify your targets and commands before execution.
+
+## 📖 Documentation
+
+For comprehensive instructions on mastering Toad, refer to the **[USER GUIDE](./USER_GUIDE.md)**.
 
 ## What is Local-Ops?
 
@@ -45,20 +49,14 @@ toad home .
 toad init-context
 ```
 
-## What's New in v1.1.1 "Polish & Insights"
+## What's New in v1.1.x "Deep Croak"
 
-- **Rich Analytics:** Deep ecosystem insights including dependency graphs,
-    velocity metrics, technical debt indicators, and composite health scoring.
-- **Health Checks:** A new `toad doctor` command for automated troubleshooting
-    and ecosystem validation.
-- **Complete MCP Surface:** 30+ tools exposing Toad's full intelligence to AI
-    agents in Windsurf, Cursor, and other IDEs.
-- **CI/CD Pipeline:** Fully automated testing and release workflows for
-    reliable multi-repo orchestration.
-- **Refined Dependency Engine:** Robust path-aware dependency resolution
-    powered by `cargo_metadata` and DFS cycle detection.
-- **Enhanced Documentation:** Comprehensive guides and updated AI skills for
-    better discoverability.
+- **Model Context Protocol (MCP):** A full-featured MCP server (`toad-mcp`) that exposes Toad's intelligence directly to AI agents.
+- **Rich Analytics:** Deep ecosystem insights including dependency graphs, velocity metrics, technical debt indicators, and composite health scoring.
+- **Health Checks:** A new `toad doctor` command for automated troubleshooting and ecosystem validation.
+- **Context Engineering:** Tiered metadata architecture (`llms.txt` → `SYSTEM_PROMPT.md` → `MANIFEST.md`) for progressive disclosure.
+- **Pattern Intel & DNA Mapping:** Deep structural analysis that automatically identifies component roles and capabilities.
+- **Hardened Multi-Repo Ops:** Improved `ggit` with unpushed commit detection, SHA drift safety, and submodule alignment.
 
 See the [CHANGELOG](CHANGELOG.md) for the full release history.
 
