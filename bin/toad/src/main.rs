@@ -490,7 +490,7 @@ fn main() -> Result<()> {
             commands::project::handle(subcommand)?;
         }
         Commands::Ggit { subcommand } => {
-            commands::ggit::handle(subcommand, &workspace)?;
+            commands::ggit::handle(subcommand, &workspace, cli.json)?;
         }
         Commands::Cw { subcommand } => {
             commands::cw::handle(subcommand)?;
@@ -499,7 +499,7 @@ fn main() -> Result<()> {
             commands::manifest::handle(&workspace, *json, *check, false, None)?;
         }
         Commands::Doctor => {
-            commands::doctor::handle()?;
+            commands::doctor::handle(cli.json)?;
         }
         Commands::Analyze { subcommand } => {
             commands::analyze::handle(&workspace, subcommand, cli.json)?;

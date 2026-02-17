@@ -21,7 +21,8 @@
 
 ### Phase 3: Hardening (20 min)
 
-- [x] Refine `analyze_debt` to strictly filter by text-based extensions if possible
+- [x] Refine `analyze_debt` to strictly filter by text-based extensions if
+      possible
 - [x] Ensure `ignore` walker handles hidden files consistently
 - [x] Optimize Git velocity calls (reduce process spawning if feasible)
 

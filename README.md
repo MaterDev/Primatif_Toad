@@ -15,7 +15,7 @@ The modular meta-engineering platform.
 
 Toad is a High-Performance Local-Ops Platform designed to manage a vast ecosystem of independent projects. It provides a multi-threaded administrative layer for orchestrating workspaces, performing data-driven analytics, and enforcing safety guardrails across dozens of repositories.
 
-With the **v1.1.0 "Deep Croak"** release, Toad transforms into a portable, AI-native **Context Oracle**, providing AI agents with zero-latency vision across complex multi-repo environments via the Model Context Protocol (MCP) and deep structural DNA mapping.
+With the **v1.1.1 "Polish & Insights"** release, Toad transforms into a portable, AI-native **Context Oracle**, providing AI agents with zero-latency vision across complex multi-repo environments via the Model Context Protocol (MCP) and deep structural DNA mapping.
 
 > [!CAUTION]
 > **Toad is a powerful meta-engineering tool.** Commands execute across multiple independent repositories simultaneously. Misuse can lead to significant data loss. Always verify your targets and commands before execution.
@@ -45,56 +45,78 @@ toad home .
 toad init-context
 ```
 
-## What's New in v1.1.0 "Deep Croak"
+## What's New in v1.1.1 "Polish & Insights"
 
-- **Model Context Protocol (MCP):** A full-featured MCP server (`toad-mcp`) that exposes Toad's intelligence directly to AI agents in Cursor, Windsurf, and other compatible IDEs.
-- **Pattern Intel & DNA Mapping:** Deep structural analysis that automatically identifies component roles (e.g., Data Layer, API Surface) and capabilities (e.g., Dockerized, Async).
-- **Context Engineering:** Tiered metadata architecture (`llms.txt` → `SYSTEM_PROMPT.md` → `MANIFEST.md`) for progressive disclosure of architectural context.
-- **Project Briefings:** Generates high-fidelity `CONTEXT.md` files with entry points, lifecycle data, and operational intelligence for every project.
-- **Ecosystem Indexing:** Centralized `ATLAS.json` for rapid cross-project pattern matching and architectural synthesis.
-- **Hardened Multi-Repo Ops:** Improved `ggit` with unpushed commit detection, SHA drift safety, and cross-platform migration support.
+- **Rich Analytics:** Deep ecosystem insights including dependency graphs,
+    velocity metrics, technical debt indicators, and composite health scoring.
+- **Health Checks:** A new `toad doctor` command for automated troubleshooting
+    and ecosystem validation.
+- **Complete MCP Surface:** 30+ tools exposing Toad's full intelligence to AI
+    agents in Windsurf, Cursor, and other IDEs.
+- **CI/CD Pipeline:** Fully automated testing and release workflows for
+    reliable multi-repo orchestration.
+- **Refined Dependency Engine:** Robust path-aware dependency resolution
+    powered by `cargo_metadata` and DFS cycle detection.
+- **Enhanced Documentation:** Comprehensive guides and updated AI skills for
+    better discoverability.
 
 See the [CHANGELOG](CHANGELOG.md) for the full release history.
 
 ## Core Commands
 
-### Analytics & Health
+### Analytics & Insights
 
-- **`toad status`** — Git health and activity tiers across the ecosystem (with
-  submodule status).
-- **`toad stats`** — Visual disk usage heatmap and artifact bloat analysis.
-- **`toad clean`** — Reclaim disk space by removing detected build artifacts.
-- **`toad reveal <query>`** — Search for projects by name or `#tag`.
+- **`toad analyze deps`** — Dependency graph analysis and critical path
+    identification.
+- **`toad analyze health`** — Composite project health scoring with proactive
+    advice.
+- **`toad analyze debt`** — Technical debt tracking, monolithic file alerts,
+    and code smells.
+- **`toad analyze velocity`** — Development momentum, commit frequency, and
+    line churn.
+- **`toad doctor`** — Automated diagnostics and health checks for your Toad
+    installation.
+
+### Health & Hygiene
+
+- **`toad status`** — Visual Git health and activity tiers across the entire
+    ecosystem.
+- **`toad stats`** — Storage heatmap, artifact bloat analysis, and disk usage
+    audits.
+- **`toad clean`** — Reclaim disk space by safely removing build artifacts and
+    bloat.
+- **`toad reveal <query>`** — Search for projects by name, `#tag`, or DNA
+    pattern.
 
 ### Multi-Repo Git Orchestration
 
 - **`toad ggit status`** — Consolidated git status across all repositories.
 - **`toad ggit commit -m "msg"`** — Commit changes across repositories.
 - **`toad ggit commit -m "msg" --cascade`** — Commit submodules first, then
-  cascade to the Hub root.
+    cascade to the Hub root.
 - **`toad ggit push`** — Push all repositories to their remotes.
 - **`toad ggit pull`** — Pull latest changes across all repositories.
 - **`toad ggit sync`** — Synchronize submodule refs with pre-flight safety
-  checks.
+    checks.
 - **`toad ggit branches`** — List all branches across repositories.
 - **`toad ggit align`** — Force-align submodules to Hub root expectations.
 
 ### AI Skills & Context Engineering
 
 - **`toad manifest`** — Generate architectural manifests and ecosystem DNA
-  indices.
+    indices.
 - **`toad context`** — High-density task briefing generator for AI agents.
 - **`toad skill sync`** — Distribute context metadata to 10+ AI vendors
-  (Cursor, Windsurf, Copilot, Copilot, etc.).
+    (Cursor, Windsurf, Copilot, etc.).
 - **`toad-mcp`** — Model Context Protocol server for real-time AI context
-  injection.
+    injection.
 
 ### Orchestration (Bulk Ops)
 
-- **`toad do "<command>"`** — Execute shell commands across matching projects in
-  parallel.
-- **`toad cw run <name>`** — Execute a registered custom workflow or automation
-  script.
+- **`toad do "<command>"`** — Execute shell commands across matching projects
+    in parallel.
+- **`toad cw run <name>`** — Execute a registered custom workflow or
+    automation script.
 
 ### Project Contexts
 

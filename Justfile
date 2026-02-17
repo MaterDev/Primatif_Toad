@@ -30,8 +30,8 @@ install:
 
 # --- Quality Assurance (QA) ---
 
-# Run full QA suite (Sync -> Docs -> Check Licenses -> Format -> Lint -> Test -> Build)
-qa: sync-version docs check-licenses fmt lint test build
+# Run full QA suite (Sync -> Docs -> Skills -> Check Licenses -> Format -> Lint -> Test -> Build)
+qa: sync-version docs sync-skills check-licenses fmt lint test build
     @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
 
 # Sync README version with Cargo.toml
@@ -41,6 +41,10 @@ sync-version:
 # Generate CLI documentation
 docs:
     cargo run -p toad -- docs
+
+# Synchronize AI agent skills
+sync-skills:
+    cargo run -p toad -- skill sync
 
 # Verify MIT/BUSL-1.1 license boundaries
 check-licenses:

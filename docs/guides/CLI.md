@@ -28,6 +28,7 @@ Commands:
   cw            Custom workflows and script orchestration
   manifest      Generate a project manifest for AI context
   doctor        Run health checks and diagnose issues
+  analyze       Advanced ecosystem insights and deep analytics
   init-context  Initialize full context (sync, manifest, tiered prompts)
   context       Inject task-specific context and generate situation reports
   list          List all available commands

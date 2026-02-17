@@ -77,6 +77,15 @@ Tools for exploring the ecosystem and finding projects.
 5. **`get_ecosystem_status`**: Global health report showing VCS state and
    activity tiers.
    - **Params:** `query`, `tag`.
+6. **`reveal_projects`**: Search for projects matching a query. Returns names,
+   paths, and basic metadata.
+   - **Params:** `query`, `tag`.
+7. **`get_git_status`**: Consolidated Git status across all repositories. Shows
+   uncommitted changes and branch info.
+   - **Params:** `query`, `tag`.
+8. **`list_branches`**: List all branches across projects. Shows current branch
+   and available local/remote branches.
+   - **Params:** `query`, `tag`, `all` (show remote).
 
 ### 🧠 Context Tools
 
@@ -91,6 +100,8 @@ Tools for deep-diving into project architecture and implementation.
    - **Params:** `name`.
 4. **`get_atlas`**: Direct access to `ATLAS.json` (DNA map for all projects).
 5. **`get_manifest`**: Direct access to `MANIFEST.md` (detailed project table).
+6. **`generate_manifest`**: Re-generate AI context files (refreshes intuition).
+   - **Params:** `project` (optional focus).
 
 ### ⚙️ Management Tools
 
@@ -100,15 +111,42 @@ Tools for managing Toad's runtime environment.
 2. **`list_contexts`**: List all registered workspace contexts.
 3. **`switch_context`**: Change the active workspace root.
    - **Params:** `name`.
+4. **`sync_registry`**: Rebuild the project registry cache by scanning the
+   workspace.
+5. **`tag_projects`**: Assign or harvest tags for projects.
+   - **Params:** `project`, `tag`, `query`, `filter_tag`, `harvest`.
+6. **`register_context`**: Register a new projects directory as a context.
+   - **Params:** `name`, `path`.
 
 ### 📊 Analysis Tools
 
-Tools for comparisons and resource auditing.
+Advanced ecosystem insights and resource auditing.
 
-1. **`get_project_stats`**: Detailed disk usage and bloat analytics.
+1. **`analyze_dependencies`**: Analyze project relationships and identify the
+   critical path.
+   - **Params:** `query`.
+2. **`analyze_velocity`**: Track development momentum and activity metrics.
+   - **Params:** `days`, `query`.
+3. **`analyze_debt`**: Identify technical debt, monolithic files, and code
+   smells.
+   - **Params:** `query`.
+4. **`analyze_health`**: Calculate composite 0-100 health scores with proactive
+   advice.
+   - **Params:** `query`.
+5. **`analyze_trends`**: Analyze historical trends (health, storage, activity).
+   - **Params:** `days`.
+6. **`analyze_patterns`**: Detect cross-project architectural consistency and
+   patterns.
+7. **`analyze_submodules`**: Audit submodule alignment and branch consistency.
+8. **`get_project_stats`**: Detailed disk usage and bloat analytics.
    - **Params:** `query`, `tag`.
-2. **`compare_projects`**: Architectural compatibility and migration pre-flight.
-   - **Params:** `source`, `target`.
+9. **`get_disk_stats`**: Ecosystem-wide storage audit (build artifacts vs
+   source).
+   - **Params:** `query`, `tag`, `all` (show details).
+10. **`compare_projects`**: Architectural compatibility and migration
+    pre-flight.
+    - **Params:** `source`, `target`.
+11. **`run_health_check`**: Run comprehensive Toad diagnostics (Doctor command).
 
 ## Common Workflows
 

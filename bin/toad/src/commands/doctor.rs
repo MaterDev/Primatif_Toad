@@ -3,11 +3,16 @@ use colored::*;
 use toad_core::Workspace;
 use toad_ops::doctor::run_health_check;
 
-pub fn handle() -> Result<()> {
-    println!("{}", "--- TOAD HEALTH CHECK ---".green().bold());
-
+pub fn handle(json: bool) -> Result<()> {
     let workspace = Workspace::discover()?;
     let report = run_health_check(&workspace)?;
+
+    if json {
+        println!("{}", serde_json::to_string_pretty(&report)?);
+        return Ok(());
+    }
+
+    println!("{}", "--- TOAD HEALTH CHECK ---".green().bold());
 
     // 1. Installation Checks
     println!("\n{} Installation", "»".blue());
