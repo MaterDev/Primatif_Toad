@@ -128,12 +128,19 @@ IDE-specific directories.
 Toad includes a full-featured MCP server that exposes its intelligence directly
 to AI agents in real-time.
 
+To use MCP in an editor/agent, you must:
+
+1. Install `toad-mcp` locally.
+2. Register it in your IDE's MCP configuration.
+
 ```bash
 toad-mcp
 ```
 
 Configure this server in your IDE (Cursor, Windsurf, etc.) to give agents
 zero-latency vision across your ecosystem.
+
+See the [MCP Guide](./docs/guides/MCP.md) for installation and configuration.
 
 ### Stack Strategies
 

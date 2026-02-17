@@ -60,6 +60,12 @@ toad home .
 toad init-context
 ```
 
+To use Toad as an MCP (Model Context Protocol) server in an editor/agent, you
+must also install `toad-mcp` locally and register it in your IDE's MCP
+configuration.
+
+See the [MCP Guide](docs/guides/MCP.md).
+
 ## What's New in v1.1.x "Deep Croak"
 
 - **Model Context Protocol (MCP):** A full-featured MCP server (`toad-mcp`) that exposes Toad's intelligence directly to AI agents.

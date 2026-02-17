@@ -6,7 +6,15 @@ Desktop) to query your ecosystem directly.
 
 ## Installation
 
-The MCP server is part of the `toad` workspace. You can install it using:
+The MCP server is a separate binary named `toad-mcp`.
+
+You must install it locally on any machine where you want an IDE/agent to use
+the MCP tools.
+
+If you installed Toad using `./scripts/install_toad.sh`, it will install both
+`toad` and `toad-mcp`.
+
+Otherwise, you can install it from the workspace using:
 
 ```bash
 cargo install --path bin/toad-mcp
@@ -14,7 +22,35 @@ cargo install --path bin/toad-mcp
 
 ## Configuration
 
-Add the following to your editor's MCP settings:
+You must also register the server in your MCP-capable tool/editor.
+
+Toad MCP uses the stdio transport, so your client should start `toad-mcp` as a
+subprocess.
+
+Minimal, tool-agnostic configuration:
+
+```json
+{
+  "mcpServers": {
+    "toad": {
+      "command": "toad-mcp",
+      "args": [],
+      "env": {
+        "TOAD_HOME": "~/.toad"
+      }
+    }
+  }
+}
+```
+
+Notes:
+
+- `command` must resolve on your `PATH` (usually via `~/.cargo/bin`). If it does
+  not, use the full path to the `toad-mcp` binary.
+- `TOAD_HOME` is optional if you have already anchored your workspace with `toad
+  home <path>`.
+
+Editor-specific examples:
 
 ### Windsurf
 
@@ -25,6 +61,7 @@ Open `~/.codeium/windsurf/mcp_config.json` and add:
   "mcpServers": {
     "toad": {
       "command": "toad-mcp",
+      "args": [],
       "env": {
         "TOAD_HOME": "/Users/your-user/.toad"
       }
@@ -49,7 +86,8 @@ Open `~/Library/Application Support/Claude/claude_desktop_config.json` and add:
 {
   "mcpServers": {
     "toad": {
-      "command": "toad-mcp"
+      "command": "toad-mcp",
+      "args": []
     }
   }
 }
