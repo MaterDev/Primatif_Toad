@@ -31,7 +31,7 @@ install:
 # --- Quality Assurance (QA) ---
 
 # Run full QA suite (Sync -> Docs -> Skills -> Check Licenses -> Format -> Lint -> Test -> Build)
-qa: sync-version docs sync-skills check-licenses fmt lint test build
+qa: sync-version docs sync-skills check-licenses check-fmt lint test build
     @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
 
 # Sync README version with Cargo.toml
@@ -66,6 +66,11 @@ check: lint test
     cargo fmt --all -- --check
     dprint check
 
+# Check formatting without modifying files (matches CI)
+check-fmt:
+    cargo fmt --all -- --check
+    dprint check
+
 # Auto-fix everything possible
 fix:
     cargo clippy --workspace --fix --allow-dirty --allow-staged
@@ -86,6 +91,7 @@ fmt-misc:
 # Lint Rust code (Clippy) and Markdown
 lint:
     cargo clippy --workspace --all-targets -- -D warnings
+    npm ci
     npm run lint:md
 
 # Run code coverage (requires cargo-tarpaulin)
