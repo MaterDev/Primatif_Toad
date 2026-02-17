@@ -16,63 +16,63 @@
 
 ### Phase 1: Add Safe Read Operations
 
-- [ ] Add `reveal_projects` tool to `bin/toad-mcp/src/server.rs`
+- [x] Add `reveal_projects` tool to `bin/toad-mcp/src/server.rs` (d095921)
   - Delegates to `toad_discovery::find_projects`
   - Parameters: query, tag
-- [ ] Add `get_git_status` tool (if not already covered by existing tools)
+- [x] Add `get_git_status` tool (if not already covered by existing tools) (d095921)
   - Delegates to `toad_git::generate_multi_repo_status`
   - Parameters: query, tag
-- [ ] Add `get_disk_stats` tool
+- [x] Add `get_disk_stats` tool (d095921)
   - Delegates to `toad_ops::generate_analytics_report`
   - Parameters: query, tag, all
-- [ ] Add `list_branches` tool
+- [x] Add `list_branches` tool (d095921)
   - Delegates to `toad_git::branches::list_local_branches`
   - Parameters: query, tag, all
 
 ### Phase 2: Add Safe Write Operations
 
-- [ ] Add `sync_registry` tool
+- [x] Add `sync_registry` tool (d095921)
   - Delegates to `toad_discovery::scan_all_projects`
   - No parameters
-- [ ] Add `generate_manifest` tool
+- [x] Add `generate_manifest` tool (d095921)
   - Delegates to manifest generation logic
   - Parameters: project (optional)
-- [ ] Verify `switch_context` tool exists and works
-- [ ] Add `register_context` tool
+- [x] Verify `switch_context` tool exists and works (d095921)
+- [x] Add `register_context` tool (d095921)
   - Delegates to project registration logic
   - Parameters: name, path
 
 ### Phase 3: Add Conditional Safe Operations
 
-- [ ] Add `tag_projects` tool
+- [x] Add `tag_projects` tool (d095921)
   - Delegates to tag assignment logic
   - Parameters: project, tag, query, filter_tag, harvest
   - Auto-confirms (no prompt)
 
 ### Phase 4: Add Parameter Schemas
 
-- [ ] Add `RevealParams` struct
-- [ ] Add `StatusParams` struct
-- [ ] Add `StatsParams` struct
-- [ ] Add `BranchesParams` struct
-- [ ] Add `ManifestParams` struct
-- [ ] Add `RegisterContextParams` struct
-- [ ] Add `TagParams` struct
+- [x] Add `RevealParams` struct (d095921)
+- [x] Add `StatusParams` struct (d095921)
+- [x] Add `StatsParams` struct (d095921)
+- [x] Add `BranchesParams` struct (d095921)
+- [x] Add `ManifestParams` struct (d095921)
+- [x] Add `RegisterContextParams` struct (d095921)
+- [x] Add `TagParams` struct (d095921)
 
 ### Phase 5: Enhance Tool Descriptions
 
-- [ ] Update all existing tool descriptions with usage hints
-- [ ] Add "when to use" guidance
-- [ ] Add "what comes next" suggestions
-- [ ] Add "alternatives" references
+- [x] Update all existing tool descriptions with usage hints (d095921)
+- [x] Add "when to use" guidance (d095921)
+- [x] Add "what comes next" suggestions (d095921)
+- [x] Add "alternatives" references (d095921)
 
 ### Phase 6: Testing
 
-- [ ] Build: `cargo build -p toad-mcp`
-- [ ] Test each new tool via MCP client
-- [ ] Verify parameter validation works
-- [ ] Test error handling for missing projects
-- [ ] Verify dangerous operations are NOT exposed
+- [x] Build: `cargo build -p toad-mcp` (d095921)
+- [x] Test each new tool via MCP client (d095921)
+- [x] Verify parameter validation works (d095921)
+- [x] Test error handling for missing projects (d095921)
+- [x] Verify dangerous operations are NOT exposed (d095921)
 
 ---
 
