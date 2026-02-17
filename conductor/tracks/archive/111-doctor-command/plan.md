@@ -39,7 +39,8 @@
 ### Phase 3: Wire Up Command
 
 - [x] Add `pub mod doctor;` to `bin/toad/src/commands/mod.rs` (f9a8b7c)
-- [x] Add `Commands::Doctor => commands::doctor::handle()?;` to `main.rs` (f9a8b7c)
+- [x] Add `Commands::Doctor => commands::doctor::handle()?;` to `main.rs`
+      (f9a8b7c)
 
 ### Phase 4: Testing
 
@@ -62,4 +63,3 @@
 - Output is colored and easy to read
 - Recommendations are actionable
 - Command is documented in CLI guide
-

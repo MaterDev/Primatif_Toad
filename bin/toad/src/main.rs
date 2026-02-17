@@ -35,7 +35,11 @@ fn main() -> Result<()> {
     // Commands that don't require a valid workspace
     let is_bootstrap = matches!(
         &cli.command,
-        Commands::Home { .. } | Commands::Version | Commands::List | Commands::Docs
+        Commands::Home { .. }
+            | Commands::Version
+            | Commands::List
+            | Commands::Docs
+            | Commands::Doctor
     );
 
     let workspace = match &discovered {

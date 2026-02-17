@@ -24,7 +24,10 @@ pub fn handle() -> Result<()> {
         println!(
             "  {} Workspace discovered at {:?}",
             "✅".green(),
-            report.workspace_path.as_ref().unwrap()
+            report
+                .workspace_path
+                .as_deref()
+                .unwrap_or_else(|| std::path::Path::new("unknown"))
         );
     }
 
