@@ -38,6 +38,12 @@ By centralizing observability and orchestration, Local-Ops solves the critical p
 
 Ultimately, Local-Ops bridges the gap between raw code and developer productivity, ensuring that a massive portfolio of work remains a live asset rather than an unmanageable burden of technical debt.
 
+## 💖 Support the Pond
+
+If Toad has helped you manage your ecosystem or made your AI agents smarter, consider supporting its development!
+
+<a href="https://buymeacoffee.com/primatif" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## 🐸 Quick Start
 
 ```bash
