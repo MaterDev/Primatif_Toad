@@ -126,6 +126,15 @@ detailed plan in its respective folder.
 - [ ] **Track: v1.1.0 Dogfooding** _Link:
       [./tracks/111-dogfooding/](./tracks/111-dogfooding/)_
 
+- [ ] **Track: Interface Standardization** _Link:
+      [./tracks/112-interface-standardization/](./tracks/112-interface-standardization/)_
+
+- [ ] **Track: Diagnostic Resilience** _Link:
+      [./tracks/112-diagnostic-resilience/](./tracks/112-diagnostic-resilience/)_
+
+- [ ] **Track: Automated QA Suite** _Link:
+      [./tracks/112-automated-qa-suite/](./tracks/112-automated-qa-suite/)_
+
 - [x] **Track: v1.1.1 ggit Submodule Path Fixes** _Link:
       [./tracks/archive/111-ggit-fixes/](./tracks/archive/111-ggit-fixes/)_
 
