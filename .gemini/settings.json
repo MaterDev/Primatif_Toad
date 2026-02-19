@@ -1,26 +1,30 @@
 {
   "project": {
-    "name": "Code Control Plane",
-    "description": "Root directory for managing local software projects and DevOps automation.",
+    "name": "Primatif_Toad",
+    "description": "An AI-native ecosystem context oracle providing high-fidelity architectural context across multiple repositories.",
     "type": "control-plane"
   },
   "context": {
     "files": [
       ".gemini/GEMINI.md",
-      ".gemini/SESSIONS.md",
-      "CROSS_REPO_MAP.md"
+      "conductor/index.md",
+      ".gemini/toad-blueprint.md",
+      ".gemini/toad-cli.md"
     ],
     "folders": [
-      "projects",
-      "scripts",
-      "work_orders",
+      "conductor",
+      "bin",
+      "crates",
       "docs",
-      "conductor"
+      "scripts"
     ]
   },
   "rules": {
-    "source_directory": "projects",
+    "source_directory": "crates",
     "automation_directory": "scripts",
-    "docs_directory": "docs"
+    "docs_directory": "docs",
+    "preferred_tools": ["toad"],
+    "quality_gate": "just qa",
+    "line_limit": 700
   }
 }
