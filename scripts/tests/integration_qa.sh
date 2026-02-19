@@ -153,7 +153,10 @@ main() {
     # Initialize toad home in sandbox
     log_info "Initializing Toad home in sandbox..."
     export TOAD_ROOT="$TEMP_SANDBOX"
-    $TOAD_BIN home "$TEMP_SANDBOX" > /dev/null 2>&1
+    if ! $TOAD_BIN home "$TEMP_SANDBOX" > /dev/null 2>&1; then
+        log_error "Failed to initialize Toad home"
+        exit 1
+    fi
     
     # Test Suite: Basic Commands
     log_info ""

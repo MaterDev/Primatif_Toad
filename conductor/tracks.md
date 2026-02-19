@@ -128,7 +128,7 @@ detailed plan in its respective folder.
 
 - [x]## v1.1.2 Tracks Complete (Released 2026-02-19)
 
-### v1.1.2-interface-standardization 
+### v1.1.2-interface-standardization
 
 **Goal:** Standardize CLI interface with unified flags and command discovery
 
@@ -144,7 +144,7 @@ detailed plan in its respective folder.
 - Standardized error messages with `--yes` hints
 - Documentation in USER_GUIDE.md
 
-### v1.1.2-diagnostic-resilience 
+### v1.1.2-diagnostic-resilience
 
 **Goal:** Enhanced error detection for malformed metadata files
 
