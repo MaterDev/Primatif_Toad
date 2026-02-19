@@ -15,7 +15,8 @@ This includes unified non-interactive flags and intelligent command suggestions.
    `unregister` for `delete`) and implement "did you mean" logic for typos.
 
 ## Implementation Details
-
+- **Zero-Intervention Mandate**: All destructive or state-changing operations MUST provide a non-interactive path via flags (e.g., `--yes`, `--force`).
 - Update `clap` definitions across all command modules.
 - Centralize flag handling where possible.
 - Implement a suggestion engine or alias map in `bin/toad/src/cli.rs`.
+

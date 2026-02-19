@@ -7,10 +7,10 @@
 ## Tasks
 
 ### Phase 1: Sandbox Automation
-
-- [ ] Create `scripts/tests/integration_qa.sh` to automate sandbox creation,
-      usage, and cleanup.
+- [ ] Create `scripts/tests/integration_qa.sh` to automate sandbox creation, usage, and cleanup.
+- [ ] **Headless Execution**: Ensure the test runner supports a `--ci` or `--non-interactive` flag to suppress all output styling and prompts.
 - [ ] Implement assertions for CLI output strings.
+
 
 ### Phase 2: MCP Validation
 
