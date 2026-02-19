@@ -33,11 +33,15 @@ fn main() -> Result<()> {
         Err(e) => {
             // Check if this is an unknown subcommand error
             let error_msg = e.to_string();
-            if error_msg.contains("unrecognized subcommand") || error_msg.contains("invalid subcommand") {
+            if error_msg.contains("unrecognized subcommand")
+                || error_msg.contains("invalid subcommand")
+            {
                 // Extract the attempted command from the error message
                 if let Some(attempted) = extract_attempted_command(&error_msg) {
                     let valid_commands = get_valid_commands();
-                    if let Some(suggestion) = suggestions::suggest_command(&attempted, &valid_commands) {
+                    if let Some(suggestion) =
+                        suggestions::suggest_command(&attempted, &valid_commands)
+                    {
                         eprintln!("{}", e);
                         eprintln!("\n{} {}", "Hint:".yellow().bold(), suggestion);
                         std::process::exit(2);
@@ -114,7 +118,8 @@ fn main() -> Result<()> {
             }
         }
         Commands::Status { query, tag } => {
-            let (result, diagnostics) = commands::status::handle(&workspace, query.clone(), tag.clone())?;
+            let (result, diagnostics) =
+                commands::status::handle(&workspace, query.clone(), tag.clone())?;
             if cli.json {
                 println!("{}", serde_json::to_string_pretty(&result)?);
             } else {
@@ -581,8 +586,7 @@ fn extract_attempted_command(error_msg: &str) -> Option<String> {
 /// Get list of valid top-level commands
 fn get_valid_commands() -> Vec<&'static str> {
     vec![
-        "create", "reveal", "status", "tag", "untag", "clean", "sync", "manifest",
-        "atlas", "doctor", "project", "cw", "strategy", "ggit", "home", "version",
-        "list", "docs",
+        "create", "reveal", "status", "tag", "untag", "clean", "sync", "manifest", "atlas",
+        "doctor", "project", "cw", "strategy", "ggit", "home", "version", "list", "docs",
     ]
 }

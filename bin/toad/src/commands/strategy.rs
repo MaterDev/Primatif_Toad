@@ -104,7 +104,7 @@ pub fn handle(subcommand: &StrategyCommands) -> Result<()> {
                     return Ok(());
                 }
             }
-            
+
             let custom_dir = GlobalConfig::config_dir(None)?.join("strategies/custom");
             let mut safe_name = name
                 .to_lowercase()

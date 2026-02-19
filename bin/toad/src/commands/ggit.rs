@@ -164,7 +164,11 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace, json: bool) -> Re
             if !yes {
                 use std::io::{self, Write};
                 let targets = filter_projects(projects.clone(), query.as_deref(), tag.as_deref());
-                print!("Checkout branch '{}' in {} repositories? [y/N]: ", branch, targets.len());
+                print!(
+                    "Checkout branch '{}' in {} repositories? [y/N]: ",
+                    branch,
+                    targets.len()
+                );
                 io::stdout().flush()?;
                 let mut input = String::new();
                 io::stdin().read_line(&mut input)?;
@@ -415,7 +419,10 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace, json: bool) -> Re
             if !yes {
                 use std::io::{self, Write};
                 let targets = filter_projects(projects.clone(), query.as_deref(), tag.as_deref());
-                print!("Force-align {} submodules to Hub expectations? [y/N]: ", targets.len());
+                print!(
+                    "Force-align {} submodules to Hub expectations? [y/N]: ",
+                    targets.len()
+                );
                 io::stdout().flush()?;
                 let mut input = String::new();
                 io::stdin().read_line(&mut input)?;

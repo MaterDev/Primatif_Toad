@@ -8,7 +8,9 @@ pub fn handle(json: bool) -> Result<()> {
     let mut report = run_health_check(&workspace)?;
 
     // Collect diagnostics from all projects
-    if let Ok(registry) = toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None) {
+    if let Ok(registry) =
+        toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None)
+    {
         for project in &registry.projects {
             let project_diagnostics =
                 toad_discovery::detect_metadata_issues(&project.path, &project.name);

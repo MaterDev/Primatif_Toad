@@ -13,7 +13,7 @@ Minor release focused on CLI usability improvements and metadata health monitori
 
 ### Interface Standardization
 
-**Non-Interactive Execution Support**
+#### Non-Interactive Execution Support
 
 - Added `--yes` / `-y` flags to all destructive commands for CI/CD workflows
   - `toad cw delete <name> --yes` - Remove workflow without confirmation
@@ -24,7 +24,7 @@ Minor release focused on CLI usability improvements and metadata health monitori
   - `toad ggit checkout <branch> --yes` - Checkout branch without confirmation
   - `toad ggit align --yes` - Force-align submodules without confirmation
 
-**Command Discovery & Suggestions**
+#### Command Discovery & Suggestions
 
 - Command alias system with 15+ common aliases
   - `ls` → `list`
@@ -42,7 +42,7 @@ Minor release focused on CLI usability improvements and metadata health monitori
 
 ### Diagnostic Resilience
 
-**Metadata Health Monitoring**
+#### Metadata Health Monitoring
 
 - Automatic detection of malformed project metadata files
   - Validates `Cargo.toml` syntax for Rust projects

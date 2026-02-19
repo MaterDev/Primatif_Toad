@@ -88,7 +88,7 @@ pub fn handle(subcommand: &CwCommand) -> Result<()> {
                     return Ok(());
                 }
             }
-            
+
             if registry.workflows.remove(&name.to_lowercase()).is_some() {
                 registry.save(None)?;
                 println!("{} Workflow '{}' removed.", "SUCCESS:".green().bold(), name);
