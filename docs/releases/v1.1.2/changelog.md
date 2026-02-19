@@ -1,11 +1,12 @@
 # v1.1.2 Changelog
 
-**Release Date:** 2026-02-19  
+**Release Date:** 2026-02-19\
 **Codename:** —
 
 ## Overview
 
-Minor release focused on CLI usability improvements and metadata health monitoring.
+Minor release focused on CLI usability improvements and metadata health
+monitoring.
 
 ---
 
@@ -65,7 +66,8 @@ Minor release focused on CLI usability improvements and metadata health monitori
 - Enhanced `toad doctor` output with metadata diagnostics section
 - Updated `toad status` to display inline diagnostic warnings
 - Improved error messages to mention `--yes` flag when operations are aborted
-  - All confirmation prompts now display: "Aborted. (Use --yes to skip confirmation)"
+  - All confirmation prompts now display: "Aborted. (Use --yes to skip
+    confirmation)"
 
 ---
 
@@ -154,4 +156,5 @@ This release completes two conductor tracks:
 - **v1.1.2-interface-standardization** - CLI UX improvements
 - **v1.1.2-diagnostic-resilience** - Enhanced error detection
 
-Both tracks followed the conductor system workflow with proper planning, implementation, and documentation phases.
+Both tracks followed the conductor system workflow with proper planning,
+implementation, and documentation phases.

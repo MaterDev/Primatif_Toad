@@ -1,6 +1,6 @@
 # v1.1.1 Changelog
 
-**Release Date:** 2026-02-16  
+**Release Date:** 2026-02-16\
 **Codename:** —
 
 ## Overview

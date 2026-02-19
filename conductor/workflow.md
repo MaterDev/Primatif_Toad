@@ -147,8 +147,9 @@ just sync-deps
 cargo update
 ```
 
-**Important:** Always run `just sync-deps` after version bumps to ensure all internal
-dependencies (toad-core, toad-discovery, etc.) reference the correct version.
+**Important:** Always run `just sync-deps` after version bumps to ensure all
+internal dependencies (toad-core, toad-discovery, etc.) reference the correct
+version.
 
 ### Phase Completion Verification and Checkpointing Protocol
 

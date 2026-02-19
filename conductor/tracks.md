@@ -187,7 +187,8 @@ detailed plan in its respective folder.
 
 ### v1.1.3-automated-qa-suite
 
-**Goal:** Develop robust automated regression testing suite for CLI and MCP server
+**Goal:** Develop robust automated regression testing suite for CLI and MCP
+server
 
 **Status:** Complete - Archived
 
@@ -195,12 +196,15 @@ detailed plan in its respective folder.
 
 **Delivered:**
 
-- CLI integration test suite (`scripts/tests/integration_qa.sh`) with 10+ test suites
-- MCP validation test suite (`scripts/tests/mcp_validation.sh`) with JSON-RPC 2.0 compliance
+- CLI integration test suite (`scripts/tests/integration_qa.sh`) with 10+ test
+  suites
+- MCP validation test suite (`scripts/tests/mcp_validation.sh`) with JSON-RPC
+  2.0 compliance
 - JSON schema definitions for MCP tool responses
 - `just test-integration` and `just test-mcp` commands
 - CI-friendly output with automated sandbox lifecycle
-- Updated all script invocations to use `bash` explicitly (no execute permissions needed)
+- Updated all script invocations to use `bash` explicitly (no execute
+  permissions needed)
 
 ---
 

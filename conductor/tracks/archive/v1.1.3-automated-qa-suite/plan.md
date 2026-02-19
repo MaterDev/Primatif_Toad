@@ -15,11 +15,14 @@
 - [x] Implement assertions for CLI output strings.
 
 **Completed:**
+
 - Created comprehensive integration test script with 10+ test suites
 - Automated sandbox lifecycle (create, test, cleanup)
 - CI-friendly output formatting
-- Test assertion helpers (assert_success, assert_output_contains, assert_file_exists)
-- Tests cover: version, help, sync, reveal, status, search, analytics, manifest, doctor
+- Test assertion helpers (assert_success, assert_output_contains,
+  assert_file_exists)
+- Tests cover: version, help, sync, reveal, status, search, analytics, manifest,
+  doctor
 
 ### Phase 2: MCP Validation ✅ COMPLETE
 
@@ -27,6 +30,7 @@
 - [x] Validate JSON responses against schemas (to be defined).
 
 **Completed:**
+
 - Created `scripts/tests/mcp_validation.sh` - comprehensive MCP test suite
 - Automated MCP server initialization and tool discovery testing
 - Validates JSON-RPC 2.0 protocol compliance
@@ -42,6 +46,7 @@
 - [x] Include integration tests in `just qa`.
 
 **Completed:**
+
 - Added `just test-integration` command
 - Integrated into `just qa` workflow
 - Integration tests now run as part of full QA suite
@@ -56,4 +61,5 @@
 
 ## Notes
 
-Tests are invoked via `bash` explicitly in the Justfile, so no execute permissions are required.
+Tests are invoked via `bash` explicitly in the Justfile, so no execute
+permissions are required.
