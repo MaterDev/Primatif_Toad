@@ -9,7 +9,7 @@ members = [
   "crates/toad-ops",
   "crates/toad-scaffold",
 ]
-resolver = "2"
+resolver = "1.1.2"
 
 [workspace.package]
 authors = ["Primatif"]
