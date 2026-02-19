@@ -36,12 +36,12 @@
 - `crates/toad-discovery/src/lib.rs`
 - `crates/toad-discovery/Cargo.toml`
 
-### Phase 2: User Reporting 🚧 IN PROGRESS
+### Phase 2: User Reporting ✅ COMPLETE
 
 - [x] Add a "Metadata Health" section to `toad doctor`.
-- [ ] **Update `toad status` to show a ⚠️ symbol next to projects with malformed
-      metadata.**
-- [ ] **Create test projects with malformed metadata for verification**
+- [x] Update `toad status` to show a ⚠️ symbol next to projects with malformed
+      metadata.
+- [x] Create test projects with malformed metadata for verification
 
 **Completed:**
 
@@ -55,16 +55,25 @@
 - `bin/toad/src/commands/doctor.rs`
 - `crates/toad-ops/src/doctor.rs`
 
-**Remaining:**
+**Completed:**
 
-- Modify `toad status` output to display ⚠️ for projects with diagnostics
-- Create test directory with intentionally malformed files
-- Verify detection works end-to-end
+- Modified `toad status` to display ⚠️ indicator for projects with diagnostics
+- Updated `format_status_report()` to show diagnostic details inline
+- Added diagnostic summary section to status output
+- Created test projects with malformed Cargo.toml
+- Verified detection works end-to-end
 
-### Phase 3: Documentation
+### Phase 3: Documentation ✅ COMPLETE
 
-- [ ] Update USER_GUIDE.md with diagnostic features
-- [ ] Document how to interpret diagnostic messages
+- [x] Update USER_GUIDE.md with diagnostic features
+- [x] Document how to interpret diagnostic messages
+
+**Completed:**
+
+- Added "Metadata Health Monitoring" section to USER_GUIDE.md
+- Documented diagnostic detection for Rust and Node projects
+- Included examples of diagnostic output in `toad doctor` and `toad status`
+- Documented severity levels (Error, Warning, Info)
 
 ---
 
@@ -72,6 +81,10 @@
 
 - [x] Intentionally breaking a `Cargo.toml` results in a clear warning in
       `toad doctor`.
-- [ ] `toad status` reports the project as malformed rather than silently
-      defaulting to "Generic".
-- [ ] USER_GUIDE.md documents diagnostic features.
+- [x] `toad status` reports the project as malformed with ⚠️ indicator and
+      detailed diagnostic messages.
+- [x] USER_GUIDE.md documents diagnostic features.
+
+## ✅ TRACK COMPLETE
+
+All phases complete. v1.1.2-diagnostic-resilience is ready for release.

@@ -114,11 +114,11 @@ fn main() -> Result<()> {
             }
         }
         Commands::Status { query, tag } => {
-            let result = commands::status::handle(&workspace, query.clone(), tag.clone())?;
+            let (result, diagnostics) = commands::status::handle(&workspace, query.clone(), tag.clone())?;
             if cli.json {
                 println!("{}", serde_json::to_string_pretty(&result)?);
             } else {
-                ui::format_status_report(&result, query.as_deref(), tag.as_deref());
+                ui::format_status_report(&result, &diagnostics, query.as_deref(), tag.as_deref());
             }
         }
         Commands::Stats { query, tag, all } => {

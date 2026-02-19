@@ -130,6 +130,59 @@ Hint: Did you mean 'reveal'?
 
 ---
 
+## 🩺 Metadata Health Monitoring
+
+Toad automatically detects and reports malformed project metadata files that
+could cause silent failures during project scanning.
+
+### Diagnostic Detection
+
+Toad validates metadata files for all projects:
+
+- **Rust projects**: Validates `Cargo.toml` syntax
+- **Node projects**: Validates `package.json` syntax
+
+When malformed files are detected, Toad reports them with detailed error
+messages.
+
+### Viewing Diagnostics
+
+**In `toad doctor`:**
+
+```bash
+$ toad doctor
+
+» Metadata Issues
+  ❌ my-project - Cargo.toml: Failed to parse Cargo.toml
+    expected a table key, found a right bracket at line 5 column 1
+  ⚠️ other-project - package.json: Failed to read package.json
+    Permission denied (os error 13)
+```
+
+**In `toad status`:**
+
+Projects with metadata issues show a ⚠️ warning indicator:
+
+```bash
+$ toad status
+
+» my-project (Rust) ✅ Clean ⚠️
+  └─ ❌ Cargo.toml: Failed to parse Cargo.toml
+
+--- SUMMARY ---
+⚠️ 1 projects have METADATA ISSUES
+  ❌ 1 errors detected
+  Run 'toad doctor' for details
+```
+
+### Diagnostic Severity Levels
+
+- **❌ Error**: Critical issue preventing proper parsing (malformed syntax)
+- **⚠️ Warning**: Issue that should be addressed (file read errors, permissions)
+- **ℹ️ Info**: Informational message
+
+---
+
 ## 🌊 Common Workflows
 
 ### Multi-Repo Git Operations

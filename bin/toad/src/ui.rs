@@ -2,8 +2,9 @@ use colored::*;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::time::Duration;
 use toad_core::{
-    AnalyticsReport, BatchCleanReport, BatchOperationReport, MultiRepoGitReport,
-    MultiRepoStatusReport, ProgressReporter, SearchResult, StatusReport, VcsStatus,
+    AnalyticsReport, BatchCleanReport, BatchOperationReport, DiagnosticReport, DiagnosticSeverity,
+    MultiRepoGitReport, MultiRepoStatusReport, ProgressReporter, SearchResult, StatusReport,
+    VcsStatus,
 };
 use toad_ops::stats::format_size;
 
@@ -259,7 +260,12 @@ pub fn format_analytics_report(
     }
 }
 
-pub fn format_status_report(report: &StatusReport, _query: Option<&str>, _tag: Option<&str>) {
+pub fn format_status_report(
+    report: &StatusReport,
+    diagnostics: &DiagnosticReport,
+    _query: Option<&str>,
+    _tag: Option<&str>,
+) {
     println!("{}", "--- ECOSYSTEM HEALTH SCAN ---".green().bold());
 
     let mut dirty = Vec::new();
@@ -276,17 +282,54 @@ pub fn format_status_report(report: &StatusReport, _query: Option<&str>, _tag: O
             VcsStatus::None => no_repo_count += 1,
         }
 
+        // Check if this project has diagnostics
+        let project_diagnostics: Vec<_> = diagnostics
+            .diagnostics
+            .iter()
+            .filter(|d| d.project_name == p.name)
+            .collect();
+
+        let diagnostic_indicator = if !project_diagnostics.is_empty() {
+            let has_errors = project_diagnostics
+                .iter()
+                .any(|d| d.severity == DiagnosticSeverity::Error);
+            if has_errors {
+                " ⚠️".to_string()
+            } else {
+                " ⚠️".yellow().to_string()
+            }
+        } else {
+            String::new()
+        };
+
         println!(
-            "{} {} ({}) {}",
+            "{} {} ({}) {}{}",
             "»".blue(),
             p.name.bold(),
             p.stack.dimmed(),
-            p.vcs_status
+            p.vcs_status,
+            diagnostic_indicator
         );
 
         for issue in &p.issues {
             let issue_msg: &str = issue;
             println!("  {} {}", "└─".dimmed(), issue_msg.yellow());
+        }
+
+        // Display diagnostic issues
+        for diag in &project_diagnostics {
+            let icon = match diag.severity {
+                DiagnosticSeverity::Error => "❌",
+                DiagnosticSeverity::Warning => "⚠️",
+                DiagnosticSeverity::Info => "ℹ️",
+            };
+            println!(
+                "  {} {} {}: {}",
+                "└─".dimmed(),
+                icon,
+                diag.file_name.yellow(),
+                diag.message.dimmed()
+            );
         }
     }
 
@@ -339,5 +382,30 @@ pub fn format_status_report(report: &StatusReport, _query: Option<&str>, _tag: O
             println!("  {} {}", "»".red(), name);
         }
     }
+
+    if diagnostics.has_errors() || diagnostics.has_warnings() {
+        println!(
+            "\n{} {} projects have {}",
+            "⚠️".yellow(),
+            diagnostics.diagnostics.len(),
+            "METADATA ISSUES".yellow().bold()
+        );
+        if diagnostics.has_errors() {
+            println!(
+                "  {} {} errors detected",
+                "❌".red(),
+                diagnostics.error_count()
+            );
+        }
+        if diagnostics.has_warnings() {
+            println!(
+                "  {} {} warnings detected",
+                "⚠️".yellow(),
+                diagnostics.warning_count()
+            );
+        }
+        println!("  Run 'toad doctor' for details");
+    }
+
     println!("\n{}", "--- SCAN COMPLETE ---".green());
 }
