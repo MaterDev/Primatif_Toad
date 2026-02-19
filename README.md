@@ -6,7 +6,7 @@
 
 The modular meta-engineering platform.
 
-[![Version: v1.1.1](https://img.shields.io/badge/version-v1.1.1-green.svg)](Cargo.toml)
+[![Version: v1.1.2](https://img.shields.io/badge/version-v1.1.2-green.svg)](Cargo.toml)
 [![CI](https://github.com/Primatif/Primatif_Toad/actions/workflows/ci.yml/badge.svg)](https://github.com/Primatif/Primatif_Toad/actions/workflows/ci.yml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
 [![MSRV: 1.85+](https://img.shields.io/badge/MSRV-1.85+-orange.svg)](Cargo.toml)
