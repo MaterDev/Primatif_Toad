@@ -91,9 +91,10 @@ mod tests {
 
     #[test]
     fn test_levenshtein_distance() {
+        assert_eq!(levenshtein_distance("cat", "hat"), 1); // One substitution: c->h
         assert_eq!(levenshtein_distance("kitten", "sitting"), 3);
-        assert_eq!(levenshtein_distance("status", "stats"), 2);
-        assert_eq!(levenshtein_distance("reveal", "reveal"), 0);
+        assert_eq!(levenshtein_distance("", "test"), 4);
+        assert_eq!(levenshtein_distance("same", "same"), 0);
     }
 
     #[test]
