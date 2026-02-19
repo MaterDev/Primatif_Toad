@@ -138,6 +138,9 @@ detailed plan in its respective folder.
 - [x] **Track: Skill Updates** _Link:
       [./tracks/archive/111-skill-updates/](./tracks/archive/111-skill-updates/)_
 
+- [x] **Track: v1.1.1 QA Testing** _Link:
+      [./tracks/archive/111-v1.1.1-qa/](./tracks/archive/111-v1.1.1-qa/)_
+
 - [x] **Track: Integration Checklist** _Link:
       [./tracks/archive/111-integration-checklist/](./tracks/archive/111-integration-checklist/)_
 
