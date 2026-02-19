@@ -13,9 +13,18 @@ just sync-version
 # 1. Install the binary
 cargo install --path bin/toad --force
 
+# 1b. Install the MCP server binary
+cargo install --path bin/toad-mcp --force
+
 # 2. Verify installation
 if ! command -v toad &> /dev/null; then
     echo "Error: 'toad' command not found after install."
+    echo "Ensure that ~/.cargo/bin is in your PATH."
+    exit 1
+fi
+
+if ! command -v toad-mcp &> /dev/null; then
+    echo "Error: 'toad-mcp' command not found after install."
     echo "Ensure that ~/.cargo/bin is in your PATH."
     exit 1
 fi

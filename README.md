@@ -2,28 +2,46 @@
 
 [![Toad Project Lifecycle](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.gif)](https://github.com/Primatif/Primatif_Toad/raw/main/assets/video.mp4)
 
-### Toad Control CLI
+### Toad CLI
 
 The modular meta-engineering platform.
 
-[![Version: v1.0.2](https://img.shields.io/badge/version-v1.0.2-green.svg)](Cargo.toml)
+[![Version: v1.1.2](https://img.shields.io/badge/version-v1.1.2-green.svg)](Cargo.toml)
+[![CI](https://github.com/Primatif/Primatif_Toad/actions/workflows/ci.yml/badge.svg)](https://github.com/Primatif/Primatif_Toad/actions/workflows/ci.yml)
 [![Coverage: >80%](https://img.shields.io/badge/coverage-%3E80%25-brightgreen.svg)](Justfile)
+[![MSRV: 1.85+](https://img.shields.io/badge/MSRV-1.85+-orange.svg)](Cargo.toml)
+<br />
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Maintenance: Actively Developed](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)](https://github.com/Primatif/Primatif_Toad/pulse)
+[![MCP: Supported](https://img.shields.io/badge/MCP-Supported-blue.svg)](docs/guides/MCP.md)
+[![Buy Me a Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/primatif)
+[![GitHub Stars](https://img.shields.io/github/stars/Primatif/Primatif_Toad.svg)](https://github.com/Primatif/Primatif_Toad/stargazers)
 
 ---
 </div>
 
-Toad is a High-Performance Local-Ops Platform designed to manage a vast ecosystem of independent projects. It provides a multi-threaded administrative layer for orchestrating workspaces, performing data-driven analytics, and enforcing safety guardrails across dozens of repositories.
+## 💖 Support the Pond
 
-> [!CAUTION]
-> **Toad is a powerful meta-engineering tool.** Commands execute across multiple independent repositories simultaneously. Misuse can lead to significant data loss. Always verify your targets and commands before execution.
+If Toad has helped you manage your ecosystem or made your AI agents smarter, consider supporting its development!
+
+<a href="https://buymeacoffee.com/primatif" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+## 📖 Documentation
+
+For comprehensive instructions on mastering Toad, refer to the **[USER GUIDE](./USER_GUIDE.md)**.
 
 ## What is Local-Ops?
 
 Local-Ops is the discipline of managing local development environments at scale.
 
+Toad is a High-Performance Local-Ops Platform designed to manage a vast ecosystem of independent projects. It provides a multi-threaded administrative layer for orchestrating workspaces, performing data-driven analytics, and enforcing safety guardrails across dozens of repositories.
+
 By centralizing observability and orchestration, Local-Ops solves the critical problems of maintenance drift and resource bloat. It provides a "bird's-eye view" through visual health analytics and parallel command dispatching, allowing a single developer to perform ecosystem-wide tasks—like security patching, artifact cleaning, or AI context synchronization—in seconds rather than hours.
 
 Ultimately, Local-Ops bridges the gap between raw code and developer productivity, ensuring that a massive portfolio of work remains a live asset rather than an unmanageable burden of technical debt.
+
+> [!CAUTION]
+> **Toad is a powerful meta-engineering tool.** Commands execute across multiple independent repositories simultaneously. Misuse can lead to significant data loss. Always verify your targets and commands before execution.
 
 ## 🐸 Quick Start
 
@@ -38,89 +56,88 @@ just setup
 # 3. Anchor your system
 toad home .
 
-# 4. Analyze your ecosystem
-toad status
+# 4. Initialize AI Context
+toad init-context
 ```
 
-## What's New in v1.0.2
+To use Toad as an MCP (Model Context Protocol) server in an editor/agent, you
+must also install `toad-mcp` locally and register it in your IDE's MCP
+configuration.
 
-- **Modular Architecture:** Codebase organized into specialized internal crates
-  across separate git repositories, managed as submodules.
-- **Multi-Repo Git Orchestration (`toad ggit`):** First-class git operations
-  across all repos — status, commit, push, pull, sync, branch listing, and
-  submodule alignment.
-- **Named Project Contexts (`toad project`):** Register multiple workspace roots
-  and switch between them instantly. All commands resolve against the active
-  context.
-- **AI Skill Distribution (`toad skill sync`):** Generate and distribute
-  architectural blueprints, CLI references, and manifests to any AI vendor
-  (Windsurf, Gemini, Cursor, Claude, Copilot, and more).
-- **Custom Workflows (`toad cw`):** Register and execute custom scripts as
-  first-class Toad commands.
-- **Submodule Awareness:** Automatic discovery and status reporting for git
-  submodules within any managed project.
+See the [MCP Guide](docs/guides/MCP.md).
+
+## What's New in v1.1.x "Deep Croak"
+
+- **Model Context Protocol (MCP):** A full-featured MCP server (`toad-mcp`) that exposes Toad's intelligence directly to AI agents.
+- **Rich Analytics:** Deep ecosystem insights including dependency graphs, velocity metrics, technical debt indicators, and composite health scoring.
+- **Health Checks:** A new `toad doctor` command for automated troubleshooting and ecosystem validation.
+- **Context Engineering:** Tiered metadata architecture (`llms.txt` → `SYSTEM_PROMPT.md` → `MANIFEST.md`) for progressive disclosure.
+- **Pattern Intel & DNA Mapping:** Deep structural analysis that automatically identifies component roles and capabilities.
+- **Hardened Multi-Repo Ops:** Improved `ggit` with unpushed commit detection, SHA drift safety, and submodule alignment.
 
 See the [CHANGELOG](CHANGELOG.md) for the full release history.
 
 ## Core Commands
 
-### Analytics & Health
+### Analytics & Insights
 
-- **`toad status`** — Git health and activity tiers across the ecosystem (with
-  submodule status).
-- **`toad stats`** — Visual disk usage heatmap and artifact bloat analysis.
-- **`toad clean`** — Reclaim disk space by removing detected build artifacts.
-- **`toad reveal <query>`** — Search for projects by name or `#tag`.
+- **`toad analyze deps`** — Dependency graph analysis and critical path
+    identification.
+- **`toad analyze health`** — Composite project health scoring with proactive
+    advice.
+- **`toad analyze debt`** — Technical debt tracking, monolithic file alerts,
+    and code smells.
+- **`toad analyze velocity`** — Development momentum, commit frequency, and
+    line churn.
+- **`toad doctor`** — Automated diagnostics and health checks for your Toad
+    installation.
+
+### Health & Hygiene
+
+- **`toad status`** — Visual Git health and activity tiers across the entire
+    ecosystem.
+- **`toad stats`** — Storage heatmap, artifact bloat analysis, and disk usage
+    audits.
+- **`toad clean`** — Reclaim disk space by safely removing build artifacts and
+    bloat.
+- **`toad reveal <query>`** — Search for projects by name, `#tag`, or DNA
+    pattern.
 
 ### Multi-Repo Git Orchestration
 
 - **`toad ggit status`** — Consolidated git status across all repositories.
 - **`toad ggit commit -m "msg"`** — Commit changes across repositories.
 - **`toad ggit commit -m "msg" --cascade`** — Commit submodules first, then
-  cascade to the Hub root.
+    cascade to the Hub root.
 - **`toad ggit push`** — Push all repositories to their remotes.
 - **`toad ggit pull`** — Pull latest changes across all repositories.
 - **`toad ggit sync`** — Synchronize submodule refs with pre-flight safety
-  checks.
+    checks.
 - **`toad ggit branches`** — List all branches across repositories.
 - **`toad ggit align`** — Force-align submodules to Hub root expectations.
 
+### AI Skills & Context Engineering
+
+- **`toad manifest`** — Generate architectural manifests and ecosystem DNA
+    indices.
+- **`toad context`** — High-density task briefing generator for AI agents.
+- **`toad skill sync`** — Distribute context metadata to 10+ AI vendors
+    (Cursor, Windsurf, Copilot, etc.).
+- **`toad-mcp`** — Model Context Protocol server for real-time AI context
+    injection.
+
 ### Orchestration (Bulk Ops)
 
-> [!WARNING] **High-Risk Operations:** Batch execution via `toad do` is
-> potentially destructive. We strongly recommend using the `--dry-run` flag to
-> preview changes before running them for real.
-
-- **`toad do "<command>"`** — Execute shell commands across matching projects in
-  parallel.
-- **`toad do "git pull" --tag stable`** — Batch update only your stable tools.
-- **`toad do "rm -rf target" --dry-run`** — Safely preview destructive
-  maintenance.
+- **`toad do "<command>"`** — Execute shell commands across matching projects
+    in parallel.
+- **`toad cw run <name>`** — Execute a registered custom workflow or
+    automation script.
 
 ### Project Contexts
 
 - **`toad project register <name> <path>`** — Register a new workspace root.
 - **`toad project switch <name>`** — Switch the active context.
-- **`toad project current`** — Show the active context.
 - **`toad project list`** — List all registered contexts.
-
-### AI Skills & Context
-
-- **`toad skill sync`** — Generate and distribute architectural blueprints, CLI
-  references, and manifests to registered AI vendors.
-- **`toad skill list`** — List distributed skills and registered vendors.
-
-### Custom Workflows
-
-- **`toad cw register <name> <script>`** — Register a custom workflow script.
-- **`toad cw run <name>`** — Execute a registered workflow.
-- **`toad cw list`** — List all registered workflows.
-
-### Taxonomy & Stack Support
-
-- **`toad strategy list`** — List all installed stack support plugins.
-- **`toad strategy add`** — Interactively create a new stack support plugin.
-- **`toad tag <project> <tag>`** — Assign custom metadata.
 ---
 
 ## 🌿 Stack Support Plugins
@@ -144,45 +161,45 @@ See the [Stack Support Plugins Guide](docs/guides/PLUGINS.md) for more details.
 > [!IMPORTANT] **Context Steering:** The `toad home` command updates the global
 > system pointer. All subsequent CLI calls will target the projects and metadata
 > in the newly anchored directory.
-
-- `toad home .`: Anchor the current directory as your system-wide Toad home.
-- `toad home [path]`: View or set the global workspace pointer manually.
+>
+> - `toad home .`: Anchor the current directory as your system-wide Toad home.
+> - `toad home [path]`: View or set the global workspace pointer manually.
 
 ---
 
 ## 🪵 Architecture
 
-Toad is built as a modular Rust workspace. Each crate is its own git repository,
-managed as a submodule:
+Toad is built as a modular Rust workspace. Each component is its own git
+repository, managed as a submodule:
 
 ```text
 Primatif_Toad/                          (Hub)
-├── bin/toad/                           CLI binary
+├── bin/
+│   ├── toad/                           Primary CLI
+│   └── toad-mcp/                       MCP Context Server
 ├── crates/
-│   ├── toad-core/                      Data models & config
-│   ├── toad-scaffold/                  Project scaffolding
-│   ├── toad-discovery/                 Ecosystem scanning
-│   ├── toad-git/                       Git orchestration
-│   ├── toad-manifest/                  Context generation
-│   └── toad-ops/                       Batch ops & safety
-├── docs/
-└── scripts/
+│   ├── toad-core/                      Shared models & config
+│   ├── toad-scaffold/                  Project bootstrapping
+│   ├── toad-discovery/                 DNA & Ecosystem scanning
+│   ├── toad-git/                       VCS Orchestration
+│   ├── toad-manifest/                  Tiered metadata generation
+│   └── toad-ops/                       Batch operations & safety
+└── docs/                               Release & Architecture guides
 ```
 
 ### Dependency Graph
 
 ```text
-bin/toad
-├── toad-core       ← shared data models
-├── toad-scaffold   ← project creation
-├── toad-discovery  ← depends on: toad-core, toad-git
-├── toad-git        ← depends on: toad-core
+toad / toad-mcp
+├── toad-discovery  ← depends on: toad-core, toad-git, toad-ops
 ├── toad-manifest   ← depends on: toad-core
-└── toad-ops        ← depends on: toad-core
+├── toad-ops        ← depends on: toad-core
+├── toad-git        ← depends on: toad-core
+└── toad-core       ← foundation
 ```
 
-The system is designed for high separation of concerns. MIT types flow
-downward; internal logic flows upward into the primary binary.
+The system is designed for high separation of concerns. MIT types flow downward;
+internal logic flows upward into the primary binary.
 
 ---
 
@@ -219,6 +236,42 @@ just qa
 
 This executes version sync, docs generation, license boundary checks,
 formatting, clippy, unit tests, and a full build.
+
+### Dogfooding: Using Toad to Develop Toad
+
+Toad's development workflow uses its own features to manage the ecosystem:
+
+#### Tag Taxonomy
+
+We use semantic tags to organize the codebase:
+
+```bash
+# View projects by role
+toad status --tag core          # Core data models and traits
+toad status --tag intelligence  # Discovery and manifest generation
+toad status --tag orchestration # Git operations and batch workflows
+toad status --tag interface     # CLI and MCP server
+toad status --tag utility       # Scaffolding and helpers
+```
+
+#### Custom Workflows
+
+Common development tasks are registered as custom workflows:
+
+```bash
+toad cw run qa             # Run full QA suite (tests, lint, format)
+toad cw run release-check  # Pre-release verification
+toad cw run update-docs    # Regenerate docs and sync AI skills
+```
+
+#### Auto-Refresh Hook
+
+A post-commit hook automatically refreshes Toad's context after each commit,
+ensuring the ecosystem manifest stays synchronized. Install hooks with:
+
+```bash
+just setup-hooks
+```
 
 ---
 
@@ -273,9 +326,12 @@ branch tracking from the target branch.
 
 ## 📜 License
 
-**Primatif Toad** is open-source software licensed under the **MIT License**.
-Please note that this license applies specifically to the Primatif Toad Hub and
-CLI orchestrator.
+Primatif Toad is released under the **MIT License**. See the [LICENSE](LICENSE)
+file for the full text.
+
+Independent components (crates) managed by this Hub are subject to their own
+respective licenses, which can be found within their individual submodule
+directories.
 
 ---
 

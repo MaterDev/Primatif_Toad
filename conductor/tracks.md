@@ -27,7 +27,7 @@ detailed plan in its respective folder.
       [./tracks/archive/bulk-op-safety/](./tracks/archive/bulk-op-safety/)_
 
 - [x] **Track: Ecosystem Analytics (Insights)** _Link:
-      [./tracks/archive/ecosystem-analytics/](./tracks/ecosystem-analytics/)_
+      [./tracks/archive/111-analytics-enhancements/](./tracks/archive/111-analytics-enhancements/)_
 
 - [x] **Track: Toad Tag (Taxonomy)** _Link:
       [./tracks/archive/toad-tag/](./tracks/archive/toad-tag/)_
@@ -59,21 +59,152 @@ detailed plan in its respective folder.
 ---
 
 - [x] **Track: v1.0.2 Licensing Migration** _Link:
-      [./tracks/archive/102-licensing/](./tracks/102-licensing/)_
+      [./tracks/archive/102-licensing/](./tracks/archive/102-licensing/)_
 
 - [x] **Track: v1.0.2 Multi-Repo Split** _Link:
-      [./tracks/102-multi-repo/](./tracks/102-multi-repo/)_
+      [./tracks/archive/102-multi-repo/](./tracks/archive/102-multi-repo/)_
+
 - [x] **Track: v1.0.2 Submodule Awareness** _Link:
-      [./tracks/102-submodule-aware/](./tracks/102-submodule-aware/)_
+      [./tracks/archive/102-submodule-aware/](./tracks/archive/102-submodule-aware/)_
 
-- [ ] **Track: v1.0.2 Group-Git Orchestration** _Link:
-      [./tracks/archive/102-ggit/](./tracks/102-ggit/)_
+- [x] **Track: v1.0.2 Group-Git Orchestration** _Link:
+      [./tracks/archive/102-ggit/](./tracks/archive/102-ggit/)_
 
-- [ ] **Track: v1.0.2 Custom Workflows** _Link:
-      [./tracks/archive/102-workflows/](./tracks/102-workflows/)_
+- [x] **Track: v1.0.2 Custom Workflows** _Link:
+      [./tracks/archive/102-workflows/](./tracks/archive/102-workflows/)_
 
-- [ ] **Track: v1.0.2 Governance & AI Navigation** _Link:
-      [./tracks/archive/102-governance/](./tracks/102-governance/)_
+- [x] **Track: v1.0.2 Governance & AI Navigation** _Link:
+      [./tracks/archive/102-governance/](./tracks/archive/102-governance/)_
+
+- [x] **Track: v1.1.0 Blockers** _Link:
+      [./tracks/archive/110-0-blockers/](./tracks/archive/110-0-blockers/)_
+
+- [x] **Track: v1.1.0 Global Install** _Link:
+      [./tracks/archive/110-1-global-install/](./tracks/archive/110-1-global-install/)_
+
+- [x] **Track: v1.1.0 Deep Extraction** _Link:
+      [./tracks/archive/110-2-deep-extraction/](./tracks/archive/110-2-deep-extraction/)_
+
+- [x] **Track: v1.1.0 Integrity** _Link:
+      [./tracks/archive/110-3-integrity/](./tracks/archive/110-3-integrity/)_
+
+- [x] **Track: v1.1.0 Agent Interface** _Link:
+      [./tracks/archive/110-4-agent-interface/](./tracks/archive/110-4-agent-interface/)_
+
+- [x] **Track: v1.1.0 MCP Server** _Link:
+      [./tracks/archive/110-5-mcp-server/](./tracks/archive/110-5-mcp-server/)_
+
+- [x] **Track: v1.1.0 Pattern Intel** _Link:
+      [./tracks/archive/110-6-pattern-intel/](./tracks/archive/110-6-pattern-intel/)_
+
+- [x] **Track: v1.1.0 Synthesis** _Link:
+      [./tracks/archive/110-7-synthesis/](./tracks/archive/110-7-synthesis/)_
+
+- [x] **Track: v1.1.0 Core Hardening** _Link:
+      [./tracks/archive/110-8-core-hardening/](./tracks/archive/110-8-core-hardening/)_
+
+- [x] **Track: v1.1.0 Intelligence Regressions** _Link:
+      [./tracks/archive/110-9-intel-regressions/](./tracks/archive/110-9-intel-regressions/)_
+
+- [x] **Track: v1.1.0 Interface Fixes** _Link:
+      [./tracks/archive/110-10-interface-fixes/](./tracks/archive/110-10-interface-fixes/)_
+
+---
+
+- [x] **Track: v1.1.0 MCP Enhancements** _Link:
+      [./tracks/archive/111-mcp-enhancements/](./tracks/archive/111-mcp-enhancements/)_
+
+- [x] **Track: v1.1.0 MCP CLI Bridge** _Link:
+      [./tracks/archive/111-mcp-cli-bridge/](./tracks/archive/111-mcp-cli-bridge/)_
+
+- [x] **Track: v1.1.0 Toad Doctor Command** _Link:
+      [./tracks/archive/111-doctor-command/](./tracks/archive/111-doctor-command/)_
+
+- [x] **Track: v1.1.1 Post-Release Hardening** _Link:
+      [./tracks/archive/111-post-release-hardening/](./tracks/archive/111-post-release-hardening/)_
+
+- [x] **Track: v1.1.1 Dogfooding** _Link:
+      [./tracks/archive/v1.1.1-dogfooding/](./tracks/archive/v1.1.1-dogfooding/)_
+
+- [x]## v1.1.2 Tracks Complete (Released 2026-02-19)
+
+### v1.1.2-interface-standardization
+
+**Goal:** Standardize CLI interface with unified flags and command discovery
+
+**Status:** Complete - Archived
+
+**Spec:** [spec.md](tracks/archive/v1.1.2-interface-standardization/spec.md)
+
+**Delivered:**
+
+- Unified `--yes` / `-y` flags for all destructive commands
+- Command alias system with 15+ common aliases
+- "Did you mean?" suggestions using Levenshtein distance
+- Standardized error messages with `--yes` hints
+- Documentation in USER_GUIDE.md
+
+### v1.1.2-diagnostic-resilience
+
+**Goal:** Enhanced error detection for malformed metadata files
+
+**Status:** Complete - Archived
+
+**Spec:** [spec.md](tracks/archive/v1.1.2-diagnostic-resilience/spec.md)
+
+**Delivered:**
+
+- Diagnostic type system (ParseDiagnostic, DiagnosticReport)
+- Metadata parsing detection for Cargo.toml and package.json
+- Integration into `toad doctor` with detailed error reporting
+- Integration into `toad status` with ⚠️ warning indicators
+- Documentation in USER_GUIDE.md
+
+- [x] **Track: v1.1.1 ggit Submodule Path Fixes** _Link:
+      [./tracks/archive/111-ggit-fixes/](./tracks/archive/111-ggit-fixes/)_
+
+- [x] **Track: v1.1.1 CI/CD & Release Automation** _Link:
+      [./tracks/archive/111-ci-cd-release/](./tracks/archive/111-ci-cd-release/)_
+
+- [x] **Track: Analytics Refinements (Hardening)** _Link:
+      [./tracks/archive/111-analytics-refinements/](./tracks/archive/111-analytics-refinements/)_
+
+- [x] **Track: Skill Updates** _Link:
+      [./tracks/archive/111-skill-updates/](./tracks/archive/111-skill-updates/)_
+
+- [x] **Track: v1.1.1 QA Testing** _Link:
+      [./tracks/archive/111-v1.1.1-qa/](./tracks/archive/111-v1.1.1-qa/)_
+
+- [x] **Track: Integration Checklist** _Link:
+      [./tracks/archive/111-integration-checklist/](./tracks/archive/111-integration-checklist/)_
+
+- [x] **Track: User Guide Updates** _Link:
+      [./tracks/archive/111-user-guide/](./tracks/archive/111-user-guide/)_
+
+---
+
+## v1.1.3 Tracks Complete
+
+### v1.1.3-automated-qa-suite
+
+**Goal:** Develop robust automated regression testing suite for CLI and MCP
+server
+
+**Status:** Complete - Archived
+
+**Spec:** [spec.md](tracks/archive/v1.1.3-automated-qa-suite/spec.md)
+
+**Delivered:**
+
+- CLI integration test suite (`scripts/tests/integration_qa.sh`) with 10+ test
+  suites
+- MCP validation test suite (`scripts/tests/mcp_validation.sh`) with JSON-RPC
+  2.0 compliance
+- JSON schema definitions for MCP tool responses
+- `just test-integration` and `just test-mcp` commands
+- CI-friendly output with automated sandbox lifecycle
+- Updated all script invocations to use `bash` explicitly (no execute
+  permissions needed)
 
 ---
 

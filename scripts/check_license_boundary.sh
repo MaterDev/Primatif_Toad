@@ -6,7 +6,7 @@ set -e
 
 # Define tiers
 MIT_CRATES=("toad-core" "scaffold")
-BUSL_CRATES=("discovery" "toad-git" "toad-manifest" "toad-ops")
+BUSL_CRATES=("discovery" "toad-git" "toad-manifest" "toad-ops" "toad-mcp")
 
 VIOLATIONS=0
 

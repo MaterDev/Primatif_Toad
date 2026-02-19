@@ -1,0 +1,10 @@
+{
+  "id": "111-v1.1.1-qa",
+  "title": "v1.1.1 QA Testing",
+  "type": "QA/Audit",
+  "priority": "P1",
+  "status": "In Progress",
+  "owner": "Primatif_Toad",
+  "start_date": "2026-02-19",
+  "tags": ["qa", "testing", "release-prep", "v1.1.1"]
+}

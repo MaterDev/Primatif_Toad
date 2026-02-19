@@ -71,3 +71,40 @@ way to reclaim this space.
 Toad includes a "Reserved Paths" safety layer that prevents it from ever
 cleaning critical files like `.git`, `src`, or configuration manifests, even if
 a custom strategy is misconfigured.
+
+## 8. Ecosystem Analytics (The Pulse)
+
+Toad provides deep insights into your ecosystem's architecture, velocity, and
+health. These analytics help you make data-driven decisions about where to focus
+your cleanup and refactoring efforts.
+
+### Key Analytics Commands
+
+- `toad analyze deps`: Generates an ecosystem-wide dependency graph. It
+  identifies the **Critical Path** (the projects most depended upon) and detects
+  circular dependencies.
+- `toad analyze health`: Calculates a 0-100 health score for every project. This
+  composite score considers VCS cleanliness, documentation presence (README),
+  recent activity, and technical debt.
+- `toad analyze debt`: Scans for technical debt indicators like `TODO`, `FIXME`,
+  and `HACK` comments, as well as monolithic files exceeding Toad's 700-line
+  limit.
+- `toad analyze velocity`: Tracks commit frequency and line churn (additions vs
+  deletions) over the last N days.
+
+## 9. Troubleshooting (Toad Doctor)
+
+If Toad is behaving unexpectedly or you want to verify your installation
+environment, use the **Doctor** command:
+
+```bash
+toad doctor
+```
+
+This command runs a series of diagnostic checks, including:
+
+- **Environment:** Verifies `TOAD_HOME` and workspace anchoring.
+- **Tools:** Checks for required dependencies like `git`.
+- **Integrity:** Validates project registry health and manifest staleness.
+- **Connectivity:** Ensures the MCP server and other ecosystem components are
+  properly configured.

@@ -21,49 +21,55 @@ To maintain the "Solo-Dev Smooth Flow," the CLI must be its own best manual.
 - **Feedback:** Success and error states should be visually distinct (e.g.,
   using block characters or specific ASCII patterns).
 
-## 3. Documentation & Context Strategy
+## 3. Context Strategy: The Oracle Pattern
 
-Documentation is not just for humans; it is the "Long-term Memory" for AI
-agents.
+Documentation and generated metadata are the "Long-term Memory" for AI agents.
 
-- **Single Source of Truth:** All project standards, workflows, and technical
-  specs live in the `conductor/` directory.
+- **Global Portability:** Generated context MUST live in `~/.toad/` (Toad Home),
+  never polluting the user's project directories.
+- **Progressive Disclosure:** Context should be tiered (`llms.txt` →
+  `SYSTEM_PROMPT.md` → `CONTEXT.md`) to minimize token usage while maximizing
+  accuracy.
 - **Track-Based History:** Major features are documented as "Tracks" with
   specific implementation plans that act as a live state machine.
-- **Context Integrity:** Employs multi-level mtime fingerprinting to ensure the
-  AI's view of the `projects/` directory is always synchronized with the actual
-  filesystem.
+- **Context Integrity:** Employs multi-level hash fingerprinting and auto-sync
+  triggers to ensure the AI's view is always synchronized with the filesystem.
 
-## 4. Engineering Tone
+## 4. Engineering Standards
 
 - **Concise:** Favor high information density over conversational filler.
+- **Small File Principle:** NO file should ever exceed **700 lines of code**.
+  Monolithic files are considered technical debt and MUST be refactored into
+  logical modules or specialized crates once this limit is approached.
 - **Action-Oriented:** Documentation and CLI output should focus on "What's
   next?" and "How do I fix this?".
 
 ## 5. Licensing & Architecture Boundaries
 
-Toad follows a strict **Open Core** boundary to protect its intelligence while
-enabling an open-source ecosystem.
+Toad follows a strict "Open Core" boundary to protect its intelligence while
+enabling an open-source ecosystem. All BUSL-1.1 crates convert to MIT after 8
+years (Change Date: 2034-02-07).
 
-- **Dependency Rule:** MIT crates (`toad-core`, `scaffold`) must never depend on
-  BUSL-1.1 crates (`discovery`, `toad-git`, `toad-manifest`, `toad-ops`).
+- **MIT (Open):** `toad-core`, `toad-scaffold`, `bin/toad`.
+- **BUSL-1.1 (Source-Available):** `toad-discovery`, `toad-git`,
+  `toad-manifest`, `toad-ops`, `toad-mcp`.
+- **Dependency Rule:** MIT crates must never depend on BUSL-1.1 crates. Binary
+  crates (`bin/toad`, `bin/toad-mcp`) may depend on everything.
 - **Git Monopoly:** No crate outside of `toad-git` may execute `git` commands or
   reason about Git internals.
-- **SDK Stability:** `toad-core` is the platform SDK. New types added here must
-  be treated as stable API contracts for third-party plugin developers.
-- **Decision Framework:**
-  - Data Model / Trait / Contract? → **`toad-core` (MIT)**.
-  - Intelligence / Analysis / Logic? → **BUSL-1.1 crate**.
-  - CLI Glue / Formatting? → **`bin/toad` (MIT)**.
+- **Logic Extraction:** Every command MUST extract its business logic into a
+  library crate and return structured data. The CLI binary is purely for
+  formatting.
 
-## 6. Project Contexts & Workspace Switching
+## 6. Project Contexts & Global Path Separation
 
 Toad supports multiple workspace roots via **Named Project Contexts**.
 
+- **Toad Home (`~/.toad/`):** The persistent database and context oracle.
+- **Projects Directory:** The user's managed repositories (read-only by
+  default).
 - **Active Context:** All commands operate against the active context resolved
   via `toad project current`.
-- **Legacy Migration:** `toad home` is deprecated. Use `toad project switch` for
-  all context changes.
 - **AI Awareness:** Always verify the active context path before performing
   scans or creating files. Use `CROSS_REPO_MAP.md` to understand the
   architectural links within the active context.

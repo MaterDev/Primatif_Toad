@@ -15,6 +15,9 @@ name = "toad-manifest"
 [[licenses.exceptions]]
 allow = ["BUSL-1.1"]
 name = "toad-ops"
+[[licenses.exceptions]]
+allow = ["BUSL-1.1"]
+name = "toad-mcp"
 
 [bans]
 multiple-versions = "warn"

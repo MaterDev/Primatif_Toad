@@ -1,0 +1,13 @@
+{
+  "name": "primatif-toad",
+  "private": true,
+  "version": "0.0.0",
+  "devDependencies": {
+    "markdownlint-cli2": "^0.17.2",
+    "markdownlint-cli2-formatter-default": "^0.0.5"
+  },
+  "scripts": {
+    "lint:md": "markdownlint-cli2 --config .markdownlint-cli2.jsonc",
+    "fix:md": "markdownlint-cli2-fix --config .markdownlint-cli2.jsonc"
+  }
+}

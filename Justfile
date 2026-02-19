@@ -26,39 +26,61 @@ setup-git-config:
 
 # Install the Toad CLI to your system (Production)
 install:
-    ./scripts/install_toad.sh
+    bash scripts/install_toad.sh
 
 # --- Quality Assurance (QA) ---
 
-# Run full QA suite (Sync -> Docs -> Check Licenses -> Format -> Lint -> Test -> Build)
-qa: sync-version docs check-licenses fmt lint test build
+# Run full QA suite (Sync -> Docs -> Skills -> Check Licenses -> Format -> Lint -> Test -> Integration -> Build)
+qa: sync-version docs sync-skills check-licenses check-fmt lint test test-integration build
     @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
 
 # Sync README version with Cargo.toml
 sync-version:
-    ./scripts/sync_version.sh
+    bash scripts/sync_version.sh
+
+# Sync all dependency versions across modules
+sync-deps:
+    bash scripts/sync_dependencies.sh
 
 # Generate CLI documentation
 docs:
     cargo run -p toad -- docs
 
+# Synchronize AI agent skills
+sync-skills:
+    cargo run -p toad -- skill sync
+
 # Verify MIT/BUSL-1.1 license boundaries
 check-licenses:
-    ./scripts/check_license_boundary.sh
+    bash scripts/check_license_boundary.sh
 
 # Setup Git hooks
 setup-hooks:
     @mkdir -p .git/hooks
     @ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
     @ln -sf ../../scripts/git-hooks/pre-push .git/hooks/pre-push
+    @ln -sf ../../scripts/git-hooks/post-commit .git/hooks/post-commit
     @echo "✅ Git hooks installed."
 
 # Run all tests
 test:
     cargo test --workspace
 
+# Run integration tests in sandbox
+test-integration:
+    bash scripts/tests/integration_qa.sh
+
+# Run MCP validation tests
+test-mcp:
+    bash scripts/tests/mcp_validation.sh
+
 # Check everything (CI Gate)
 check: lint test
+    cargo fmt --all -- --check
+    dprint check
+
+# Check formatting without modifying files (matches CI)
+check-fmt:
     cargo fmt --all -- --check
     dprint check
 
@@ -66,8 +88,7 @@ check: lint test
 fix:
     cargo clippy --workspace --fix --allow-dirty --allow-staged
     just fmt
-    @command -v markdownlint > /dev/null || (echo "❌ ERROR: markdownlint-cli is NOT installed. Install with 'npm install -g markdownlint-cli'" && exit 1)
-    markdownlint "**/*.md" --fix
+    npm run fix:md
 
 # Format code and docs
 fmt: fmt-rust fmt-misc
@@ -82,9 +103,9 @@ fmt-misc:
 
 # Lint Rust code (Clippy) and Markdown
 lint:
-    cargo clippy --workspace -- -D warnings
-    @command -v markdownlint > /dev/null || (echo "❌ ERROR: markdownlint-cli is NOT installed. Install with 'npm install -g markdownlint-cli'" && exit 1)
-    markdownlint "**/*.md"
+    cargo clippy --workspace --all-targets -- -D warnings
+    npm ci
+    npm run lint:md
 
 # Run code coverage (requires cargo-tarpaulin)
 coverage:

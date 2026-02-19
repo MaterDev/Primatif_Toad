@@ -11,6 +11,36 @@
 1. **User Experience First:** Every decision should prioritize user experience
 1. **Non-Interactive & CI-Aware:** Prefer non-interactive commands. Use
    `CI=true` for watch-mode tools (tests, linters) to ensure single execution.
+1. **Version-Based Track Naming:** Track directory names MUST reflect the target
+   version they will be released in, signaling version bumps upon completion.
+
+## Track Naming Convention
+
+All conductor tracks MUST follow this naming pattern:
+
+```text
+conductor/tracks/v{MAJOR}.{MINOR}.{PATCH}-{slug}/
+```
+
+**Rules:**
+
+- Version number indicates the target release version
+- Slug is a short, descriptive kebab-case identifier
+- Completing all tracks for a version signals readiness for that version bump
+- Post-release workflow improvements use the current version (no bump)
+
+**Examples:**
+
+- `v1.1.2-interface-standardization/` → Will be released in v1.1.2
+- `v1.1.2-diagnostic-resilience/` → Will be released in v1.1.2
+- `v1.1.3-automated-qa/` → Will be released in v1.1.3
+- `v1.1.1-dogfooding/` → Post-release workflow (current version, no bump)
+
+**Migration from old numbering:**
+
+- Old `111-*` tracks were ambiguous (v1.1.0 or v1.1.1?)
+- Old `112-*` tracks implied sequence, not version
+- New system makes version targets explicit and self-documenting
 
 ## Task Workflow
 
@@ -100,6 +130,26 @@ All tasks follow a strict lifecycle:
    - **Action:** Update all `Cargo.toml` files in the workspace, run
      `cargo build` to sync the lockfile, and include the version bump in the
      task or phase commit.
+
+#### 5. Bump Version Numbers
+
+Update version in all Cargo.toml files and sync dependencies:
+
+```bash
+# Update package versions
+find . -name "Cargo.toml" -not -path "./target/*" \
+  -exec sed -i '' 's/version = "{OLD_VERSION}"/version = "{NEW_VERSION}"/g' {} \;
+
+# Sync all toad-* dependency versions
+just sync-deps
+
+# Update Cargo.lock
+cargo update
+```
+
+**Important:** Always run `just sync-deps` after version bumps to ensure all
+internal dependencies (toad-core, toad-discovery, etc.) reference the correct
+version.
 
 ### Phase Completion Verification and Checkpointing Protocol
 
@@ -212,14 +262,12 @@ Before marking any task complete, verify:
 
 - [ ] All tests pass
 - [ ] Code coverage meets requirements (>80%)
-- [ ] Code follows project's code style guidelines (as defined in
-      `code_styleguides/`)
-- [ ] All public functions/methods are documented (e.g., docstrings, JSDoc,
-      GoDoc)
-- [ ] Type safety is enforced (e.g., type hints, TypeScript types, Go types)
-- [ ] No linting or static analysis errors (using the project's configured
-      tools)
-- [ ] Works correctly on mobile (if applicable)
+- [ ] **Small Files:** No file exceeds 700 lines of code.
+- [ ] Code follows project's code style guidelines
+- [ ] **Context Freshness:** Run `toad skill sync` to update AI intuition.
+- [ ] All public functions/methods are documented
+- [ ] Type safety is enforced
+- [ ] No linting or static analysis errors
 - [ ] Documentation updated if needed
 - [ ] No security vulnerabilities introduced
 

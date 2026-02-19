@@ -12,7 +12,7 @@ fi
 echo "🏷️  Syncing ecosystem to v$VERSION..."
 
 # 1. Update individual crate Cargo.toml files
-for toml in crates/*/Cargo.toml; do
+for toml in crates/*/Cargo.toml bin/*/Cargo.toml; do
     if [ -f "$toml" ]; then
         # Update [package] version
         sed -i '' "s/^version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"$VERSION\"/" "$toml"
@@ -22,7 +22,7 @@ for toml in crates/*/Cargo.toml; do
 done
 
 # 2. Update Hub README version badges
-sed -i '' "s/version-v[0-9]*\.[0-9]*\.[0-9]*/version-v$VERSION/g" README.md
-sed -i '' "s/Version: v[0-9]*\.[0-9]*\.[0-9]*/Version: v$VERSION/g" README.md
+sed -i '' "s/version-v[0-9]*\.[0-9]*\.[0-9x]*/version-v$VERSION/g" README.md
+sed -i '' "s/Version: v[0-9]*\.[0-9]*\.[0-9x]*/Version: v$VERSION/g" README.md
 
 echo "✅ Sync complete."
