@@ -133,7 +133,7 @@ fn test_strategy_flow() -> Result<(), Box<dyn std::error::Error>> {
         .arg("Zig")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Strategy 'Zig' removed"));
+        .stdout(predicate::str::contains("Aborted. (Use --yes to skip confirmation)"));
 
     Ok(())
 }
