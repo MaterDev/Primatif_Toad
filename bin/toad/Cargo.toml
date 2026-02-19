@@ -19,7 +19,7 @@ toad-git = { version = "1.1.2", path = "../../crates/toad-git" }
 toad-manifest = { version = "1.1.2", path = "../../crates/toad-manifest" }
 toad-ops = { version = "1.1.2", path = "../../crates/toad-ops" }
 toad-scaffold = { version = "1.1.2", path = "../../crates/toad-scaffold" }
-toml = "0.8.23"
+toml = "1.0.3"
 whoami = "2.1"
 
 [dev-dependencies]
