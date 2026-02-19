@@ -1237,7 +1237,7 @@ dependencies = [
 
 [[package]]
 name = "toad"
-version = "1.1.1"
+version = "1.1.2"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -1277,7 +1277,7 @@ dependencies = [
 
 [[package]]
 name = "toad-discovery"
-version = "1.1.1"
+version = "1.1.2"
 dependencies = [
  "anyhow",
  "filetime",
@@ -1310,7 +1310,7 @@ dependencies = [
 
 [[package]]
 name = "toad-mcp"
-version = "1.1.1"
+version = "1.1.2"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -1331,7 +1331,7 @@ dependencies = [
 
 [[package]]
 name = "toad-ops"
-version = "1.1.1"
+version = "1.1.2"
 dependencies = [
  "anyhow",
  "cargo_metadata",
