@@ -38,6 +38,10 @@ qa: sync-version docs sync-skills check-licenses check-fmt lint test test-integr
 sync-version:
     ./scripts/sync_version.sh
 
+# Sync all dependency versions across modules
+sync-deps:
+    ./scripts/sync_dependencies.sh
+
 # Generate CLI documentation
 docs:
     cargo run -p toad -- docs

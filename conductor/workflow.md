@@ -131,6 +131,25 @@ All tasks follow a strict lifecycle:
      `cargo build` to sync the lockfile, and include the version bump in the
      task or phase commit.
 
+#### 5. Bump Version Numbers
+
+Update version in all Cargo.toml files and sync dependencies:
+
+```bash
+# Update package versions
+find . -name "Cargo.toml" -not -path "./target/*" \
+  -exec sed -i '' 's/version = "{OLD_VERSION}"/version = "{NEW_VERSION}"/g' {} \;
+
+# Sync all toad-* dependency versions
+just sync-deps
+
+# Update Cargo.lock
+cargo update
+```
+
+**Important:** Always run `just sync-deps` after version bumps to ensure all internal
+dependencies (toad-core, toad-discovery, etc.) reference the correct version.
+
 ### Phase Completion Verification and Checkpointing Protocol
 
 **Trigger:** This protocol is executed immediately after a task is completed

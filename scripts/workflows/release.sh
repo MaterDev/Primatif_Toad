@@ -97,7 +97,14 @@ echo "  New version: ${NEW_VERSION}"
 
 # Update all Cargo.toml files
 find . -name "Cargo.toml" -not -path "./target/*" -exec sed -i '' "s/version = \"${CURRENT_VERSION}\"/version = \"${NEW_VERSION}\"/g" {} \;
-echo -e "${GREEN}✓${NC} Version updated in Cargo.toml files\n"
+
+# Sync all dependency versions
+echo "  Syncing dependency versions..."
+if ! ./scripts/sync_dependencies.sh > /dev/null 2>&1; then
+    echo -e "${RED}Error: Dependency sync failed${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓${NC} Version and dependencies updated\n"
 
 # Step 7: Summary
 echo -e "${BLUE}=== Release Preparation Complete ===${NC}"
