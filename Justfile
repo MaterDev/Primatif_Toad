@@ -26,7 +26,7 @@ setup-git-config:
 
 # Install the Toad CLI to your system (Production)
 install:
-    ./scripts/install_toad.sh
+    bash scripts/install_toad.sh
 
 # --- Quality Assurance (QA) ---
 
@@ -36,11 +36,11 @@ qa: sync-version docs sync-skills check-licenses check-fmt lint test test-integr
 
 # Sync README version with Cargo.toml
 sync-version:
-    ./scripts/sync_version.sh
+    bash scripts/sync_version.sh
 
 # Sync all dependency versions across modules
 sync-deps:
-    ./scripts/sync_dependencies.sh
+    bash scripts/sync_dependencies.sh
 
 # Generate CLI documentation
 docs:
@@ -52,7 +52,7 @@ sync-skills:
 
 # Verify MIT/BUSL-1.1 license boundaries
 check-licenses:
-    ./scripts/check_license_boundary.sh
+    bash scripts/check_license_boundary.sh
 
 # Setup Git hooks
 setup-hooks:
@@ -68,7 +68,11 @@ test:
 
 # Run integration tests in sandbox
 test-integration:
-    ./scripts/tests/integration_qa.sh
+    bash scripts/tests/integration_qa.sh
+
+# Run MCP validation tests
+test-mcp:
+    bash scripts/tests/mcp_validation.sh
 
 # Check everything (CI Gate)
 check: lint test

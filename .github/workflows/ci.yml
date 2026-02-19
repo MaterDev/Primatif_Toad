@@ -86,7 +86,7 @@ jobs:
           submodules: recursive
       
       - name: Verify license boundaries
-        run: ./scripts/check_license_boundary.sh
+        run: bash scripts/check_license_boundary.sh
 
   build:
     name: Build

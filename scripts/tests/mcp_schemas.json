@@ -1,0 +1,278 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Toad MCP Tool Response Schemas",
+  "description": "JSON schemas for validating toad-mcp tool responses",
+  "definitions": {
+    "mcpResponse": {
+      "type": "object",
+      "required": ["jsonrpc"],
+      "properties": {
+        "jsonrpc": {
+          "type": "string",
+          "const": "2.0"
+        },
+        "id": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ]
+        }
+      }
+    },
+    "mcpSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpResponse" },
+        {
+          "required": ["result"],
+          "properties": {
+            "result": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "mcpErrorResponse": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpResponse" },
+        {
+          "required": ["error"],
+          "properties": {
+            "error": {
+              "type": "object",
+              "required": ["code", "message"],
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "toolCallResult": {
+      "type": "object",
+      "required": ["content"],
+      "properties": {
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["text", "image", "resource"]
+              },
+              "text": {
+                "type": "string"
+              },
+              "data": {
+                "type": "string"
+              },
+              "mimeType": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "isError": {
+          "type": "boolean"
+        }
+      }
+    },
+    "serverInfo": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "website_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "toolInfo": {
+      "type": "object",
+      "required": ["name", "description", "inputSchema"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "inputSchema": {
+          "type": "object",
+          "required": ["type", "properties"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "object"
+            },
+            "properties": {
+              "type": "object"
+            },
+            "required": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "schemas": {
+    "initialize": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpSuccessResponse" },
+        {
+          "properties": {
+            "result": {
+              "type": "object",
+              "required": ["protocolVersion", "capabilities", "serverInfo"],
+              "properties": {
+                "protocolVersion": {
+                  "type": "string"
+                },
+                "capabilities": {
+                  "type": "object",
+                  "properties": {
+                    "tools": {
+                      "type": "object"
+                    },
+                    "resources": {
+                      "type": "object"
+                    },
+                    "prompts": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "serverInfo": {
+                  "$ref": "#/definitions/serverInfo"
+                },
+                "instructions": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "tools/list": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpSuccessResponse" },
+        {
+          "properties": {
+            "result": {
+              "type": "object",
+              "required": ["tools"],
+              "properties": {
+                "tools": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/toolInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "tools/call": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpSuccessResponse" },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/definitions/toolCallResult"
+            }
+          }
+        }
+      ]
+    },
+    "list_projects": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpSuccessResponse" },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/definitions/toolCallResult"
+            }
+          }
+        }
+      ]
+    },
+    "get_project_detail": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpSuccessResponse" },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/definitions/toolCallResult"
+            }
+          }
+        }
+      ]
+    },
+    "search_projects": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpSuccessResponse" },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/definitions/toolCallResult"
+            }
+          }
+        }
+      ]
+    },
+    "get_manifest": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpSuccessResponse" },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/definitions/toolCallResult"
+            }
+          }
+        }
+      ]
+    },
+    "get_ecosystem_summary": {
+      "allOf": [
+        { "$ref": "#/definitions/mcpSuccessResponse" },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/definitions/toolCallResult"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
