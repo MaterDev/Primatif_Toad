@@ -1,4 +1,4 @@
-# Plan: Automated QA Suite (112-automated-qa-suite)
+# Plan: Automated QA Suite (v1.1.3-automated-qa-suite)
 
 > **Spec:** [./spec.md](./spec.md)
 
@@ -7,10 +7,12 @@
 ## Tasks
 
 ### Phase 1: Sandbox Automation
-- [ ] Create `scripts/tests/integration_qa.sh` to automate sandbox creation, usage, and cleanup.
-- [ ] **Headless Execution**: Ensure the test runner supports a `--ci` or `--non-interactive` flag to suppress all output styling and prompts.
-- [ ] Implement assertions for CLI output strings.
 
+- [ ] Create `scripts/tests/integration_qa.sh` to automate sandbox creation,
+      usage, and cleanup.
+- [ ] **Headless Execution**: Ensure the test runner supports a `--ci` or
+      `--non-interactive` flag to suppress all output styling and prompts.
+- [ ] Implement assertions for CLI output strings.
 
 ### Phase 2: MCP Validation
 

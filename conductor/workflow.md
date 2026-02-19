@@ -11,6 +11,36 @@
 1. **User Experience First:** Every decision should prioritize user experience
 1. **Non-Interactive & CI-Aware:** Prefer non-interactive commands. Use
    `CI=true` for watch-mode tools (tests, linters) to ensure single execution.
+1. **Version-Based Track Naming:** Track directory names MUST reflect the target
+   version they will be released in, signaling version bumps upon completion.
+
+## Track Naming Convention
+
+All conductor tracks MUST follow this naming pattern:
+
+```text
+conductor/tracks/v{MAJOR}.{MINOR}.{PATCH}-{slug}/
+```
+
+**Rules:**
+
+- Version number indicates the target release version
+- Slug is a short, descriptive kebab-case identifier
+- Completing all tracks for a version signals readiness for that version bump
+- Post-release workflow improvements use the current version (no bump)
+
+**Examples:**
+
+- `v1.1.2-interface-standardization/` → Will be released in v1.1.2
+- `v1.1.2-diagnostic-resilience/` → Will be released in v1.1.2
+- `v1.1.3-automated-qa/` → Will be released in v1.1.3
+- `v1.1.1-dogfooding/` → Post-release workflow (current version, no bump)
+
+**Migration from old numbering:**
+
+- Old `111-*` tracks were ambiguous (v1.1.0 or v1.1.1?)
+- Old `112-*` tracks implied sequence, not version
+- New system makes version targets explicit and self-documenting
 
 ## Task Workflow
 

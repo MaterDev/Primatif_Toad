@@ -1,4 +1,4 @@
-# Specification: Diagnostic Resilience (112-diagnostic-resilience)
+# Specification: Diagnostic Resilience (v1.1.2-diagnostic-resilience)
 
 ## Overview
 

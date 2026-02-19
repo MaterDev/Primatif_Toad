@@ -1,4 +1,4 @@
-# Specification: Automated QA Suite (112-automated-qa-suite)
+# Specification: Automated QA Suite (v1.1.3-automated-qa-suite)
 
 ## Overview
 

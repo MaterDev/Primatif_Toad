@@ -1,4 +1,4 @@
-# Specification: Dogfooding Improvements (111-dogfooding)
+# Specification: Dogfooding Improvements (v1.1.1-dogfooding)
 
 ## Overview
 

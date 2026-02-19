@@ -1,4 +1,4 @@
-# Plan: Interface Standardization & Command Discovery (112-interface-standardization)
+# Plan: Interface Standardization & Command Discovery (v1.1.2-interface-standardization)
 
 > **Spec:** [./spec.md](./spec.md)
 

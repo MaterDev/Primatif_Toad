@@ -1,4 +1,4 @@
-# Plan: Diagnostic Resilience (112-diagnostic-resilience)
+# Plan: Diagnostic Resilience (v1.1.2-diagnostic-resilience)
 
 > **Spec:** [./spec.md](./spec.md)
 
