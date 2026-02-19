@@ -32,7 +32,20 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace, json: bool) -> Re
             tag,
             cascade,
             fail_fast,
+            yes,
         } => {
+            if !yes {
+                use std::io::{self, Write};
+                let targets = filter_projects(projects.clone(), query.as_deref(), tag.as_deref());
+                print!("Commit changes to {} repositories? [y/N]: ", targets.len());
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted. (Use --yes to skip confirmation)");
+                    return Ok(());
+                }
+            }
             let targets = filter_projects(projects, query.as_deref(), tag.as_deref());
             if targets.is_empty() {
                 println!("No projects found matching filters.");
@@ -78,7 +91,20 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace, json: bool) -> Re
             query,
             tag,
             fail_fast,
+            yes,
         } => {
+            if !yes {
+                use std::io::{self, Write};
+                let targets = filter_projects(projects.clone(), query.as_deref(), tag.as_deref());
+                print!("Push changes to {} repositories? [y/N]: ", targets.len());
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted. (Use --yes to skip confirmation)");
+                    return Ok(());
+                }
+            }
             let targets = filter_projects(projects, query.as_deref(), tag.as_deref());
             if targets.is_empty() {
                 println!("No projects found matching filters.");
@@ -98,7 +124,20 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace, json: bool) -> Re
             query,
             tag,
             fail_fast,
+            yes,
         } => {
+            if !yes {
+                use std::io::{self, Write};
+                let targets = filter_projects(projects.clone(), query.as_deref(), tag.as_deref());
+                print!("Pull changes from {} repositories? [y/N]: ", targets.len());
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted. (Use --yes to skip confirmation)");
+                    return Ok(());
+                }
+            }
             let targets = filter_projects(projects, query.as_deref(), tag.as_deref());
             if targets.is_empty() {
                 println!("No projects found matching filters.");
@@ -120,7 +159,20 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace, json: bool) -> Re
             query,
             tag,
             fail_fast,
+            yes,
         } => {
+            if !yes {
+                use std::io::{self, Write};
+                let targets = filter_projects(projects.clone(), query.as_deref(), tag.as_deref());
+                print!("Checkout branch '{}' in {} repositories? [y/N]: ", branch, targets.len());
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted. (Use --yes to skip confirmation)");
+                    return Ok(());
+                }
+            }
             if !json {
                 println!("{}", "--- MULTI-REPO GIT CHECKOUT ---".blue().bold());
             }
@@ -359,7 +411,19 @@ pub fn handle(subcommand: &GgitCommand, workspace: &Workspace, json: bool) -> Re
                 println!("{}", serde_json::to_string_pretty(&all_results)?);
             }
         }
-        GgitCommand::Align { query, tag } => {
+        GgitCommand::Align { query, tag, yes } => {
+            if !yes {
+                use std::io::{self, Write};
+                let targets = filter_projects(projects.clone(), query.as_deref(), tag.as_deref());
+                print!("Force-align {} submodules to Hub expectations? [y/N]: ", targets.len());
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted. (Use --yes to skip confirmation)");
+                    return Ok(());
+                }
+            }
             if !json {
                 println!("{}", "--- SUBMODULE ALIGNMENT ---".blue().bold());
             }

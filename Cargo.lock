@@ -1289,6 +1289,7 @@ dependencies = [
  "toad-core",
  "toad-git",
  "toad-ops",
+ "toml",
 ]
 
 [[package]]

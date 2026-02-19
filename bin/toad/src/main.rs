@@ -6,6 +6,7 @@ use toad_core::Workspace;
 
 mod cli;
 mod commands;
+mod suggestions;
 mod ui;
 
 use cli::{Cli, Commands};
@@ -27,7 +28,26 @@ fn print_banner() {
 }
 
 fn main() -> Result<()> {
-    let cli = Cli::parse();
+    let cli = match Cli::try_parse() {
+        Ok(cli) => cli,
+        Err(e) => {
+            // Check if this is an unknown subcommand error
+            let error_msg = e.to_string();
+            if error_msg.contains("unrecognized subcommand") || error_msg.contains("invalid subcommand") {
+                // Extract the attempted command from the error message
+                if let Some(attempted) = extract_attempted_command(&error_msg) {
+                    let valid_commands = get_valid_commands();
+                    if let Some(suggestion) = suggestions::suggest_command(&attempted, &valid_commands) {
+                        eprintln!("{}", e);
+                        eprintln!("\n{} {}", "Hint:".yellow().bold(), suggestion);
+                        std::process::exit(2);
+                    }
+                }
+            }
+            // For other errors, use default clap error handling
+            e.exit();
+        }
+    };
 
     // --- Context Discovery ---
     let discovered = Workspace::discover();
@@ -545,4 +565,24 @@ fn main() -> Result<()> {
     }
 
     Ok(())
+}
+
+/// Extract the attempted command from a clap error message
+fn extract_attempted_command(error_msg: &str) -> Option<String> {
+    // Try to extract from "unrecognized subcommand 'xyz'"
+    if let Some(start) = error_msg.find("'") {
+        if let Some(end) = error_msg[start + 1..].find("'") {
+            return Some(error_msg[start + 1..start + 1 + end].to_string());
+        }
+    }
+    None
+}
+
+/// Get list of valid top-level commands
+fn get_valid_commands() -> Vec<&'static str> {
+    vec![
+        "create", "reveal", "status", "tag", "untag", "clean", "sync", "manifest",
+        "atlas", "doctor", "project", "cw", "strategy", "ggit", "home", "version",
+        "list", "docs",
+    ]
 }

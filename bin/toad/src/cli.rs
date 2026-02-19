@@ -329,6 +329,9 @@ pub enum CwCommand {
     Delete {
         /// Name of the workflow
         name: String,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
 }
 
@@ -360,6 +363,9 @@ pub enum GgitCommand {
         /// Halt the entire batch if a single repo fails
         #[arg(long, short = 'f')]
         fail_fast: bool,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
     /// Push changes across repositories
     Push {
@@ -372,6 +378,9 @@ pub enum GgitCommand {
         /// Halt the entire batch if a single repo fails
         #[arg(long, short = 'f')]
         fail_fast: bool,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
     /// Pull changes across repositories
     Pull {
@@ -384,6 +393,9 @@ pub enum GgitCommand {
         /// Halt the entire batch if a single repo fails
         #[arg(long, short = 'f')]
         fail_fast: bool,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
     /// Switch branches across repositories
     Checkout {
@@ -401,6 +413,9 @@ pub enum GgitCommand {
         /// Halt the entire batch if a single repo fails
         #[arg(long, short = 'f')]
         fail_fast: bool,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
     /// Synchronize and align repositories (safe multi-repo update)
     Sync {
@@ -434,6 +449,9 @@ pub enum GgitCommand {
         /// Filter by tag
         #[arg(long, short = 't')]
         tag: Option<String>,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
 }
 
@@ -553,5 +571,8 @@ pub enum StrategyCommands {
     Remove {
         /// Name of the strategy
         name: String,
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
 }

@@ -5,7 +5,26 @@ use toad_ops::doctor::run_health_check;
 
 pub fn handle(json: bool) -> Result<()> {
     let workspace = Workspace::discover()?;
-    let report = run_health_check(&workspace)?;
+    let mut report = run_health_check(&workspace)?;
+
+    // Collect diagnostics from all projects
+    if let Ok(registry) = toad_core::ProjectRegistry::load(workspace.active_context.as_deref(), None) {
+        for project in &registry.projects {
+            let project_diagnostics =
+                toad_discovery::detect_metadata_issues(&project.path, &project.name);
+            report.diagnostics.merge(project_diagnostics);
+        }
+    }
+
+    // Add diagnostic summary to warnings if issues found
+    if report.diagnostics.has_errors() || report.diagnostics.has_warnings() {
+        report.warnings.push(format!(
+            "Found {} metadata issues ({} errors, {} warnings)",
+            report.diagnostics.diagnostics.len(),
+            report.diagnostics.error_count(),
+            report.diagnostics.warning_count()
+        ));
+    }
 
     if json {
         println!("{}", serde_json::to_string_pretty(&report)?);
@@ -103,9 +122,31 @@ pub fn handle(json: bool) -> Result<()> {
         println!("  {} ATLAS.json not found", "⚠️".yellow());
     }
 
+    // 6. Metadata Diagnostics
+    if !report.diagnostics.diagnostics.is_empty() {
+        println!("\n{} Metadata Issues", "»".blue());
+        for diag in &report.diagnostics.diagnostics {
+            let icon = match diag.severity {
+                toad_core::DiagnosticSeverity::Error => "❌",
+                toad_core::DiagnosticSeverity::Warning => "⚠️",
+                toad_core::DiagnosticSeverity::Info => "ℹ️",
+            };
+            println!(
+                "  {} {} - {}: {}",
+                icon,
+                diag.project_name.bold(),
+                diag.file_name.yellow(),
+                diag.message
+            );
+            if let Some(details) = &diag.details {
+                println!("    {}", details.dimmed());
+            }
+        }
+    }
+
     // Summary
     println!("\n{}", "--- SUMMARY ---".bold());
-    if report.issues.is_empty() && report.warnings.is_empty() {
+    if report.issues.is_empty() && report.warnings.is_empty() && !report.diagnostics.has_errors() {
         println!("{} All checks passed! Toad is healthy.", "✅".green());
     } else {
         if !report.warnings.is_empty() {
@@ -119,6 +160,13 @@ pub fn handle(json: bool) -> Result<()> {
             for i in &report.issues {
                 println!("  - {}", i);
             }
+        }
+        if report.diagnostics.has_errors() {
+            println!(
+                "{} {} metadata errors detected",
+                "❌".red(),
+                report.diagnostics.error_count()
+            );
         }
     }
 

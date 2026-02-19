@@ -76,7 +76,19 @@ pub fn handle(subcommand: &CwCommand) -> Result<()> {
             );
             println!("{}: {:?}", "Registered".bold(), wf.registered_at);
         }
-        CwCommand::Delete { name } => {
+        CwCommand::Delete { name, yes } => {
+            if !yes {
+                use std::io::{self, Write};
+                print!("Remove workflow '{}'? [y/N]: ", name);
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted. (Use --yes to skip confirmation)");
+                    return Ok(());
+                }
+            }
+            
             if registry.workflows.remove(&name.to_lowercase()).is_some() {
                 registry.save(None)?;
                 println!("{} Workflow '{}' removed.", "SUCCESS:".green().bold(), name);

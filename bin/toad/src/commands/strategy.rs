@@ -92,7 +92,19 @@ pub fn handle(subcommand: &StrategyCommands) -> Result<()> {
                 path
             );
         }
-        StrategyCommands::Remove { name } => {
+        StrategyCommands::Remove { name, yes } => {
+            if !yes {
+                use std::io::{self, Write};
+                print!("Remove strategy '{}'? [y/N]: ", name);
+                io::stdout().flush()?;
+                let mut input = String::new();
+                io::stdin().read_line(&mut input)?;
+                if !input.trim().to_lowercase().starts_with('y') {
+                    println!("Aborted. (Use --yes to skip confirmation)");
+                    return Ok(());
+                }
+            }
+            
             let custom_dir = GlobalConfig::config_dir(None)?.join("strategies/custom");
             let mut safe_name = name
                 .to_lowercase()

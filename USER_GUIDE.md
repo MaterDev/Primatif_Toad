@@ -69,6 +69,67 @@ project structures.
 
 ---
 
+## 🔧 Non-Interactive Execution
+
+### Using `--yes` Flags
+
+All destructive or interactive commands support the `--yes` (or `-y`) flag for
+non-interactive execution, perfect for scripts and CI/CD workflows:
+
+**Custom Workflows:**
+
+```bash
+toad cw delete my-workflow --yes
+```
+
+**Strategy Management:**
+
+```bash
+toad strategy remove custom-stack --yes
+```
+
+**Multi-Repo Git Operations:**
+
+```bash
+toad ggit commit -m "Update dependencies" --yes
+toad ggit push --yes
+toad ggit pull --yes
+toad ggit checkout feature-branch --yes
+toad ggit align --yes
+```
+
+Without `--yes`, these commands will prompt for confirmation. If you abort, the
+message will remind you: `Aborted. (Use --yes to skip confirmation)`
+
+### Command Aliases
+
+Toad recognizes common command aliases to improve discoverability:
+
+- `ls` → `list`
+- `search`, `find` → `reveal`
+- `check` → `status`
+- `health`, `diagnose` → `doctor`
+- `cleanup`, `purge` → `clean`
+- `git` → `ggit`
+- `workflow`, `workflows` → `cw`
+- `unregister`, `remove`, `rm`, `del` → `delete`
+
+### "Did You Mean?" Suggestions
+
+If you mistype a command, Toad will suggest the correct one:
+
+```bash
+$ toad lst
+error: unrecognized subcommand 'lst'
+Hint: Did you mean 'list'?
+
+$ toad search my-project
+error: unrecognized subcommand 'search'
+Hint: Did you mean 'reveal'?
+```
+
+---
+
 ## 🌊 Common Workflows
 
 ### Multi-Repo Git Operations
