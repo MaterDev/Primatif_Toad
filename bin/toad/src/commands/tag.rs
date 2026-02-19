@@ -2,7 +2,24 @@ use crate::commands::utils::{normalize_tag, resolve_projects};
 use anyhow::{bail, Result};
 use colored::*;
 use std::io::{self, Write};
-use toad_core::{TagRegistry, Workspace};
+use std::time::SystemTime;
+use toad_core::{ProjectRegistry, TagRegistry, Workspace};
+
+fn refresh_registry_tags_and_fingerprint(workspace: &Workspace, tag_reg: &TagRegistry) {
+    let mut registry =
+        ProjectRegistry::load(workspace.active_context.as_deref(), None).unwrap_or_default();
+
+    for p in &mut registry.projects {
+        p.tags = tag_reg.get_tags(&p.name);
+    }
+
+    if let Ok(fp) = workspace.get_fingerprint() {
+        registry.fingerprint = fp;
+        registry.last_sync = SystemTime::now();
+    }
+
+    let _ = registry.save(workspace.active_context.as_deref(), None);
+}
 
 pub fn handle_tag(
     workspace: &Workspace,
@@ -100,6 +117,9 @@ pub fn handle_tag(
         println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
         return Err(e.into());
     }
+
+    refresh_registry_tags_and_fingerprint(workspace, &tag_reg);
+
     println!(
         "{} Processed {} projects.",
         "SUCCESS:".green().bold(),
@@ -190,6 +210,9 @@ pub fn handle_untag(
         println!("{} Failed to save tags: {}", "ERROR:".red().bold(), e);
         return Err(e.into());
     }
+
+    refresh_registry_tags_and_fingerprint(workspace, &tag_reg);
+
     println!(
         "{} Processed {} projects.",
         "SUCCESS:".green().bold(),

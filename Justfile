@@ -55,6 +55,7 @@ setup-hooks:
     @mkdir -p .git/hooks
     @ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
     @ln -sf ../../scripts/git-hooks/pre-push .git/hooks/pre-push
+    @ln -sf ../../scripts/git-hooks/post-commit .git/hooks/post-commit
     @echo "✅ Git hooks installed."
 
 # Run all tests

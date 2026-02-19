@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if command -v toad &> /dev/null; then
+    toad manifest --quiet 2>/dev/null || true
+fi

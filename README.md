@@ -237,6 +237,42 @@ just qa
 This executes version sync, docs generation, license boundary checks,
 formatting, clippy, unit tests, and a full build.
 
+### Dogfooding: Using Toad to Develop Toad
+
+Toad's development workflow uses its own features to manage the ecosystem:
+
+#### Tag Taxonomy
+
+We use semantic tags to organize the codebase:
+
+```bash
+# View projects by role
+toad status --tag core          # Core data models and traits
+toad status --tag intelligence  # Discovery and manifest generation
+toad status --tag orchestration # Git operations and batch workflows
+toad status --tag interface     # CLI and MCP server
+toad status --tag utility       # Scaffolding and helpers
+```
+
+#### Custom Workflows
+
+Common development tasks are registered as custom workflows:
+
+```bash
+toad cw run qa             # Run full QA suite (tests, lint, format)
+toad cw run release-check  # Pre-release verification
+toad cw run update-docs    # Regenerate docs and sync AI skills
+```
+
+#### Auto-Refresh Hook
+
+A post-commit hook automatically refreshes Toad's context after each commit,
+ensuring the ecosystem manifest stays synchronized. Install hooks with:
+
+```bash
+just setup-hooks
+```
+
 ---
 
 ## 🛠️ Contributor Guide: Multi-Repo Workflow
