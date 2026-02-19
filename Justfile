@@ -30,8 +30,8 @@ install:
 
 # --- Quality Assurance (QA) ---
 
-# Run full QA suite (Sync -> Docs -> Skills -> Check Licenses -> Format -> Lint -> Test -> Build)
-qa: sync-version docs sync-skills check-licenses check-fmt lint test build
+# Run full QA suite (Sync -> Docs -> Skills -> Check Licenses -> Format -> Lint -> Test -> Integration -> Build)
+qa: sync-version docs sync-skills check-licenses check-fmt lint test test-integration build
     @echo "\n✅ QA Complete: Codebase is clean, tested, and builds."
 
 # Sync README version with Cargo.toml
@@ -61,6 +61,10 @@ setup-hooks:
 # Run all tests
 test:
     cargo test --workspace
+
+# Run integration tests in sandbox
+test-integration:
+    ./scripts/tests/integration_qa.sh
 
 # Check everything (CI Gate)
 check: lint test

@@ -126,14 +126,39 @@ detailed plan in its respective folder.
 - [x] **Track: v1.1.1 Dogfooding** _Link:
       [./tracks/archive/v1.1.1-dogfooding/](./tracks/archive/v1.1.1-dogfooding/)_
 
-- [ ] **Track: v1.1.2 Interface Standardization** _Link:
-      [./tracks/v1.1.2-interface-standardization/](./tracks/v1.1.2-interface-standardization/)_
+- [x]## v1.1.2 Tracks Complete (Released 2026-02-19)
 
-- [ ] **Track: v1.1.2 Diagnostic Resilience** _Link:
-      [./tracks/v1.1.2-diagnostic-resilience/](./tracks/v1.1.2-diagnostic-resilience/)_
+### v1.1.2-interface-standardization 
 
-- [ ] **Track: v1.1.3 Automated QA Suite** _Link:
-      [./tracks/v1.1.3-automated-qa-suite/](./tracks/v1.1.3-automated-qa-suite/)_
+**Goal:** Standardize CLI interface with unified flags and command discovery
+
+**Status:** Complete - Archived
+
+**Spec:** [spec.md](tracks/archive/v1.1.2-interface-standardization/spec.md)
+
+**Delivered:**
+
+- Unified `--yes` / `-y` flags for all destructive commands
+- Command alias system with 15+ common aliases
+- "Did you mean?" suggestions using Levenshtein distance
+- Standardized error messages with `--yes` hints
+- Documentation in USER_GUIDE.md
+
+### v1.1.2-diagnostic-resilience 
+
+**Goal:** Enhanced error detection for malformed metadata files
+
+**Status:** Complete - Archived
+
+**Spec:** [spec.md](tracks/archive/v1.1.2-diagnostic-resilience/spec.md)
+
+**Delivered:**
+
+- Diagnostic type system (ParseDiagnostic, DiagnosticReport)
+- Metadata parsing detection for Cargo.toml and package.json
+- Integration into `toad doctor` with detailed error reporting
+- Integration into `toad status` with ⚠️ warning indicators
+- Documentation in USER_GUIDE.md
 
 - [x] **Track: v1.1.1 ggit Submodule Path Fixes** _Link:
       [./tracks/archive/111-ggit-fixes/](./tracks/archive/111-ggit-fixes/)_

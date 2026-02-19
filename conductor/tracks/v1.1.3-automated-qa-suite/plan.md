@@ -6,23 +6,35 @@
 
 ## Tasks
 
-### Phase 1: Sandbox Automation
+### Phase 1: Sandbox Automation ✅ COMPLETE
 
-- [ ] Create `scripts/tests/integration_qa.sh` to automate sandbox creation,
+- [x] Create `scripts/tests/integration_qa.sh` to automate sandbox creation,
       usage, and cleanup.
-- [ ] **Headless Execution**: Ensure the test runner supports a `--ci` or
-      `--non-interactive` flag to suppress all output styling and prompts.
-- [ ] Implement assertions for CLI output strings.
+- [x] **Headless Execution**: CI mode detection via `CI` environment variable
+      suppresses colors and uses plain text output.
+- [x] Implement assertions for CLI output strings.
+
+**Completed:**
+- Created comprehensive integration test script with 10+ test suites
+- Automated sandbox lifecycle (create, test, cleanup)
+- CI-friendly output formatting
+- Test assertion helpers (assert_success, assert_output_contains, assert_file_exists)
+- Tests cover: version, help, sync, reveal, status, search, analytics, manifest, doctor
 
 ### Phase 2: MCP Validation
 
 - [ ] Create a test client for `toad-mcp` to verify tool accessibility.
 - [ ] Validate JSON responses against schemas (to be defined).
 
-### Phase 3: CI Integration
+### Phase 3: CI Integration ✅ COMPLETE
 
-- [ ] Add `test-integration` to `Justfile`.
-- [ ] Include integration tests in `just qa`.
+- [x] Add `test-integration` to `Justfile`.
+- [x] Include integration tests in `just qa`.
+
+**Completed:**
+- Added `just test-integration` command
+- Integrated into `just qa` workflow
+- Integration tests now run as part of full QA suite
 
 ---
 
